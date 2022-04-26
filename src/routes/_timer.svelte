@@ -6,6 +6,7 @@
 
   export let start : Date;
   export let end : Date;
+  $: if (start == null) start = end;
   $: daysToGo = differenceInCalendarDays(end, start);
   $: totalSeconds = Math.ceil(differenceInSeconds(end, start)) % SECONDS_IN_A_DAY;
   $: hoursToGo = Math.floor(totalSeconds / 3600);

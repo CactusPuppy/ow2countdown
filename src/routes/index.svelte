@@ -19,7 +19,7 @@
   export let _dates : CountdownDate[];
   if (!$dates.length) $dates = _dates;
 
-  let now = new Date();
+  let now = null;
 
   async function getData() {
     let data : any;

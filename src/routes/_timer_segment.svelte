@@ -1,9 +1,12 @@
 <script lang="ts">
   export let value : number;
   export let unit : string;
+
+  export const zeroPadAmount = 2;
+  $: clampedValue = Math.max(0, value);
 </script>
 
-<div class="flex flex-col">
-  <p class="text-2xl">{ value }</p>
+<div class="flex flex-col gap-2 items-center">
+  <p class="text-2xl">{ String(clampedValue).padStart(zeroPadAmount, "0") }</p>
   <p class="text-sm">{ unit }</p>
 </div>

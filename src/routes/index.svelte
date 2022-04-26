@@ -43,8 +43,8 @@
 
 <div class="flex flex-col justify-center items-center h-[100vh] w-[100vw] dark:bg-slate-800">
   <div class="flex-grow flex flex-col justify-center items-center gap-2 py-8 w-[100vw] dark:text-gray-50">
-    <p><b>Countdown:</b> Overwatch 2 PVP Beta 1</p>
-    <Timer start={now} end={new Date("2022-04-26T11:00:00.000-07:00")} />
+    <p><b>Countdown:</b> Twitch Drops for Overwatch 2 Beta 1 Access</p>
+    <Timer start={now} end={new Date("2022-04-27T10:00:00.000-07:00")} /> <!-- TODO: Make this actually pull from the dates -->
   </div>
   <div class="flex justify-between my-4 mx-2 px-4 h-8 w-full">
     <p class="text-xs text-gray-500 dark:text-slate-400 italic text-left">Created by <a class="text-blue-600 dark:text-blue-300 underline" href="https://twitter.com/Cactus_Puppy" rel="noreferrer noopener" target="_blank">@Cactus_Puppy</a><br /><a href="https://github.com/CactusPuppy/ow2countdown" rel="noreferrer noopener" target="_blank" class="text-blue-600 dark:text-blue-300 underline">GitHub</a></p>

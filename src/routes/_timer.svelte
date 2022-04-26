@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { differenceInCalendarDays, differenceInSeconds } from "date-fns";
+  import { differenceInSeconds } from "date-fns";
   import TimerSegment from "./_timer_segment.svelte";
 
   const SECONDS_IN_A_DAY = 86400;
@@ -7,7 +7,7 @@
   export let start : Date;
   export let end : Date;
   $: if (start == null) start = end;
-  $: daysToGo = differenceInCalendarDays(end, start);
+  $: daysToGo = Math.floor(differenceInSeconds(end, start) / SECONDS_IN_A_DAY);
   $: totalSeconds = Math.ceil(differenceInSeconds(end, start)) % SECONDS_IN_A_DAY;
   $: hoursToGo = Math.floor(totalSeconds / 3600);
   $: minutesToGo = Math.floor(totalSeconds / 60) % 60;

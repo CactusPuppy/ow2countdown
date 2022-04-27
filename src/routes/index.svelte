@@ -12,25 +12,25 @@
 
 <script lang="ts">
   import type { CountdownDate } from "$lib/types";
-  import { getDates, dates } from "../stores/dates";
+  // import { getDates, dates } from "../stores/dates";
   import Timer from "./_timer.svelte";
   import { onMount } from "svelte";
 import { compareAsc, isPast, parseISO } from "date-fns";
 
-  export let _dates : CountdownDate[];
-  if (!$dates.length) $dates = _dates;
+  // export let _dates : CountdownDate[];
+  // if (!$dates.length) $dates = _dates;
 
   let now = null;
 
-  async function getData() {
-    let data : any;
-    try {
-      data = await getDates();
-    } catch (error) {
-      throw new Error(error.message);
-    }
-    $dates = [...$dates, ...data]
-  }
+  // async function getData() {
+  //   let data : any;
+  //   try {
+  //     data = await getDates();
+  //   } catch (error) {
+  //     throw new Error(error.message);
+  //   }
+  //   $dates = [...$dates, ...data]
+  // }
 
   function updateTime() {
     now = new Date();

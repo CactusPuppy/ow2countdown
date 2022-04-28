@@ -15,7 +15,7 @@
   // import { getDates, dates } from "../stores/dates";
   import Timer from "./_timer.svelte";
   import { onMount } from "svelte";
-import { compareAsc, isPast, parseISO } from "date-fns";
+  import { compareAsc, parseISO } from "date-fns";
 
   // export let _dates : CountdownDate[];
   // if (!$dates.length) $dates = _dates;

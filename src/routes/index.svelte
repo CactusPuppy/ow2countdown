@@ -63,7 +63,7 @@ import { compareAsc, isPast, parseISO } from "date-fns";
   <div class="flex-grow flex flex-col justify-center items-center gap-6 py-8 w-[100vw] dark:text-gray-50">
     <p class="text-center">
       <b class="text-3xl">Current Countdown:</b>
-      <br>{activeDate.title}
+      <br>{now === null ? "Loading..." : activeDate.title}
     </p>
     <Timer start={now} end={dateMarker} /> <!-- TODO: Make this actually pull from the dates -->
   </div>

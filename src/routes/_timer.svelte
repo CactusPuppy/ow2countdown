@@ -6,7 +6,6 @@
 
   export let start : Date;
   export let end : Date;
-  $: if (start == null) start = end;
   $: daysToGo = Math.floor(differenceInSeconds(end, start) / SECONDS_IN_A_DAY);
   $: totalSeconds = Math.ceil(differenceInSeconds(end, start)) % SECONDS_IN_A_DAY;
   $: hoursToGo = Math.floor(totalSeconds / 3600);
@@ -15,8 +14,15 @@
 </script>
 
 <div class="flex w-64 justify-between">
-  <TimerSegment value={daysToGo} unit="days" />
-  <TimerSegment value={hoursToGo} unit="hours" />
-  <TimerSegment value={minutesToGo} unit="mins" />
-  <TimerSegment value={secondsToGo} unit="secs" />
+  { #if start === null}
+    <TimerSegment value={null} unit="days" />
+    <TimerSegment value={null} unit="hours" />
+    <TimerSegment value={null} unit="mins" />
+    <TimerSegment value={null} unit="secs" />
+  { :else }
+    <TimerSegment value={daysToGo} unit="days" />
+    <TimerSegment value={hoursToGo} unit="hours" />
+    <TimerSegment value={minutesToGo} unit="mins" />
+    <TimerSegment value={secondsToGo} unit="secs" />
+  { /if }
 </div>

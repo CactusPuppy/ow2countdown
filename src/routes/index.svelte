@@ -59,7 +59,7 @@ import { compareAsc, isPast, parseISO } from "date-fns";
   $: dateMarker = parseISO(activeDate.date);
 </script>
 
-<div class="flex flex-col justify-center items-center h-[100vh] w-[100vw] dark:bg-slate-800">
+<div class="flex flex-col justify-center items-center h-[100vh] w-[100vw]">
   <div class="flex-grow flex flex-col justify-center items-center gap-6 py-8 w-[100vw] dark:text-gray-50">
     <p class="text-center">
       <b class="text-3xl">Current Countdown:</b>

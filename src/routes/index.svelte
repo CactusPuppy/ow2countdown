@@ -20,12 +20,17 @@
 
   async function updateDates() {
     fetching = true;
-    let data = await getDates();
-    $dates = data.filter(
-      (d) => compareAsc(now, parseISO(d.date)) < 0
-    );
-    setActiveDate();
-    fetching = false;
+    try {
+      $dates = await getDates();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      $dates = $dates.filter(
+        (d) => compareAsc(now, parseISO(d.date)) < 0
+      );
+      setActiveDate();
+      fetching = false;
+    }
   }
 
   function getAdditionalBackoffAmount(number : Number) {

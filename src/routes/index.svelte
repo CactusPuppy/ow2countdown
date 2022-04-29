@@ -7,7 +7,7 @@
 
   let now : Date;
   let activeDate : CountdownDate;
-  $: dateMarker = activeDate == null ? null : parseISO(activeDate?.date);
+  $: dateMarker = activeDate == null ? null : parseISO(activeDate.date);
   $: if (now > dateMarker && !fetching) {
     updateDates();
   }
@@ -18,19 +18,30 @@
     return Math.min(Math.max(value, min), max);
   }
 
+  let previousUpdate : NodeJS.Timeout;
+
   async function updateDates() {
+    if (previousUpdate != null) {
+      clearTimeout(previousUpdate);
+    }
     fetching = true;
+    if (activeDate?.id === -1) {
+      activeDate = null;
+      dateMarker = null;
+    }
+    let hadError = false;
     try {
       $dates = await getDates();
     } catch (error) {
+      hadError = true;
       console.error(error);
-    } finally {
-      $dates = $dates.filter(
-        (d) => compareAsc(now, parseISO(d.date)) < 0
-      );
-      setActiveDate();
-      fetching = false;
     }
+    $dates = $dates.filter(
+      (d) => compareAsc(now, parseISO(d.date)) < 0
+    );
+    setActiveDate(hadError);
+    previousUpdate = setTimeout(updateDates, 60 * 1000);
+    fetching = false;
   }
 
   function getAdditionalBackoffAmount(number : Number) {
@@ -46,12 +57,12 @@
     return 60;
   }
 
-  function setActiveDate() {
+  function setActiveDate(hadError : Boolean) {
     if ($dates.length === 0) {
       activeDate = {
         id: -1,
         date: formatISO(addSeconds(now, backoff + 1)),
-        title: "No countdown found, retrying in...",
+        title: hadError ? "Error getting countdown data, retrying in..." : "No countdown found, retrying in...",
         description: "",
       };
       backoff = clamp(backoff + getAdditionalBackoffAmount(backoff), 5, 60);

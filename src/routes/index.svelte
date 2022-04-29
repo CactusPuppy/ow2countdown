@@ -1,71 +1,79 @@
-<script context="module" lang="ts">
-  export async function load({ url, params, query }) {
-    // const dates = await getDates();
-
-    return {
-      props: {
-        _dates: [] // TODO: Change this once we have dates
-      }
-    }
-  }
-</script>
-
 <script lang="ts">
   import type { CountdownDate } from "$lib/types";
-  // import { getDates, dates } from "../stores/dates";
+  import { getDates, dates } from "../stores/dates";
   import Timer from "./_timer.svelte";
   import { onMount } from "svelte";
-  import { compareAsc, parseISO } from "date-fns";
+  import { addSeconds, compareAsc, formatISO, getMilliseconds, parseISO } from "date-fns";
 
-  // export let _dates : CountdownDate[];
-  // if (!$dates.length) $dates = _dates;
+  let now : Date;
+  let activeDate : CountdownDate;
+  $: dateMarker = activeDate == null ? null : parseISO(activeDate?.date);
+  $: if (now > dateMarker && !fetching) {
+    updateDates();
+  }
+  let backoff = 5;
+  let fetching = false;
 
-  let now = null;
+  function clamp(value : number, min : number, max : number) {
+    return Math.min(Math.max(value, min), max);
+  }
 
-  // async function getData() {
-  //   let data : any;
-  //   try {
-  //     data = await getDates();
-  //   } catch (error) {
-  //     throw new Error(error.message);
-  //   }
-  //   $dates = [...$dates, ...data]
-  // }
+  async function updateDates() {
+    fetching = true;
+    let data = await getDates();
+    $dates = data.filter(
+      (d) => compareAsc(now, parseISO(d.date)) < 0
+    );
+    setActiveDate();
+    fetching = false;
+  }
+
+  function getAdditionalBackoffAmount(number : Number) {
+    if (number < 15) {
+      return 5;
+    }
+    if (number < 30) {
+      return 15;
+    }
+    if (number < 60) {
+      return 30;
+    }
+    return 60;
+  }
+
+  function setActiveDate() {
+    if ($dates.length === 0) {
+      activeDate = {
+        id: -1,
+        date: formatISO(addSeconds(now, backoff + 1)),
+        title: "No countdown found, retrying in...",
+        description: "",
+      };
+      backoff = clamp(backoff + getAdditionalBackoffAmount(backoff), 5, 60);
+    } else {
+      backoff = 5;
+      activeDate = $dates[0];
+    }
+  }
 
   function updateTime() {
     now = new Date();
-    if (compareAsc(now, dateMarker) > 0) {
-      // TODO: Move to next event
-      activeDate = {
-        id: 1,
-        date: "2022-04-27T18:00:00.000-07:00",
-        title: "Twitch Drops End for OW2 Beta Access",
-        description: ""
-      }
-    }
     setTimeout(updateTime, 100);
   }
 
   onMount(() => {
+    updateDates();
     updateTime();
   });
-
-  let activeDate : CountdownDate = {
-    id: 0,
-    date: "2022-04-27T10:00:00.000-07:00",
-    title: "Twitch Drops for Overwatch 2 Beta 1 Access",
-    description: ""
-  };
-  $: dateMarker = parseISO(activeDate.date);
 </script>
 
 <div class="flex flex-col justify-center items-center h-[100vh] w-[100vw]">
   <div class="flex-grow flex flex-col justify-center items-center gap-6 py-8 w-[100vw] dark:text-gray-50">
     <p class="text-center">
       <b class="text-3xl">Current Countdown:</b>
-      <br>{now === null ? "Loading..." : activeDate.title}
+      <br>{activeDate ? activeDate.title : "Loading..."}
     </p>
-    <Timer start={now} end={dateMarker} /> <!-- TODO: Make this actually pull from the dates -->
+    <Timer start={now} end={dateMarker} />
   </div>
   <div class="flex justify-between my-4 mx-2 px-4 h-8 w-full">
     <p class="text-xs text-gray-500 dark:text-slate-400 italic text-left">Created by <a class="text-blue-600 dark:text-blue-300 underline" href="https://twitter.com/Cactus_Puppy" rel="noreferrer noopener" target="_blank">@Cactus_Puppy</a><br /><a href="https://github.com/CactusPuppy/ow2countdown" rel="noreferrer noopener" target="_blank" class="text-blue-600 dark:text-blue-300 underline">GitHub</a></p>

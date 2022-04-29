@@ -16,7 +16,7 @@ A countdown clock to important dates for Overwatch 2
 To run the site locally:
 
 ```bash
-yarn run dev
+npm run dev
 ```
 
 To create a production version of your app:

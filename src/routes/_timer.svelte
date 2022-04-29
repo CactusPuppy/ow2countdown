@@ -14,7 +14,7 @@
 </script>
 
 <div class="flex w-64 justify-between">
-  { #if start === null}
+  { #if start == null || end == null }
     <TimerSegment value={null} unit="days" />
     <TimerSegment value={null} unit="hours" />
     <TimerSegment value={null} unit="mins" />

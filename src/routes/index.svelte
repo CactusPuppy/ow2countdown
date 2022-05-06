@@ -62,7 +62,7 @@
       activeDate = {
         id: -1,
         date: formatISO(addSeconds(now, backoff + 1)),
-        title: hadError ? "Error getting countdown data, retrying in..." : "No countdown found, retrying in...",
+        title: hadError ? "Error getting countdown data, retrying in..." : "No countdown found, refreshing in...",
         description: "",
       };
       backoff = clamp(backoff + getAdditionalBackoffAmount(backoff), 5, 60);
@@ -84,16 +84,16 @@
 </script>
 
 <div class="flex flex-col justify-center items-center h-[100vh] w-[100vw]">
-  <div class="flex-grow flex flex-col justify-center items-center gap-6 py-8 w-[100vw] dark:text-gray-50">
-    <p class="text-center">
+  <div class="flex-grow flex flex-col justify-center items-center gap-6 py-8 w-[100vw] dark:text-zinc-50">
+    <p class="text-center text-xl">
       <b class="text-3xl">Current Countdown:</b>
-      <br>{activeDate ? activeDate.title : "Loading..."}
+      <br><span class="text-ow2-orange dark:text-ow2-light-orange">{activeDate ? activeDate.title : "Loading..."}</span>
     </p>
     <Timer start={now} end={dateMarker} />
   </div>
   <div class="flex justify-between my-4 mx-2 px-4 h-8 w-full">
-    <p class="text-xs text-gray-500 dark:text-slate-400 italic text-left">Created by <a class="text-blue-600 dark:text-blue-300 underline" href="https://twitter.com/Cactus_Puppy" rel="noreferrer noopener" target="_blank">@Cactus_Puppy</a><br /><a href="https://github.com/CactusPuppy/ow2countdown" rel="noreferrer noopener" target="_blank" class="text-blue-600 dark:text-blue-300 underline">GitHub</a></p>
-    <p class="text-xs text-gray-500 dark:text-slate-400 italic text-right">
+    <p class="text-xs text-zinc-500 dark:text-zinc-400 italic text-left">Created by <a class="text-ow2-orange dark:text-ow2-light-orange underline" href="https://twitter.com/Cactus_Puppy" rel="noreferrer noopener" target="_blank">@Cactus_Puppy</a><br /><a href="https://github.com/CactusPuppy/ow2countdown" rel="noreferrer noopener" target="_blank" class="text-ow2-orange dark:text-ow2-light-orange underline">GitHub</a></p>
+    <p class="text-xs text-zinc-500 dark:text-zinc-400 italic text-right">
       This site and its creator are not affiliated with Overwatch or Blizzard Entertainment.
       <br />Overwatch 2 and the Overwatch 2 logo are ©2022 Blizzard Entertainment, Inc.
     </p>

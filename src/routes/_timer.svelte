@@ -13,7 +13,7 @@
   $: secondsToGo = Math.floor(totalSeconds % 60);
 </script>
 
-<div class="flex w-64 justify-between">
+<div class="flex w-72 justify-between">
   { #if start == null || end == null }
     <TimerSegment value={null} unit="days" />
     <TimerSegment value={null} unit="hours" />

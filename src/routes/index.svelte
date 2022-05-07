@@ -85,8 +85,8 @@
 
 <div class="flex flex-col justify-center items-center h-[100vh] w-[100vw]">
   <div class="flex-grow flex flex-col justify-center items-center gap-6 py-8 w-[100vw] dark:text-zinc-50">
-    <p class="text-center text-xl">
-      <b class="text-3xl">Current Countdown:</b>
+    <p class="text-center text-xl md:text-2xl lg:text-3xl">
+      <b class="text-3xl md:text-4xl lg:text-5xl">Current Countdown:</b>
       <br><span class="text-ow2-orange dark:text-ow2-light-orange">{activeDate ? activeDate.title : "Loading..."}</span>
     </p>
     <Timer start={now} end={dateMarker} />

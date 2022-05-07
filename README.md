@@ -2,7 +2,7 @@
 
 A countdown clock to important dates for Overwatch 2
 
-![](https://i.imgur.com/7ad5TB3.gif)
+![](https://i.imgur.com/GKIba9d.gif)
 
 ## Tech Stack
 

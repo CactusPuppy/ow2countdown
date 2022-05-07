@@ -7,6 +7,6 @@
 </script>
 
 <div class="flex flex-col gap-2 items-center">
-  <p class="text-3xl font-mono">{ value !== null ? String(clampedValue).padStart(zeroPadAmount, "0") : "--" }</p>
-  <p class="text-sm font-thin">{ unit }</p>
+  <p class="text-3xl md:text-4xl lg:text-5xl font-mono">{ value !== null ? String(clampedValue).padStart(zeroPadAmount, "0") : "--" }</p>
+  <p class="text-sm md:text-base lg:text-lg font-thin">{ unit }</p>
 </div>

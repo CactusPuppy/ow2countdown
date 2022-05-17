@@ -14,7 +14,7 @@
   $: minutesToGo = Math.floor(totalSeconds / 60) % 60;
   $: secondsToGo = Math.floor(totalSeconds % 60);
   $: timerValues = [].concat([daysToGo, hoursToGo, minutesToGo, secondsToGo]);
-  let timerUnits = ["days", "hours", "mins", "seconds"];
+  let timerUnits = ["days", "hours", "mins", "secs"];
 
   $: hideValue = start == null || end == null;
 </script>

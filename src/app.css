@@ -3,3 +3,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-zinc-50;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    @apply bg-zinc-900;
+  }
+}

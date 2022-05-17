@@ -21,7 +21,7 @@
 
 <div class="flex w-72 md:w-96 lg:w-[30rem] justify-between">
   {#each timerValues as timerValue, i}
-    <div in:fade="{{duration: 500, delay: i * 300 + 500}}">
+    <div in:fade="{{duration: 500, delay: i * 150 + 700}}">
       <TimerSegment
         value={hideValue ? null : timerValue}
         unit={timerUnits[i]}

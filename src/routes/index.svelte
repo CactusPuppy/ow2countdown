@@ -96,15 +96,15 @@
           <b>Current Countdown:</b>
         </p>
         {#key activeDate?.id}
-          <p class="mt-1 text-center text-xl md:text-2xl lg:text-3xl text-ow2-orange dark:text-ow2-light-orange" in:fade="{{duration: 500}}">
+          <p class="mt-1 text-center text-xl md:text-2xl lg:text-3xl text-ow2-orange dark:text-ow2-light-orange" in:fade="{{duration: 500, delay: 200}}">
             {activeDate ? activeDate.title : "Loading..."}
           </p>
-          <p class="text-center text-md md:text-xl lg:text-2xl" in:fade="{{duration: 500, delay: 300}}">
+          <p class="text-center text-md md:text-xl lg:text-2xl" in:fade="{{duration: 500, delay: 500}}">
             {activeDate && activeDate.id != -1 ? format(parseISO(activeDate?.date), "PPPPp") : " "}
           </p>
         {/key}
       </div>
-      <div class="mt-8" in:fade="{{duration: 800}}">
+      <div class="mt-8" in:fade="{{duration: 800, delay: 800}}">
         <Timer start={now} end={dateMarker} />
       </div>
     {/if}

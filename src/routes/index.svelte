@@ -2,7 +2,7 @@
   import type { CountdownDate } from "$lib/types";
   import { getDates, dates } from "../stores/dates";
   import Timer from "./_timer.svelte";
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { addSeconds, compareAsc, format, formatISO, parseISO } from "date-fns";
   import { browser } from "$app/env";
 
@@ -75,17 +75,23 @@
     }
   }
 
-  function updateTime() {
+  let animationRequest : number;
+  function updateTime(timestamp : DOMHighResTimeStamp) {
     now = new Date();
-    setTimeout(updateTime, 100);
+    animationRequest = requestAnimationFrame(updateTime);
   }
 
   let visible = browser ? false : true;
   onMount(() => {
     updateDates();
-    updateTime();
+    if (browser) animationRequest = window.requestAnimationFrame(updateTime);
     visible = true;
   });
+
+  onDestroy(() => {
+    clearTimeout(previousUpdate);
+    if (browser) window.cancelAnimationFrame(animationRequest);
+  })
 </script>
 
 <div class="flex flex-col justify-center items-center h-[100vh] max-h-[100vh] w-[100vw]">

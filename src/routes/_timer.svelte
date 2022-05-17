@@ -13,21 +13,19 @@
   $: hoursToGo = Math.floor(totalSeconds / 3600);
   $: minutesToGo = Math.floor(totalSeconds / 60) % 60;
   $: secondsToGo = Math.floor(totalSeconds % 60);
+  $: timerValues = [].concat([daysToGo, hoursToGo, minutesToGo, secondsToGo]);
+  let timerUnits = ["days", "hours", "minutes", "seconds"];
 
   $: hideValue = start == null || end == null;
 </script>
 
 <div class="flex w-72 md:w-96 lg:w-[30rem] justify-between">
-  <div in:fade="{{duration: 500, delay: 0}}">
-    <TimerSegment value={hideValue ? null : daysToGo} unit="days"    />
-  </div>
-  <div in:fade="{{duration: 500, delay: 300}}">
-    <TimerSegment value={hideValue ? null : hoursToGo} unit="hours"  />
-  </div>
-  <div in:fade="{{duration: 500, delay: 600}}">
-    <TimerSegment value={hideValue ? null : minutesToGo} unit="mins" />
-  </div>
-  <div in:fade="{{duration: 500, delay: 900}}">
-    <TimerSegment value={hideValue ? null : secondsToGo} unit="secs" />
-  </div>
+  {#each timerValues as timerValue, i}
+    <div in:fade="{{duration: 500, delay: i * 300 + 500}}">
+      <TimerSegment
+        value={hideValue ? null : timerValue}
+        unit={timerUnits[i]}
+      />
+    </div>
+  {/each}
 </div>

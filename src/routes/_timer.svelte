@@ -14,21 +14,33 @@
   $: hoursToGo = Math.floor(totalSeconds / 3600);
   $: minutesToGo = Math.floor(totalSeconds / 60) % 60;
   $: secondsToGo = Math.floor(totalSeconds % 60);
-  $: timerValues = [].concat([daysToGo, hoursToGo, minutesToGo, secondsToGo]);
-  let timerUnits = ["days", "hours", "mins", "secs"];
+  $: timerValues = [].concat([{
+      value: daysToGo,
+      units: "days"
+    },{
+      value: hoursToGo,
+      units: "hours",
+    },{
+      value: minutesToGo,
+      units: "mins",
+    }, {
+      value: secondsToGo,
+      units: "secs",
+    }
+  ]).filter((_, i, array) => array.slice(0, i + 1).some(({ value }) => value !== 0));
 
   $: hideValue = start == null || end == null;
 </script>
 
 <div class="flex items-center h-40 gap-12 md:gap-20 lg:gap-28">
-  {#each timerValues as timerValue, i}
+  {#each timerValues as timerValue, i (timerValue.units)}
     <div in:fade="{{ duration: 500, delay: i * 150 + 700 }}"
       out:fly="{{ duration: 500, y: 20 }}"
       animate:flip
     >
       <TimerSegment
-        value={hideValue ? null : timerValue}
-        unit={timerUnits[i]}
+        value={hideValue ? null : timerValue.value}
+        unit={timerValue.units}
       />
     </div>
   {/each}

@@ -83,6 +83,7 @@
 
   let visible = browser ? false : true;
   onMount(() => {
+    if (browser) now = new Date();
     updateDates();
     if (browser) animationRequest = window.requestAnimationFrame(updateTime);
     visible = true;

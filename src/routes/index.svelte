@@ -110,9 +110,7 @@
           </p>
         {/key}
       </div>
-      <div class="mt-8" in:fade="{{duration: 800, delay: 800}}">
-        <Timer start={now} end={dateMarker} />
-      </div>
+      <Timer start={now} end={dateMarker} />
     {/if}
   </div>
   <div class="flex justify-between my-4 mx-2 px-4 h-8 w-full">

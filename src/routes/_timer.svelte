@@ -1,8 +1,9 @@
 <script lang="ts">
   import { differenceInSeconds } from "date-fns";
   import TimerSegment from "./_timer_segment.svelte";
+  import { flip } from "svelte/animate";
 
-  import { fade } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
 
   const SECONDS_IN_A_DAY = 86400;
 
@@ -19,9 +20,12 @@
   $: hideValue = start == null || end == null;
 </script>
 
-<div class="flex w-72 md:w-96 lg:w-[30rem] justify-between">
+<div class="flex items-center h-40 gap-12 md:gap-20 lg:gap-28">
   {#each timerValues as timerValue, i}
-    <div in:fade="{{duration: 500, delay: i * 150 + 700}}">
+    <div in:fade="{{ duration: 500, delay: i * 150 + 700 }}"
+      out:fly="{{ duration: 500, y: 20 }}"
+      animate:flip
+    >
       <TimerSegment
         value={hideValue ? null : timerValue}
         unit={timerUnits[i]}

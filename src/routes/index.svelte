@@ -35,13 +35,14 @@
     let hadError = false;
     try {
       $dates = await getDates();
+      $dates = $dates.filter(
+        (d) => compareAsc(now, parseISO(d.date)) < 0
+      );
     } catch (error) {
       hadError = true;
       console.error(error);
     }
-    $dates = $dates.filter(
-      (d) => compareAsc(now, parseISO(d.date)) < 0
-    );
+
     setActiveDate(hadError);
     previousUpdate = setTimeout(updateDates, 60 * 1000);
     fetching = false;
@@ -83,6 +84,7 @@
 
   let visible = browser ? false : true;
   onMount(() => {
+    if (browser) now = new Date();
     updateDates();
     if (browser) animationRequest = window.requestAnimationFrame(updateTime);
     visible = true;
@@ -110,9 +112,7 @@
           </p>
         {/key}
       </div>
-      <div class="mt-8" in:fade="{{duration: 800, delay: 800}}">
-        <Timer start={now} end={dateMarker} />
-      </div>
+      <Timer start={now} end={dateMarker} />
     {/if}
   </div>
   <div class="flex justify-between my-4 mx-2 px-4 h-8 w-full">

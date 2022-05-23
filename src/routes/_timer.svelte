@@ -27,7 +27,7 @@
       value: secondsToGo,
       units: "secs",
     }
-  ]).filter((_, i, array) => array.slice(0, i + 1).some(({ value }) => value !== 0));
+  ]).filter((_, i, array) => array.slice(0, i + 1).some(({ value }, i2) => value !== 0 || i2 === array.length - 1));
 
   $: hideValue = start == null || end == null;
 </script>

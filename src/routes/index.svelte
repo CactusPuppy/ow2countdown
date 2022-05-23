@@ -35,13 +35,14 @@
     let hadError = false;
     try {
       $dates = await getDates();
+      $dates = $dates.filter(
+        (d) => compareAsc(now, parseISO(d.date)) < 0
+      );
     } catch (error) {
       hadError = true;
       console.error(error);
     }
-    $dates = $dates.filter(
-      (d) => compareAsc(now, parseISO(d.date)) < 0
-    );
+
     setActiveDate(hadError);
     previousUpdate = setTimeout(updateDates, 60 * 1000);
     fetching = false;

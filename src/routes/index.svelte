@@ -2,6 +2,7 @@
   import type { CountdownDate } from "$lib/types";
   import { getDates, dates } from "../stores/dates";
   import Timer from "./_timer.svelte";
+  import CopyTimeButton from "./_copy_time.svelte";
   import { onMount, onDestroy } from "svelte";
   import { addSeconds, compareAsc, format, formatISO, parseISO } from "date-fns";
   import { browser } from "$app/env";
@@ -108,7 +109,12 @@
             {activeDate ? activeDate.title : "Loading..."}
           </p>
           <p class="text-center text-md md:text-xl lg:text-2xl" in:fade="{{duration: 500, delay: 500}}">
-            {activeDate && activeDate.id != -1 ? format(parseISO(activeDate?.date), "PPPPp") : " "}
+            {#if activeDate && activeDate.id != -1}
+              {format(parseISO(activeDate.date), "PPPPp")}
+              <CopyTimeButton date={activeDate} />
+            {:else}
+              {" "}
+            {/if}
           </p>
         {/key}
       </div>

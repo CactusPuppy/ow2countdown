@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { library } from '@fortawesome/fontawesome-svg-core';
-  import { faCopy, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+  import { faCopy } from '@fortawesome/free-solid-svg-icons';
   import { faDiscord } from '@fortawesome/free-brands-svg-icons';
   import { FontAwesomeIcon } from 'fontawesome-svelte';
   import Dropdown from './_dropdown.svelte';
@@ -11,9 +10,6 @@
   export let date : CountdownDate;
 
   const dateObj = parseISO(date.date);
-
-  // @ts-ignore ts(2345): IconDefinition is not assignable to IconDefinitionOrPack
-  library.add(faCopy, faChevronDown, faDiscord);
 
   async function copyToClipboard(text: string) {
     const { state } = await navigator.permissions.query({

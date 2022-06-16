@@ -1,13 +1,9 @@
 <script lang="ts">
-  import { library } from '@fortawesome/fontawesome-svg-core';
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from 'fontawesome-svelte';
 
   import { onMount } from 'svelte';
   import { scale } from 'svelte/transition';
-
-  // @ts-ignore ts(2345): IconDefinition is not assignable to IconDefinitionOrPack
-  library.add(faChevronDown);
 
   // Based on https://codechips.me/tailwind-ui-react-vs-svelte/
   let dropdownMenu = null;

@@ -2,7 +2,7 @@
   import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from 'fontawesome-svelte';
 
-  import { onMount } from 'svelte';
+  import { onMount, afterUpdate } from 'svelte';
   import { scale } from 'svelte/transition';
 
   // Based on https://codechips.me/tailwind-ui-react-vs-svelte/
@@ -30,9 +30,18 @@
       document.removeEventListener('keyup', handleEscape, false);
     };
   });
+
+  let menuEl : HTMLDivElement;
+  let menuOpenDirection : "left" | "right" = "left";
+  afterUpdate(() => {
+    if (isOpen && menuEl) {
+      const { right: menuRightmost } = menuEl.getBoundingClientRect();
+      menuOpenDirection = menuRightmost > window.innerWidth ? "right" : "left";
+    }
+  });
 </script>
 
-<div class="relative inline" bind:this={dropdownMenu}>
+<div class={`relative inline z-10 ${$$props.class}`} bind:this={dropdownMenu}>
   <button
     type="button"
     class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
@@ -47,7 +56,9 @@
 
   {#if isOpen}
     <div
-      class="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+      bind:this={menuEl}
+      class="origin-top-right absolute mt-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+      style={`${menuOpenDirection}: 0px`}
       role="menu"
       aria-orientation="vertical"
       aria-labelledby="copy-dropdown-button"

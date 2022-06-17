@@ -1661,10 +1661,15 @@
     "svelte-preprocess" "^4.0.0"
     "typescript" "*"
 
-"svelte-hmr@^0.14.11":
-  "integrity" "sha512-R9CVfX6DXxW1Kn45Jtmx+yUe+sPhrbYSUp7TkzbW0jI5fVPn6lsNG9NEs5dFg5qRhFNAoVdRw5qQDLALNKhwbQ=="
-  "resolved" "https://registry.npmjs.org/svelte-hmr/-/svelte-hmr-0.14.11.tgz"
-  "version" "0.14.11"
+svelte-confetti@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/svelte-confetti/-/svelte-confetti-1.2.0.tgz#754a5af1c066751c06d6b393ceafb02ffff84fb3"
+  integrity sha512-6njSCc2mzNQpgxd6VnIkS8yhdbL9np9uTpK6bdmbephmLvI0+km0cBdfuM+MLmceVdW9Frx+ibwCFPDq/dBd1g==
+
+svelte-hmr@^0.14.11:
+  version "0.14.11"
+  resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.14.11.tgz#63d532dc9c2c849ab708592f034765fa2502e568"
+  integrity sha512-R9CVfX6DXxW1Kn45Jtmx+yUe+sPhrbYSUp7TkzbW0jI5fVPn6lsNG9NEs5dFg5qRhFNAoVdRw5qQDLALNKhwbQ==
 
 "svelte-preprocess@^4.0.0", "svelte-preprocess@^4.10.1":
   "integrity" "sha512-VKXPRScCzAZqeBZOGq4LLwtNrAu++mVn7XvQox3eFDV7Ciq0Lg70Q8QWjH9iXF7J+pMlXhPsSFwpCb2E+hoeyA=="

@@ -1,16 +1,19 @@
 <script lang="ts">
   import { differenceInSeconds } from "date-fns";
+  import { Confetti } from "svelte-confetti";
   import TimerSegment from "./_timer_segment.svelte";
-  import { flip } from "svelte/animate";
 
+  import { flip } from "svelte/animate";
   import { fade, fly } from "svelte/transition";
 
   const SECONDS_IN_A_DAY = 86400;
 
   export let start : Date;
   export let end : Date;
-  $: daysToGo = Math.floor(differenceInSeconds(end, start) / SECONDS_IN_A_DAY);
-  $: totalSeconds = Math.ceil(differenceInSeconds(end, start)) % SECONDS_IN_A_DAY;
+  export let id : Number;
+  $: diffInSeconds = Math.max(0, differenceInSeconds(end, start));
+  $: daysToGo = Math.floor(diffInSeconds / SECONDS_IN_A_DAY);
+  $: totalSeconds = Math.ceil(diffInSeconds) % SECONDS_IN_A_DAY;
   $: hoursToGo = Math.floor(totalSeconds / 3600);
   $: minutesToGo = Math.floor(totalSeconds / 60) % 60;
   $: secondsToGo = Math.floor(totalSeconds % 60);
@@ -32,7 +35,7 @@
   $: hideValue = start == null || end == null;
 </script>
 
-<div class="flex items-center h-40 gap-12 md:gap-20 lg:gap-28">
+<div class="relative flex justify-center gap-12 md:gap-20 lg:gap-28 my-6 w-80 md:w-[36rem] lg:w-[40rem]">
   {#each timerValues as timerValue, i (timerValue.units)}
     <div in:fade="{{ duration: 500, delay: i * 150 + 700 }}"
       out:fly="{{ duration: 500, y: 20 }}"
@@ -44,4 +47,19 @@
       />
     </div>
   {/each}
+  {#if id !== -1 && diffInSeconds === 0}
+    <div class="confetti">
+      <Confetti x={[0, 2.5]} y={[0.2, 1.5]}  delay={[0, 150]} amount=70 />
+      <Confetti x={[-2.5, 0]} y={[0.2, 1.5]} delay={[0, 150]} amount=70 />
+    </div>
+  {/if}
 </div>
+
+<style>
+  .confetti {
+    position: absolute;
+    bottom: 0%;
+    left: 50%;
+    pointer-events: none;
+  }
+</style>

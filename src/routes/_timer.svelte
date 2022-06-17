@@ -9,8 +9,10 @@
 
   export let start : Date;
   export let end : Date;
-  $: daysToGo = Math.floor(differenceInSeconds(end, start) / SECONDS_IN_A_DAY);
-  $: totalSeconds = Math.ceil(differenceInSeconds(end, start)) % SECONDS_IN_A_DAY;
+  export let id : Number;
+  $: diffInSeconds = Math.max(0, differenceInSeconds(end, start));
+  $: daysToGo = Math.floor(diffInSeconds / SECONDS_IN_A_DAY);
+  $: totalSeconds = Math.ceil(diffInSeconds) % SECONDS_IN_A_DAY;
   $: hoursToGo = Math.floor(totalSeconds / 3600);
   $: minutesToGo = Math.floor(totalSeconds / 60) % 60;
   $: secondsToGo = Math.floor(totalSeconds % 60);
@@ -32,7 +34,7 @@
   $: hideValue = start == null || end == null;
 </script>
 
-<div class="flex items-center h-40 gap-12 md:gap-20 lg:gap-28">
+<div class="relative flex justify-center gap-12 md:gap-20 lg:gap-28 my-6 w-80 md:w-[36rem] lg:w-[40rem]">
   {#each timerValues as timerValue, i (timerValue.units)}
     <div in:fade="{{ duration: 500, delay: i * 150 + 700 }}"
       out:fly="{{ duration: 500, y: 20 }}"

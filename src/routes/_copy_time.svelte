@@ -27,7 +27,7 @@
   }
 </script>
 
-<Dropdown>
+<Dropdown {... $$restProps}>
   <FontAwesomeIcon icon={faCopy} slot="button-text" />
   <CopyTimeButton slot="items" handleCopy={copyDiscordTimestamp}>
     <FontAwesomeIcon icon={faDiscord} />

@@ -110,7 +110,7 @@
         {#if date.id !== -1}
           <p class="text-center text-lg md:text-xl lg:text-2xl" in:fade="{{duration: 500, delay: 500}}">
             {format(parseISO(date.date), "PPPPp")}
-            <CopyTimeButton date={date} />
+            <CopyTimeButton class="ml-1" date={date} />
           </p>
         {/if}
         <div class="flex justify-center">

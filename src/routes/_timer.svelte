@@ -1,8 +1,9 @@
 <script lang="ts">
   import { differenceInSeconds } from "date-fns";
+  import { Confetti } from "svelte-confetti";
   import TimerSegment from "./_timer_segment.svelte";
-  import { flip } from "svelte/animate";
 
+  import { flip } from "svelte/animate";
   import { fade, fly } from "svelte/transition";
 
   const SECONDS_IN_A_DAY = 86400;
@@ -46,4 +47,19 @@
       />
     </div>
   {/each}
+  {#if id !== -1 && diffInSeconds === 0}
+    <div class="confetti">
+      <Confetti x={[0, 2.5]} y={[0.2, 1.5]}  delay={[0, 150]} amount=70 />
+      <Confetti x={[-2.5, 0]} y={[0.2, 1.5]} delay={[0, 150]} amount=70 />
+    </div>
+  {/if}
 </div>
+
+<style>
+  .confetti {
+    position: absolute;
+    bottom: 0%;
+    left: 50%;
+    pointer-events: none;
+  }
+</style>

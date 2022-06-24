@@ -27,10 +27,10 @@
   }
 </script>
 
-<Dropdown {... $$restProps}>
-  <FontAwesomeIcon icon={faCopy} slot="button-text" />
+<Dropdown defaultOpenSide="right" {...$$restProps}>
+  <slot name="button-text" slot="button-text" />
   <CopyTimeButton slot="items" handleCopy={copyDiscordTimestamp}>
     <FontAwesomeIcon icon={faDiscord} />
-    Discord Timestamp
+    Copy as Discord Timestamp
   </CopyTimeButton>
 </Dropdown>

@@ -5,6 +5,10 @@
   import { onMount, afterUpdate } from 'svelte';
   import { scale } from 'svelte/transition';
 
+  type OpenSide = "right" | "left";
+
+  export let defaultOpenSide: OpenSide = "left";
+
   // Based on https://codechips.me/tailwind-ui-react-vs-svelte/
   let dropdownMenu = null;
   let isOpen = false;
@@ -31,12 +35,20 @@
     };
   });
 
-  let menuEl : HTMLDivElement;
-  let menuOpenDirection : "left" | "right" = "left";
+  let menuEl: HTMLDivElement;
+  let menuOpenDirection: OpenSide = defaultOpenSide;
   afterUpdate(() => {
     if (isOpen && menuEl) {
-      const { right: menuRightmost } = menuEl.getBoundingClientRect();
-      menuOpenDirection = menuRightmost > window.innerWidth ? "right" : "left";
+      const {
+        left: menuLeftmost,
+        right: menuRightmost
+      } = menuEl.getBoundingClientRect();
+
+      if (menuRightmost > window.innerWidth) {
+        menuOpenDirection = "right";
+      } else if (menuLeftmost < 0) {
+        menuOpenDirection = "left";
+      }
     }
   });
 </script>
@@ -44,20 +56,20 @@
 <div class={`relative inline z-10 ${$$props.class}`} bind:this={dropdownMenu}>
   <button
     type="button"
-    class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+    class="justify-center rounded-md px-2 py-1"
     aria-label="copy-dropdown-button"
     aria-expanded="true"
     aria-haspopup="true"
     on:click={() => { isOpen = true; }}
   >
-    <slot name="button-text" />
-    <FontAwesomeIcon icon={faChevronDown} class="ml-2" />
-  </button>
+  <slot name="button-text" />
+  <FontAwesomeIcon icon={faChevronDown} class="ml-2" />
+</button>
 
   {#if isOpen}
     <div
       bind:this={menuEl}
-      class="origin-top-right absolute mt-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="origin-top-right absolute mt-1 w-56 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       style={`${menuOpenDirection}: 0px`}
       role="menu"
       aria-orientation="vertical"

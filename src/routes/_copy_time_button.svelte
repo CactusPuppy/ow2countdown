@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DropdownItem from './_dropdown_item.svelte';
-  import { fade } from 'svelte/transition';
+  import DropdownItem from "./_dropdown_item.svelte";
+  import { fade } from "svelte/transition";
 
   export let handleCopy : (() => Promise<void>);
 

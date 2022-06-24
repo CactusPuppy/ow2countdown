@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-  import { FontAwesomeIcon } from 'fontawesome-svelte';
+  import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+  import { FontAwesomeIcon } from "fontawesome-svelte";
 
-  import { onMount, afterUpdate } from 'svelte';
-  import { scale } from 'svelte/transition';
+  import { onMount, afterUpdate } from "svelte";
+  import { scale } from "svelte/transition";
 
   type OpenSide = "right" | "left";
 
@@ -21,17 +21,17 @@
     };
 
     const handleEscape = (event) => {
-      if (isOpen && event.key === 'Escape') {
+      if (isOpen && event.key === "Escape") {
         isOpen = false;
       }
     };
 
-    document.addEventListener('click', handleOutsideClick, false);
-    document.addEventListener('keyup', handleEscape, false);
+    document.addEventListener("click", handleOutsideClick, false);
+    document.addEventListener("keyup", handleEscape, false);
 
     return () => {
-      document.removeEventListener('click', handleOutsideClick, false);
-      document.removeEventListener('keyup', handleEscape, false);
+      document.removeEventListener("click", handleOutsideClick, false);
+      document.removeEventListener("keyup", handleEscape, false);
     };
   });
 

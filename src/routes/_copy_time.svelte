@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { faCopy } from '@fortawesome/free-solid-svg-icons';
-  import { faDiscord } from '@fortawesome/free-brands-svg-icons';
-  import { FontAwesomeIcon } from 'fontawesome-svelte';
-  import Dropdown from './_dropdown.svelte';
-  import CopyTimeButton from './_copy_time_button.svelte';
-  import type { CountdownDate } from '$lib/types';
-  import { parseISO } from 'date-fns';
+  import { faDiscord } from "@fortawesome/free-brands-svg-icons";
+  import { FontAwesomeIcon } from "fontawesome-svelte";
+  import Dropdown from "./_dropdown.svelte";
+  import CopyTimeButton from "./_copy_time_button.svelte";
+  import type { CountdownDate } from "$lib/types";
+  import { parseISO } from "date-fns";
 
   export let date : CountdownDate;
 

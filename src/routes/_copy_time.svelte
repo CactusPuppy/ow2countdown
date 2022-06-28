@@ -10,19 +10,8 @@
 
   const dateObj = parseISO(date.date);
 
-  async function copyToClipboard(text: string) {
-    const { state } = await navigator.permissions.query({
-      // @ts-ignore ts(2322): lib.dom.ts doesn't have "clipboard-write" as a valid permission
-      name: "clipboard-write"
-    });
-    if (!(state === "granted" || state === "prompt")) {
-      throw new Error("user disallowed copying")
-    }
-    await navigator.clipboard.writeText(text);
-  }
-
   async function copyDiscordTimestamp() {
-    await copyToClipboard(`<t:${Math.floor(dateObj.getTime() / 1000)}:f> (<t:${Math.floor(dateObj.getTime() / 1000)}:R>)`);
+    await navigator.clipboard.writeText(`<t:${Math.floor(dateObj.getTime() / 1000)}:f> (<t:${Math.floor(dateObj.getTime() / 1000)}:R>)`);
   }
 </script>
 

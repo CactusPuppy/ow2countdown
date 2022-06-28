@@ -60,7 +60,7 @@
     aria-label="copy-dropdown-button"
     aria-expanded="true"
     aria-haspopup="true"
-    on:click={() => { isOpen = true; }}
+    on:click={() => { isOpen = !isOpen; }}
   >
   <slot name="button-text" />
   <FontAwesomeIcon icon={faChevronDown} class="ml-2" />

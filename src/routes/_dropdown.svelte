@@ -53,7 +53,7 @@
   });
 </script>
 
-<div class={`relative inline z-10 ${$$props.class}`} bind:this={dropdownMenu}>
+<div class={`relative z-10 ${$$props.class}`} bind:this={dropdownMenu}>
   <button
     type="button"
     class="justify-center rounded-md px-2 py-1"

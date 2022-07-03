@@ -29,25 +29,36 @@
 		<meta name="theme-color" content="#f2750f" />
 
 		<script>
-			let params = new URL(window.location.href).searchParams;
-			if (params.get("theme") === "dark") {
-				localStorage.theme = "dark";
-			} else if (params.get("theme") === "light") {
-				localStorage.theme = "light";
-			} else if (params.get("theme") === "reset") {
-				localStorage.removeItem("theme");
-			}
-
-			document.addEventListener("DOMContentLoaded", () => {
-				if (localStorage.theme === "dark") {
-					setDarkMode();
-				} else if (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-					setDarkMode();
-					localStorage.theme === "dark";
-				} else {
-					setLightMode();
+			try {
+				let params = new URL(window.location.href).searchParams;
+				if (params.get("theme") === "dark") {
+					localStorage.theme = "dark";
+				} else if (params.get("theme") === "light") {
+					localStorage.theme = "light";
+				} else if (params.get("theme") === "reset") {
+					localStorage.removeItem("theme");
 				}
-			});
+
+				document.addEventListener("DOMContentLoaded", () => {
+					if (localStorage.theme === "dark") {
+						setDarkMode();
+					} else if (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+						setDarkMode();
+						localStorage.theme === "dark";
+					} else {
+						setLightMode();
+					}
+				});
+			} catch (error) {
+				// Fallback (mostly for Brave browsers)
+				document.addEventListener("DOMContentLoaded", () => {
+					if (window.matchMedia('(prefers-color-scheme: dark)').matches()) {
+						setDarkMode();
+					} else {
+						setLightMode();
+					}
+				});
+			}
 
 			function setDarkMode() {
 				document.body.classList.add("dark", "bg-zinc-900");

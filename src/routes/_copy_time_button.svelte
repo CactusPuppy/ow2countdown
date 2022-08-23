@@ -22,7 +22,7 @@
   }
 </script>
 
-<DropdownItem slot="items" handleClick={handleClick}>
+<DropdownItem handleClick={handleClick}>
   <slot />
   <span
     bind:this={confirmationLabel}

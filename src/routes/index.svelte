@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { CountdownDate } from "$lib/types";
   import { getDates, dates } from "../stores/dates";
   import Timer from "./_timer.svelte";
   import CopyTimeDropdown from "./_copy_time.svelte";

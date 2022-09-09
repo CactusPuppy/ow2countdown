@@ -77,6 +77,7 @@
       tabindex="-1"
       in:scale={{ duration: 100, start: 0.95 }}
       out:scale={{ duration: 75, start: 0.95 }}
+      on:click={() => { setTimeout(() => isOpen = !isOpen, 500) }}
     >
       <slot name="items" />
     </div>

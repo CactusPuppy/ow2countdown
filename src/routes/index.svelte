@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getDates, dates } from "../stores/dates";
   import Timer from "./_timer.svelte";
-  import CopyTimeDropdown from "./_copy_time.svelte";
+  import CopyTimeDropdown from "./_copy_time_dropdown.svelte";
   import { onMount, onDestroy } from "svelte";
   import { addSeconds, compareAsc, format, formatISO, min, parseISO } from "date-fns";
   import { browser } from "$app/env";

@@ -96,7 +96,7 @@
 </script>
 
 <div class="flex flex-col md:justify-center items-center min-h-[100vh] w-full overflow-x-hidden">
-  <div class="flex-grow flex flex-col gap-12 md:justify-center items-center py-8 w-full dark:text-zinc-50">
+  <div class="flex-grow flex flex-col gap-8 md:justify-center items-center py-8 w-full dark:text-zinc-50">
    {#each $dates as date (date.id)}
       <div
         class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 md:px-8 pt-8 pb-4"

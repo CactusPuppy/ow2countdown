@@ -27,6 +27,7 @@ export async function getDates(page = 0): Promise<CountdownDate[]> {
   // ]
   const { data, error } = await client.from(tableName)
     .select(select)
+    .order("priority", {ascending: false})
     .order("date", {ascending: true})
     .range(page * DATES_PAGE_SIZE, (page + 1) * DATES_PAGE_SIZE);
 

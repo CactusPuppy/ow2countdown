@@ -11,7 +11,7 @@
   export let start : Date;
   export let end : Date;
   export let id : Number;
-  $: diffInSeconds = Math.max(0, differenceInSeconds(end, start));
+  $: diffInSeconds = Math.max(0, differenceInSeconds(end, start, { roundingMethod: "ceil" }));
   $: daysToGo = Math.floor(diffInSeconds / SECONDS_IN_A_DAY);
   $: totalSeconds = Math.ceil(diffInSeconds) % SECONDS_IN_A_DAY;
   $: hoursToGo = Math.floor(totalSeconds / 3600);

@@ -103,7 +103,7 @@
         in:fade
         out:fade
         animate:flip>
-        <p class="text-center text-xl md:text-2xl lg:text-3xl text-ow2-orange dark:text-ow2-light-orange" in:fade="{{duration: 500, delay: 200}}">
+        <p class="text-center text-xl md:text-2xl lg:text-3xl text-ow2-orange dark:text-ow2-light-orange timer__title" in:fade="{{duration: 500, delay: 200}}">
           {date.title}
         </p>
         {#if date.id !== -1}
@@ -129,3 +129,9 @@
     </p>
   </div>
 </div>
+
+<style>
+  .timer__title {
+    white-space: pre-line;
+  }
+</style>

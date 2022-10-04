@@ -63,7 +63,7 @@
   }
 
   function setActiveDate(hadError : Boolean) {
-    if ($dates.length === 0) {
+    if ($dates.length === 0 || $dates?.[0].id === -1) {
       $dates = [{
         id: -1,
         date: formatISO(addSeconds(now, backoff + 1)),

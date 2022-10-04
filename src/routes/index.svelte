@@ -70,7 +70,7 @@
         title: hadError ? "Error getting countdown data, retrying in..." : "No countdown found, refreshing in...",
         description: "",
       }];
-      backoff = clamp(backoff + getAdditionalBackoffAmount(backoff) + Math.random() * 0.5, 10, 59);
+      backoff = clamp(backoff + getAdditionalBackoffAmount(backoff) + Math.random() * 0.5, 15, 59);
     } else {
       backoff = 5;
     }

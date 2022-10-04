@@ -33,6 +33,12 @@
   ]).filter((_, i, array) => array.slice(0, i + 1).some(({ value }, i2) => value !== 0 || i2 === array.length - 1));
 
   $: hideValue = start == null || end == null || isNaN(start.getTime()) || isNaN(end.getTime());
+  $: if (hideValue || id === -1) {
+    timerValues = [].concat([{
+      value: diffInSeconds,
+      units: "secs"
+    }])
+  }
 </script>
 
 <div class="relative flex justify-center gap-12 md:gap-20 lg:gap-28 my-6 w-80 md:w-[36rem] lg:w-[40rem]">

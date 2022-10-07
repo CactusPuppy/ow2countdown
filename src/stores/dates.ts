@@ -8,7 +8,7 @@ const tableName = "Upcoming Dates";
 const select = `id, title, description, date, group`;
 
 export const dates = writable([] as CountdownDate[]);
-export const DATES_PAGE_SIZE = 10;
+export const DATES_PAGE_SIZE = 50;
 
 export async function getDates(page = 0): Promise<CountdownDate[]> {
   // const timeInTheFuture = "2022-10-06T17:57:00-07:00";

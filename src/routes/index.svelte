@@ -3,7 +3,7 @@
   import Timer from "./_timer.svelte";
   import CopyTimeDropdown from "./_copy_time_dropdown.svelte";
   import { onMount, onDestroy } from "svelte";
-  import { addSeconds, compareAsc, format, formatISO, min, parseISO } from "date-fns";
+  import { addSeconds, closestIndexTo, compareAsc, format, formatISO, min, parseISO } from "date-fns";
   import { browser } from "$app/env";
 
   import { fade } from "svelte/transition";
@@ -39,6 +39,14 @@
       $dates = $dates.filter(
         (d) => compareAsc(now, parseISO(d.date)) < 0
       );
+      $dates = $dates.filter(
+        (d) => {
+          if (d.group === null) return true;
+          const datesInGroup = $dates.filter((d2) => d2.group === d.group);
+          const minDateInGroup = datesInGroup[0];
+          return d.date === minDateInGroup.date;
+        }
+      );
     } catch (error) {
       hadError = true;
       console.error(error);
@@ -69,6 +77,7 @@
         date: formatISO(addSeconds(now, backoff + 1)),
         title: hadError ? "Error getting countdown data, retrying in..." : "No countdown found, refreshing in...",
         description: "",
+        priority: 100
       }];
       backoff = clamp(backoff + getAdditionalBackoffAmount(backoff) + Math.random() * 0.5, 15, 59);
     } else {

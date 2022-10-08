@@ -2,13 +2,14 @@ import client from "$lib/db";
 
 import type { CountdownDate } from "$lib/types";
 // import { addSeconds, addMinutes, addHours, addDays, formatISO, parseISO } from "date-fns";
+import { formatISO } from "date-fns";
 import { writable } from "svelte/store";
 
 const tableName = "Upcoming Dates";
 const select = `id, title, description, date, group`;
 
 export const dates = writable([] as CountdownDate[]);
-export const DATES_PAGE_SIZE = 50;
+export const DATES_PAGE_SIZE = 25;
 
 export async function getDates(page = 0): Promise<CountdownDate[]> {
   // const timeInTheFuture = "2022-10-06T17:57:00-07:00";
@@ -40,6 +41,7 @@ export async function getDates(page = 0): Promise<CountdownDate[]> {
   // ]
   const { data, error } = await client.from(tableName)
     .select(select)
+    .gte("date", formatISO(new Date()))
     .order("priority", {ascending: false})
     .order("date", {ascending: true})
     .range(page * DATES_PAGE_SIZE, (page + 1) * DATES_PAGE_SIZE);

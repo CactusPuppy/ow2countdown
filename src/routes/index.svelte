@@ -1,95 +1,54 @@
 <script lang="ts">
-  import { getDates, dates } from "../stores/dates";
-  import Timer from "./_timer.svelte";
-  import CopyTimeDropdown from "./_copy_time_dropdown.svelte";
-  import { onMount, onDestroy } from "svelte";
-  import { addSeconds, closestIndexTo, compareAsc, format, formatISO, min, parseISO } from "date-fns";
   import { browser } from "$app/env";
+  import { compareAsc, differenceInMilliseconds, format, formatDistanceStrict, parseISO } from "date-fns";
+  import { onDestroy, onMount } from "svelte";
+  import { dates } from "../stores/dates";
+  import CopyTimeDropdown from "./_copy_time_dropdown.svelte";
+  import Timer from "./_timer.svelte";
 
-  import { fade } from "svelte/transition";
   import { flip } from "svelte/animate";
-
-  const DATE_FADEOUT_DELAY = 3000;
+  import { fade } from "svelte/transition";
+  import type { CountdownDate } from "$lib/types";
 
   let now : Date;
-  $: dateMarker = min($dates.map(({ date }) => parseISO(date)));
-  $: if (now > dateMarker && !fetching) {
-    setTimeout(updateDates, $dates.length === 1 && $dates[0].id != -1 ? DATE_FADEOUT_DELAY : 0);
-  }
-  let backoff = 5;
-  let fetching = false;
+  let nextAttemptMarker: Date;
+  let timeToNextAttempt: string;
 
-  function clamp(value : number, min : number, max : number) {
-    return Math.min(Math.max(value, min), max);
-  }
-
-  let previousUpdate : NodeJS.Timeout;
-
-  async function updateDates() {
-    if (previousUpdate != null) {
-      clearTimeout(previousUpdate);
+  let displayDates: CountdownDate[];
+  // Gets the earliest date in each group
+  $: if ($dates.errored !== true) displayDates = Object.values($dates.reduce((accumulator, date) => {
+    const itemKey = date?.group != undefined ? `GROUP-${date?.group}` : `ID-${date.id}`;
+    if (accumulator[itemKey] === undefined) {
+      accumulator[itemKey] = date;
+    } else
+          if (compareAsc(parseISO(date.date), parseISO(accumulator[itemKey].date)) < 0) {
+      accumulator[itemKey] = date;
     }
-    fetching = true;
-    if ($dates?.[0]?.id === -1) {
-      $dates[0].date = null;
-    };
-    let hadError = false;
-    try {
-      $dates = await getDates();
-      $dates = $dates.filter(
-        (d) => compareAsc(now, parseISO(d.date)) < 0
-      );
-      $dates = $dates.filter(
-        (d) => {
-          if (d.group === null) return true;
-          const datesInGroup = $dates.filter((d2) => d2.group === d.group);
-          const minDateInGroup = datesInGroup[0];
-          return d.date === minDateInGroup.date;
-        }
-      );
-    } catch (error) {
-      hadError = true;
-      console.error(error);
-    }
-
-    setActiveDate(hadError);
-    previousUpdate = setTimeout(updateDates, 60 * 1000);
-    fetching = false;
-  }
-
-  function getAdditionalBackoffAmount(number : Number) {
-    if (number < 15) {
-      return 5;
-    }
-    if (number < 30) {
-      return 15;
-    }
-    if (number < 60) {
-      return 30;
-    }
-    return 60;
-  }
-
-  function setActiveDate(hadError : Boolean) {
-    if ($dates.length === 0 || $dates?.[0].id === -1) {
-      $dates = [{
-        id: -1,
-        date: formatISO(addSeconds(now, backoff + 1)),
-        title: hadError ? "Error getting countdown data, retrying in..." : "No countdown found, refreshing in...",
-        description: "",
-        priority: 100
-      }];
-      backoff = clamp(backoff + getAdditionalBackoffAmount(backoff) + Math.random() * 0.5, 15, 59);
-    } else {
-      backoff = 5;
-    }
-  }
+    return accumulator;
+  }, {} as Record<string, CountdownDate>));
 
   let animationRequest : number;
   function updateTime(timestamp : DOMHighResTimeStamp) {
     now = new Date();
     animationRequest = requestAnimationFrame(updateTime);
+    if (nextAttemptMarker !== undefined) {
+      timeToNextAttempt = formatDistanceStrict(nextAttemptMarker, now, { unit: "second", roundingMethod: "ceil" });
+    }
   }
+
+  let dateUpdateTimer: NodeJS.Timeout;
+
+  async function updateDates() {
+    const result = await dates.requestUpdate();
+    if (result === -1) {
+      dateUpdateTimer = setTimeout(updateDates, 5000);
+    } else if ($dates?.errored) {
+      nextAttemptMarker = result;
+      dateUpdateTimer = setTimeout(updateDates, differenceInMilliseconds(result, new Date()));
+    } else {
+      dateUpdateTimer = setTimeout(updateDates, 60 * 1000);
+    }
+  };
 
   onMount(() => {
     if (browser) now = new Date();
@@ -98,15 +57,19 @@
   });
 
   onDestroy(() => {
-    clearTimeout(previousUpdate);
+    clearTimeout(dateUpdateTimer);
     if (browser) window.cancelAnimationFrame(animationRequest);
   })
 
 </script>
 
-<div class="flex flex-col md:justify-center items-center min-h-[100vh] w-full overflow-x-hidden">
-  <div class="flex-grow flex flex-col gap-8 md:justify-center items-center px-4 py-8 w-full dark:text-zinc-50">
-   {#each $dates as date (date.id)}
+{#if $dates.errored}
+  <div class="absolute top-0 z-10 w-full text-center p-4 bg-red-600 dark:bg-red-900 dark:text-zinc-50 opacity-80">
+    A problem arose while fetching the dates. Don't refresh, we'll try to contact the server again for you {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}.</div>
+{/if}
+<div class="flex-grow flex flex-col gap-8 md:justify-center items-center px-4 py-8 w-full dark:text-zinc-50">
+  {#if displayDates?.length != undefined}
+    {#each displayDates as date (date.id)}
       <div
         class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 md:px-8 pt-8 pb-4"
         in:fade
@@ -129,14 +92,7 @@
         </div>
       </div>
     {/each}
-  </div>
-  <div class="flex justify-between my-4 mx-2 px-4 h-8 w-full">
-    <p class="text-xs text-zinc-500 dark:text-zinc-400 italic text-left">Created by <a class="text-ow2-orange dark:text-ow2-light-orange underline" href="https://twitter.com/Cactus_Puppy" rel="noreferrer noopener" target="_blank">@Cactus_Puppy</a><br /><a href="https://github.com/CactusPuppy/ow2countdown" rel="noreferrer noopener" target="_blank" class="text-ow2-orange dark:text-ow2-light-orange underline">GitHub</a></p>
-    <p class="text-xs text-zinc-500 dark:text-zinc-400 italic text-right">
-      This site and its creator are not affiliated with Overwatch or Blizzard Entertainment.
-      <br />Overwatch 2 and the Overwatch 2 logo are ©2022 Blizzard Entertainment, Inc.
-    </p>
-  </div>
+  {/if}
 </div>
 
 <style>

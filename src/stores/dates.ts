@@ -35,7 +35,7 @@ function createDates() {
 
       const now = new Date();
       if (compareAsc(now, nextPermissibleUpdate) < 0) {
-        return new Promise((resolve, _) => resolve(new Date(nextPermissibleUpdate.getTime())));
+        return new Promise((resolve) => resolve(new Date(nextPermissibleUpdate.getTime())));
       }
 
       return getDates().then(result => {

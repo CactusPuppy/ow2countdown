@@ -64,7 +64,7 @@
 </script>
 
 {#if $dates.errored}
-  <div class="absolute top-0 z-10 w-full text-center p-4 bg-red-600 dark:bg-red-900 dark:text-zinc-50 opacity-80">
+  <div class="fixed top-0 z-30 w-full text-center p-4 bg-[#f15047df] dark:bg-[#7F1D1DDF] dark:text-zinc-50">
     A problem arose while fetching the dates. Don't refresh, we'll try to contact the server again for you {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}.</div>
 {/if}
 <div class="flex-grow flex flex-col gap-8 md:justify-center items-center px-4 py-8 w-full dark:text-zinc-50">

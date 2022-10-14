@@ -3,8 +3,8 @@
   import { compareAsc, differenceInMilliseconds, format, formatDistanceStrict, parseISO } from "date-fns";
   import { onDestroy, onMount } from "svelte";
   import { dates } from "../stores/dates";
-  import CopyTimeDropdown from "./_copy_time_dropdown.svelte";
-  import Timer from "./_timer.svelte";
+  import CopyTimeDropdown from "$lib/_copy_time_dropdown.svelte";
+  import Timer from "$lib/_timer.svelte";
 
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";

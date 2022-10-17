@@ -1,14 +1,6 @@
-import client from "$lib/db";
-
 import type { CountdownDate } from "$lib/types";
-import type { PostgrestError } from "@supabase/supabase-js";
-import { addSeconds, addMinutes, addHours, addDays, formatISO, getDate, compareAsc, differenceInSeconds } from "date-fns";
+import { addSeconds, compareAsc } from "date-fns";
 import { writable } from "svelte/store";
-
-const tableName = "Upcoming Dates";
-const select = `id, title, description, date, group`;
-
-export const DATES_PAGE_SIZE = 25;
 
 const MIN_BACKOFF = 10;
 const MAX_BACKOFF = 60;
@@ -66,44 +58,14 @@ function createDates() {
 
 export const dates = createDates();
 
-async function getDates(page = 0): Promise<CountdownDate[]> {
-  // const timeInTheFuture = "2022-10-06T17:57:00-07:00";
-  // return [
-  //   {
-  //     id: 1,
-  //     title: "The End of the World",
-  //     description: "The end of the world is coming",
-  //     date: timeInTheFuture,
-  //     priority: 0,
-  //     group: "ohno",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "The End of the World 2",
-  //     description: "The end of the world is coming again",
-  //     date: formatISO(addSeconds(addDays(parseISO(timeInTheFuture), 1), 17)),
-  //     priority: 0,
-  //     group: "ohno",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "A new element",
-  //     description: "asdf",
-  //     date: formatISO(addSeconds(addDays(parseISO(timeInTheFuture), 1), 17)),
-  //     priority: 0,
-  //     group: null
-  //   }
-  // ]
-  const { data, error } = await client.from(tableName)
-    .select(select)
-    .gte("date", formatISO(new Date()))
-    .order("priority", {ascending: false})
-    .order("date", {ascending: true})
-    .range(page * DATES_PAGE_SIZE, (page + 1) * DATES_PAGE_SIZE);
+async function getDates(): Promise<CountdownDate[]> {
+  const response = await fetch("/api/events", {
+    redirect: "follow"
+  });
 
-  if (error) throw new Error(error.message);
+  if (!response.ok) throw "API error";
 
-  return data;
+  return await response.json();
 }
 
 function clamp(value : number, min : number, max : number) {

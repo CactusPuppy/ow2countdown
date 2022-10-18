@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from "$app/environment";
+  import { navigating } from "$app/stores";
   import { compareAsc, differenceInMilliseconds, format, formatDistanceStrict, parseISO } from "date-fns";
   import { onDestroy, onMount } from "svelte";
   import { dates } from "../stores/dates";
@@ -73,7 +74,7 @@
       <div
         class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 md:px-8 pt-8 pb-4"
         in:fade
-        out:fade
+        out:fade={$navigating ? { duration: 0 } : {}}
         animate:flip>
         <p
           class="text-center text-xl md:text-2xl lg:text-3xl text-ow2-orange dark:text-ow2-light-orange timer__title"

@@ -67,6 +67,10 @@
 
 </script>
 
+<svelte:head>
+  <title>OW2 Countdown Clock</title>
+</svelte:head>
+
 {#if $dates.errored}
   <div class="fixed top-0 z-30 w-full text-center p-4 bg-[#f15047df] dark:bg-[#7F1D1DDF] dark:text-zinc-50">
     A problem arose while contacting the server for updated information. Don't refresh, we'll try to contact the server again for you {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}.</div>

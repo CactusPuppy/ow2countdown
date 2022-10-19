@@ -30,7 +30,12 @@
 </script>
 
 <svelte:head>
-  <title>{data.event?.title ?? "Event"} Countdown | OW2 Countdown</title>
+  <title>{data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock</title>
+
+  <meta name="twitter:title" content={`${data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock`}/>
+
+  <meta name="og:title" content={`${data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock`} />
+  <meta name="og:url" content={`https://ow2countdown.com/event/${data.event.id}`} />
 </svelte:head>
 
 <h1

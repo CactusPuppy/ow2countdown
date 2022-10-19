@@ -2,8 +2,8 @@
   import "../app.css";
 </script>
 
-<div class="wrapper min-h-[100vh] overflow-x-hidden px-2">
-  <main class="main__wrapper m-auto">
+<div class="wrapper min-h-[100vh] max-w-full overflow-x-hidden mx-2">
+  <main class="main__wrapper max-w-full m-auto">
     <slot />
   </main>
   <footer
@@ -24,7 +24,12 @@
   }
 
   .main__wrapper {
-    max-width: calc(900px - 4rem + 20vw);
-    padding: 0 calc(10vw - 2rem);
+    max-width: min(calc(900px - 4rem + 20vw), 100%);
+  }
+
+  @media (min-width: 768px) {
+    .main__wrapper {
+      padding: 0 calc(10vw - 2rem);
+    }
   }
 </style>

@@ -11,6 +11,9 @@
   import { fade } from "svelte/transition";
   import type { CountdownDate } from "$lib/types";
 
+  import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+  import { FontAwesomeIcon } from "fontawesome-svelte";
+
   let now : Date;
   let nextAttemptMarker: Date;
   let timeToNextAttempt: string;
@@ -72,14 +75,23 @@
   {#if displayDates?.length != undefined}
     {#each displayDates as date (date.id)}
       <div
-        class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 md:px-8 pt-8 pb-4"
+        class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 md:px-8 pt-8 pb-4 relative"
         in:fade
         out:fade={$navigating ? { duration: 0 } : {}}
         animate:flip>
         <p
-          class="text-center text-xl md:text-2xl lg:text-3xl text-ow2-orange dark:text-ow2-light-orange timer__title"
+          class="text-center text-xl md:text-2xl lg:text-3xl timer__title"
           in:fade="{{duration: 500, delay: 200}}">
-          <a href={`/event/${date.id}`}>{date.title}</a>
+          <a href={`/event/${date.id}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{date.title}</a>
+          {#if date.id !== -1}
+            <a
+              class="inline md:absolute md:right-0 md:top-0 md:mr-4 md:mt-3 px-2 py-1 bg-zinc-700 text-zinc-200 rounded-md text-lg"
+              href={`/event/${date.id}`}
+            >
+              <FontAwesomeIcon icon={faCircleInfo} />
+              <span class="screenreader-only">{date.title + " Information"}</span>
+            </a>
+          {/if}
         </p>
         {#if date.id !== -1}
           <p
@@ -101,5 +113,17 @@
 <style>
   .timer__title {
     white-space: pre-line;
+  }
+
+  .screenreader-only {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
   }
 </style>

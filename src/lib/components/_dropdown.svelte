@@ -64,9 +64,9 @@
     aria-haspopup="true"
     on:click={() => { isOpen = !isOpen; }}
   >
-  <slot name="button-text" />
-  <FontAwesomeIcon icon={faChevronDown} class="ml-2" />
-</button>
+    <slot name="button-text" />
+    <FontAwesomeIcon icon={faChevronDown} class="ml-2" />
+  </button>
 
   {#if isOpen}
     <div

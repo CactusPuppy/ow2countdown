@@ -2,11 +2,9 @@
   "name": "ow2countdown",
   "version": "0.0.1",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite",
     "build": "vite build",
-    "package": "vite package",
     "preview": "vite preview",
-    "prepare": "vite sync",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint --ignore-path .gitignore ."

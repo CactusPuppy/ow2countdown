@@ -8,7 +8,7 @@
 
   import { quintInOut } from "svelte/easing";
   import { browser } from "$app/environment";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
 
   export let data: PageData;
@@ -27,10 +27,19 @@
     if (browser) now = new Date();
     if (browser) animationRequest = window.requestAnimationFrame(updateTime);
   })
+
+  onDestroy(() => {
+    if (browser) cancelAnimationFrame(animationRequest);
+  })
 </script>
 
 <svelte:head>
-  <title>{data.event?.title ?? "Event"} Countdown | OW2 Countdown</title>
+  <title>{data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock</title>
+
+  <meta name="twitter:title" content={`${data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock`}/>
+
+  <meta name="og:title" content={`${data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock`} />
+  <meta name="og:url" content={`https://ow2countdown.com/event/${data.event.id}`} />
 </svelte:head>
 
 <h1

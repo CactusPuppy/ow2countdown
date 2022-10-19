@@ -68,7 +68,12 @@
 </script>
 
 <svelte:head>
-  <title>OW2 Countdown Clock</title>
+  <title>Overwatch 2 Countdown Clock</title>
+
+  <meta name="twitter:title" content="Overwatch 2 Countdown Clock">
+
+  <meta name="og:title" content="Overwatch 2 Countdown Clock" />
+  <meta name="og:url" content="https://ow2countdown.com" />
 </svelte:head>
 
 {#if $dates.errored}

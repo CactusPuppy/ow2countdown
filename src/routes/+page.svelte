@@ -1,15 +1,15 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { navigating } from "$app/stores";
+  import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
+  import Timer from "$lib/components/_timer.svelte";
   import { compareAsc, differenceInMilliseconds, format, formatDistanceStrict, parseISO } from "date-fns";
   import { onDestroy, onMount } from "svelte";
   import { dates } from "../stores/dates";
-  import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
-  import Timer from "$lib/components/_timer.svelte";
 
+  import type { CountdownDate } from "$lib/types";
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
-  import type { CountdownDate } from "$lib/types";
 
   import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
   import { FontAwesomeIcon } from "fontawesome-svelte";

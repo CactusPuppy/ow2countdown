@@ -8,7 +8,7 @@
 
   import { quintInOut } from "svelte/easing";
   import { browser } from "$app/environment";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
 
   export let data: PageData;
@@ -26,6 +26,10 @@
   onMount(() => {
     if (browser) now = new Date();
     if (browser) animationRequest = window.requestAnimationFrame(updateTime);
+  })
+
+  onDestroy(() => {
+    if (browser) cancelAnimationFrame(animationRequest);
   })
 </script>
 

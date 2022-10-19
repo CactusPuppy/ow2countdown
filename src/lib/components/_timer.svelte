@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { navigating } from "$app/stores";
+
   import { differenceInSeconds } from "date-fns";
   import { Confetti } from "svelte-confetti";
   import TimerSegment from "./_timer_segment.svelte";
@@ -44,7 +46,7 @@
 <div class="relative flex justify-center gap-12 md:gap-20 lg:gap-28 my-6 w-80 md:w-[36rem] lg:w-[40rem]">
   {#each timerValues as timerValue, i (timerValue.units)}
     <div in:fade="{{ duration: 500, delay: i * 150 + 700 }}"
-      out:fly="{{ duration: 500, y: 20 }}"
+      out:fly="{{ duration: $navigating ? 0 : 500, y: 20 }}"
       animate:flip
     >
       <TimerSegment

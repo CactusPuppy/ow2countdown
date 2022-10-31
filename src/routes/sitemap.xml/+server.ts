@@ -6,8 +6,7 @@ import { compareAsc, parseISO } from "date-fns";
 
 export const GET: RequestHandler = async({ request, setHeaders }) => {
   const requestURL = new URL(request.url);
-  const domain = requestURL.hostname;
-  const port = (requestURL.port in [80, 443]) ? "" : `:${requestURL.port}`;
+  const host = requestURL.host;
 
   const { data, error: err } = await db.from(SUPABASE_TABLE_NAME).select('*');
 
@@ -26,14 +25,14 @@ export const GET: RequestHandler = async({ request, setHeaders }) => {
       http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
   >
     <url>
-      <loc>https://${domain}</loc>
+      <loc>https://${host}</loc>
       <changefreq>hourly</changefreq>
       <priority>1.0</priority>
     </url>
 
     ${ (data as CountdownDate[]).sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime()).map(date => `
       <url>
-        <loc>${requestURL.protocol}//${domain}${port}/event/${date.id}</loc>
+        <loc>${requestURL.protocol}//${host}/event/${date.id}</loc>
         <changefreq>hourly</changefreq>
         <priority>${ compareAsc(parseISO(date.date), new Date()) > 0 ? "0.8" : "0.5" }</priority>
       </url>

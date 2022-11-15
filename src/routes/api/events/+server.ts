@@ -20,7 +20,7 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
     .order("priority", {ascending: false})
     .order("date", {ascending: true})
 
-  if (!params["include_past"]) { query = query.gte("date", formatISO(new Date())) }
+  if (!params["include_past"]) { query = query.or(`date.gte.${formatISO(new Date())},date.is.null`) }
 
   query = query.range(pageNum * DATES_PAGE_SIZE, ((pageNum + 1) * DATES_PAGE_SIZE) - 1);
 

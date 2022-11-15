@@ -8,12 +8,6 @@ export const DATES_PAGE_SIZE = 25;
 
 export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const pageNum = Number.parseInt(params["page"], 10) || 0;
-  // const { data, error: err } = await db.from("Upcoming Dates")
-  //   .select("*")
-  //   .gte("date", formatISO(new Date()))
-  //   .order("priority", {ascending: false})
-  //   .order("date", {ascending: true})
-  //   .range(pageNum * DATES_PAGE_SIZE)
 
   let query = db.from(SUPABASE_TABLE_NAME)
     .select("*")

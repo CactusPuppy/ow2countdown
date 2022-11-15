@@ -51,9 +51,11 @@
 <p
   class="text-center text-lg md:text-xl lg:text-2xl"
   in:fade={{duration: 1000, delay: 500, easing: quintInOut}}>
-  <CopyTimeDropdown class="ml-1" date={event}>
-    <span slot="button-text">{format(parseISO(event.date), "PPPPp")}</span>
-  </CopyTimeDropdown>
+  {#if event.date !== null}
+    <CopyTimeDropdown class="ml-1" date={event}>
+      <span slot="button-text">{format(parseISO(event.date), "PPPPp")}</span>
+    </CopyTimeDropdown>
+  {/if}
 </p>
 <div class="flex justify-center">
   <Timer start={now} end={parseISO(event.date)} id={event.id}/>

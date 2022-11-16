@@ -38,7 +38,7 @@
   $: if (hideValue || id === -1) {
     timerValues = [].concat([{
       value: diffInSeconds,
-      units: "secs"
+      units: ""
     }])
   }
 </script>

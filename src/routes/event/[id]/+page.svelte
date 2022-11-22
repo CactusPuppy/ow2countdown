@@ -77,4 +77,9 @@
   .event__description {
     white-space: pre-line;
   }
+
+  .event__description :global(a.link-wrap) {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
 </style>

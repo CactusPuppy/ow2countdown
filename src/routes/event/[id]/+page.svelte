@@ -76,6 +76,6 @@
 
   .event__description {
     white-space: pre-line;
-    overflow-wrap: break-word;
+    word-break: break-all;
   }
 </style>

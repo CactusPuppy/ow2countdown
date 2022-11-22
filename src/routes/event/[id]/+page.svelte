@@ -78,7 +78,7 @@
     white-space: pre-line;
   }
 
-  .event__description :global(a) {
+  .event__description :global(a.link-wrap) {
     word-break: break-all;
   }
 </style>

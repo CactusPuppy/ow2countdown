@@ -84,12 +84,12 @@
   {#if displayDates?.length != undefined}
     {#each displayDates as date (date.id)}
       <div
-        class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 md:px-8 pt-8 pb-4 relative"
+        class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 sm:px-12 pt-8 pb-4 relative w-min"
         in:fade
         out:fade={$navigating ? { duration: 0 } : {}}
         animate:flip>
         <p
-          class="text-center text-xl md:text-2xl lg:text-3xl timer__title"
+          class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
           in:fade="{{duration: 500, delay: 200}}">
           <a href={`/event/${date.id}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{date.title}</a>
           {#if date.id !== -1}
@@ -120,10 +120,6 @@
 </div>
 
 <style>
-  .timer__title {
-    white-space: pre-line;
-  }
-
   .screenreader-only {
     border: 0;
     clip: rect(0 0 0 0);

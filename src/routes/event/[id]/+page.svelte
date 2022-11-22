@@ -76,6 +76,9 @@
 
   .event__description {
     white-space: pre-line;
+  }
+
+  .event__description :global(a) {
     word-break: break-all;
   }
 </style>

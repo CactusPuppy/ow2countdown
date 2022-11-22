@@ -79,6 +79,7 @@
   }
 
   .event__description :global(a.link-wrap) {
-    word-break: break-all;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 </style>

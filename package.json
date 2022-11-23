@@ -1,6 +1,7 @@
 {
   "name": "ow2countdown",
-  "version": "0.0.1",
+  "version": "1.0",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

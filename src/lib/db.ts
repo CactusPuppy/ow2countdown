@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "$env/static/private";
+import { SUPABASE_URL, SUPABASE_SERVICE_KEY } from "$env/static/private";
 
 export default createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY,
+  SUPABASE_SERVICE_KEY,
 );

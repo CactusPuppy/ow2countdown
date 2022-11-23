@@ -1,5 +1,21 @@
 <script>
+  import client from "$lib/client";
+  import { invalidate } from "$app/navigation";
+  import { onMount } from "svelte";
+
   import "../app.css";
+
+  onMount(() => {
+    const {
+      data: { subscription },
+    } = client.auth.onAuthStateChange(() => {
+      invalidate("supabase:auth");
+    })
+
+    return () => {
+      subscription.unsubscribe();
+    }
+  });
 </script>
 
 <div class="wrapper min-h-[100vh] max-w-full overflow-x-hidden mx-2">

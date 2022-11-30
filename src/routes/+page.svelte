@@ -1,10 +1,14 @@
 <script lang="ts">
   import { browser } from "$app/environment";
+  import { page } from "$app/stores";
   import { compareAsc, differenceInMilliseconds, formatDistanceStrict, parseISO } from "date-fns";
   import { onDestroy, onMount } from "svelte";
   import { flip } from "svelte/animate";
 
   import type { CountdownDate } from "$lib/types";
+
+  import { FontAwesomeIcon } from "fontawesome-svelte";
+  import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
   import { dates } from "../stores/dates";
   import EventCard from "./_event_card.svelte";
@@ -84,3 +88,8 @@
     {/each}
   {/if}
 </div>
+{#if $page.data.session}
+  <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
+    <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
+  </a>
+{/if}

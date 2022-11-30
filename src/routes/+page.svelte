@@ -2,11 +2,11 @@
   import { browser } from "$app/environment";
   import { compareAsc, differenceInMilliseconds, formatDistanceStrict, parseISO } from "date-fns";
   import { onDestroy, onMount } from "svelte";
-  import { dates } from "../stores/dates";
-
-  import type { CountdownDate } from "$lib/types";
   import { flip } from "svelte/animate";
 
+  import type { CountdownDate } from "$lib/types";
+
+  import { dates } from "../stores/dates";
   import EventCard from "./_event_card.svelte";
 
   let now : Date;

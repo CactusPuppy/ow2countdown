@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit";
-import type { PageLoad } from "./$types";
+import type { PageLoad } from "../$types";
 
 export const load: PageLoad = async ({ params, fetch }) => {
   const response = await fetch(`/api/event/${params.id}`);

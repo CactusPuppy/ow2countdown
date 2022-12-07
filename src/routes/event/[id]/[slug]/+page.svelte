@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import type { CountdownDate } from "$lib/types";
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
+
+  import { FontAwesomeIcon } from "fontawesome-svelte";
+  import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
   import { quintInOut } from "svelte/easing";
   import { browser } from "$app/environment";
@@ -53,7 +57,7 @@
   in:fade={{duration: 1000, delay: 500, easing: quintInOut}}>
   {#if event.date !== null}
     <CopyTimeDropdown class="ml-1" date={event}>
-      <span slot="button-text">{format(parseISO(event.date), "PPPPp")}</span>
+      <span slot="button-text"><time datetime={event.date}>{format(parseISO(event.date), "PPPPp")}</time></span>
     </CopyTimeDropdown>
   {/if}
 </p>
@@ -67,6 +71,13 @@
   >
     {@html event.description}
   </p>
+{/if}
+{#if $page.data.session}
+  <div class="sm:grid grid-cols-2">
+    <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
+      <FontAwesomeIcon icon={faPencil}/><span class="pl-2 font-semibold">Edit Event</span>
+    </a>
+  </div>
 {/if}
 
 <style>

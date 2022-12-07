@@ -3,6 +3,7 @@
   import { navigating } from "$app/stores";
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
+  import { titleToSlug } from "$lib/utils/event_helpers";
   import { compareAsc, differenceInMilliseconds, format, formatDistanceStrict, parseISO } from "date-fns";
   import { onDestroy, onMount } from "svelte";
   import { dates } from "../stores/dates";
@@ -91,11 +92,11 @@
         <p
           class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
           in:fade="{{duration: 500, delay: 200}}">
-          <a href={`/event/${date.id}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{date.title}</a>
+          <a href={`/event/${date.id}/${titleToSlug(date.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{date.title}</a>
           {#if date.id !== -1}
             <a
               class="inline md:absolute md:right-0 md:top-0 md:mr-4 md:mt-3 px-2 py-1 bg-zinc-700 text-zinc-200 rounded-md text-lg"
-              href={`/event/${date.id}`}
+              href={`/event/${date.id}/${titleToSlug(date.title)}`}
             >
               <FontAwesomeIcon icon={faCircleInfo} />
               <span class="screenreader-only">{date.title + " Information"}</span>

@@ -20,7 +20,7 @@
   let displayDates: CountdownDate[];
   // Gets the earliest date in each group
   $: if ($dates.errored !== true) displayDates = Object.values($dates.reduce((accumulator, date) => {
-    const itemKey = date?.group != undefined ? `GROUP-${date?.group}` : `ID-${date.id}`;
+    const itemKey = (date?.group != undefined && date.group != "") ? `GROUP-${date?.group}` : `ID-${date.id}`;
     if (accumulator[itemKey] === undefined) {
       accumulator[itemKey] = date;
     } else

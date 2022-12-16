@@ -27,7 +27,7 @@
     <a href={`/event/${date.id}/${titleToSlug(date.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{date.title}</a>
     {#if date.id !== -1}
       <a
-        class="inline md:absolute md:right-0 md:top-0 md:mr-4 md:mt-3 px-2 py-1 bg-zinc-700 text-zinc-200 rounded-md text-lg"
+        class="inline sm:absolute sm:right-0 sm:top-0 sm:mr-4 sm:mt-3 px-2 py-1 bg-zinc-700 text-zinc-200 rounded-md text-lg"
         href={`/event/${date.id}/${titleToSlug(date.title)}`}
       >
         <FontAwesomeIcon icon={faCircleInfo} />

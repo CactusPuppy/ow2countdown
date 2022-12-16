@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { page } from "$app/stores";
-  import { compareAsc, differenceInMilliseconds, formatDistanceStrict, parseISO } from "date-fns";
+  import { compareAsc, differenceInMilliseconds, formatDistanceStrict, parseISO, addSeconds } from "date-fns";
   import { onDestroy, onMount } from "svelte";
   import { flip } from "svelte/animate";
 
@@ -44,11 +44,13 @@
   async function updateDates() {
     const result = await dates.requestUpdate();
     if (result === -1) {
+      nextAttemptMarker = addSeconds(Date.now(), 5);
       dateUpdateTimer = setTimeout(updateDates, 5000);
     } else if ($dates?.errored) {
       nextAttemptMarker = result;
       dateUpdateTimer = setTimeout(updateDates, differenceInMilliseconds(result, new Date()));
     } else {
+      nextAttemptMarker = addSeconds(Date.now(), 60);
       dateUpdateTimer = setTimeout(updateDates, 60 * 1000);
     }
   };
@@ -80,12 +82,17 @@
     A problem arose while contacting the server for updated information. Don't refresh, we'll try to contact the server again for you {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}.</div>
 {/if}
 <div class="flex-grow flex flex-col gap-8 md:justify-center items-center md:mx-4 my-8 w-full dark:text-zinc-50">
-  {#if displayDates?.length != undefined}
+  {#if displayDates?.length != undefined && displayDates.length > 0}
     {#each displayDates as date (date.id)}
       <div animate:flip>
         <EventCard {now} {date} />
       </div>
     {/each}
+  {:else}
+      <div class="text-center">
+        <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">No events found</h1>
+        <p class="text-xl">Next refresh {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}</p>
+      </div>
   {/if}
 </div>
 {#if $page.data.session}

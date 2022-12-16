@@ -6,7 +6,9 @@ const MIN_BACKOFF = 10;
 const MAX_BACKOFF = 60;
 const BACKOFF_VARIANCE = 0.5;
 
-export type CountdownDateContainer = CountdownDate[] & {errored?: boolean}
+export const CountdownDateKeys: (keyof CountdownDate)[] = ["date", "description", "end_date", "group", "priority", "tags", "title"];
+
+export type CountdownDateContainer = CountdownDate[] & {errored?: boolean};
 
 function createDates() {
   const { subscribe, update } = writable([] as CountdownDateContainer);
@@ -85,13 +87,18 @@ function getAdditionalBackoffAmount(number : number) {
   return 60;
 }
 
-// FIXME: SOME DEBUG STUFF LOL
+export function entriesToEventObject(entries: IterableIterator<[string, FormDataEntryValue]>) {
+  const result = <Partial<CountdownDate>>Object.fromEntries(Array.from(entries).filter((entry) => (CountdownDateKeys as string[]).includes(entry[0])));
 
-// client.removeAllSubscriptions();
+  if (!result.date?.length) delete result.date;
+  if (!result.end_date?.length) delete result.end_date;
+  if (String(result["priority"]) === "") {
+    result.priority = 0;
+  } else if (/^\d+$/.test(String(result.priority))) {
+    result.priority = Number.parseInt(String(result.priority));
+  } else {
+    delete result.priority;
+  }
 
-// const subscription = client
-//   .from('*')
-//   .on("*", (payload) => { console.log(payload) })
-//   .subscribe((status) => { console.log("Subscription status: ", status) });
-
-// console.log(subscription);
+  return result;
+}

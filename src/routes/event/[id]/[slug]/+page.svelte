@@ -8,12 +8,14 @@
   import { format, parseISO } from "date-fns";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
-  import { faPencil } from "@fortawesome/free-solid-svg-icons";
+  import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 
   import { quintInOut } from "svelte/easing";
   import { browser } from "$app/environment";
   import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
+  import { enhance } from "$app/forms";
+  import { goto } from "$app/navigation";
 
   export let data: PageData;
   let event: CountdownDate;
@@ -73,10 +75,34 @@
   </p>
 {/if}
 {#if $page.data.session}
-  <div class="sm:grid grid-cols-2">
-    <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
-      <FontAwesomeIcon icon={faPencil}/><span class="pl-2 font-semibold">Edit Event</span>
-    </a>
+  <div class="sm:grid grid-cols-2 fixed bottom-8 right-8 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+    <p class="p-4 pr-2 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
+      <a href={`/event/${event.id}/edit`} class="" data-sveltekit-reload>
+        <FontAwesomeIcon icon={faPencil}/><span class="pl-2 font-semibold">Edit Event</span>
+      </a>
+    </p>
+    <form
+      class="p-4 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200 text-red-700 dark:text-red-400"
+      action={`/event/${event.id}/destroy`}
+      method="POST"
+      use:enhance={({ cancel }) => {
+        if (!window.confirm(`Are you sure you want to delete '${event.title}'?`)) {
+          cancel();
+        }
+
+        return async ({ result }) => {
+          if (result.type == "success" || result.type == "redirect") {
+            goto("/");
+          } else {
+            alert("Something went wrong. Sorry about that!");
+          }
+        };
+      }}
+    >
+      <button type="submit">
+        <FontAwesomeIcon icon={faTrash}/><span class="pl-2 font-semibold">Delete Event</span>
+      </button>
+    </form>
   </div>
 {/if}
 

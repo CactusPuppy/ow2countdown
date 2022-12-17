@@ -1,19 +1,17 @@
 <script lang="ts">
   import { browser } from "$app/environment";
-  import { navigating } from "$app/stores";
-  import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
-  import Timer from "$lib/components/_timer.svelte";
-  import { titleToSlug } from "$lib/utils/event_helpers";
-  import { compareAsc, differenceInMilliseconds, format, formatDistanceStrict, parseISO } from "date-fns";
+  import { page } from "$app/stores";
+  import { compareAsc, differenceInMilliseconds, formatDistanceStrict, parseISO, addSeconds } from "date-fns";
   import { onDestroy, onMount } from "svelte";
-  import { dates } from "../stores/dates";
+  import { flip } from "svelte/animate";
 
   import type { CountdownDate } from "$lib/types";
-  import { flip } from "svelte/animate";
-  import { fade } from "svelte/transition";
 
-  import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
   import { FontAwesomeIcon } from "fontawesome-svelte";
+  import { faPlus } from "@fortawesome/free-solid-svg-icons";
+
+  import { dates } from "../stores/dates";
+  import EventCard from "./_event_card.svelte";
 
   let now : Date;
   let nextAttemptMarker: Date;
@@ -22,7 +20,7 @@
   let displayDates: CountdownDate[];
   // Gets the earliest date in each group
   $: if ($dates.errored !== true) displayDates = Object.values($dates.reduce((accumulator, date) => {
-    const itemKey = date?.group != undefined ? `GROUP-${date?.group}` : `ID-${date.id}`;
+    const itemKey = (date?.group != undefined && date.group != "") ? `GROUP-${date?.group}` : `ID-${date.id}`;
     if (accumulator[itemKey] === undefined) {
       accumulator[itemKey] = date;
     } else
@@ -46,11 +44,13 @@
   async function updateDates() {
     const result = await dates.requestUpdate();
     if (result === -1) {
+      nextAttemptMarker = addSeconds(Date.now(), 5);
       dateUpdateTimer = setTimeout(updateDates, 5000);
     } else if ($dates?.errored) {
       nextAttemptMarker = result;
       dateUpdateTimer = setTimeout(updateDates, differenceInMilliseconds(result, new Date()));
     } else {
+      nextAttemptMarker = addSeconds(Date.now(), 60);
       dateUpdateTimer = setTimeout(updateDates, 60 * 1000);
     }
   };
@@ -82,54 +82,21 @@
     A problem arose while contacting the server for updated information. Don't refresh, we'll try to contact the server again for you {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}.</div>
 {/if}
 <div class="flex-grow flex flex-col gap-8 md:justify-center items-center md:mx-4 my-8 w-full dark:text-zinc-50">
-  {#if displayDates?.length != undefined}
+  {#if displayDates?.length != undefined && displayDates.length > 0}
     {#each displayDates as date (date.id)}
-      <div
-        class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 sm:px-12 pt-8 pb-4 relative w-min"
-        in:fade
-        out:fade={$navigating ? { duration: 0 } : {}}
-        animate:flip>
-        <p
-          class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
-          in:fade="{{duration: 500, delay: 200}}">
-          <a href={`/event/${date.id}/${titleToSlug(date.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{date.title}</a>
-          {#if date.id !== -1}
-            <a
-              class="inline md:absolute md:right-0 md:top-0 md:mr-4 md:mt-3 px-2 py-1 bg-zinc-700 text-zinc-200 rounded-md text-lg"
-              href={`/event/${date.id}/${titleToSlug(date.title)}`}
-            >
-              <FontAwesomeIcon icon={faCircleInfo} />
-              <span class="screenreader-only">{date.title + " Information"}</span>
-            </a>
-          {/if}
-        </p>
-        {#if date.id !== -1 && date.date !== null}
-          <p
-            class="text-center text-lg md:text-xl lg:text-2xl"
-            in:fade="{{duration: 500, delay: 500}}">
-            <CopyTimeDropdown class="ml-1" date={date}>
-              <span slot="button-text">{format(parseISO(date.date), "PPPPp")}</span>
-            </CopyTimeDropdown>
-          </p>
-        {/if}
-        <div class="flex justify-center">
-          <Timer start={now} end={parseISO(date.date)} id={date.id}/>
-        </div>
+      <div animate:flip>
+        <EventCard {now} {date} />
       </div>
     {/each}
+  {:else}
+      <div class="text-center">
+        <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">No events found</h1>
+        <p class="text-xl">Next refresh {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}</p>
+      </div>
   {/if}
 </div>
-
-<style>
-  .screenreader-only {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-  }
-</style>
+{#if $page.data.session}
+  <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
+    <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
+  </a>
+{/if}

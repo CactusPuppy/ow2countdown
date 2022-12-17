@@ -1,9 +1,11 @@
 import { SUPABASE_TABLE_NAME } from "$env/static/private";
-import db from "$lib/db";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
+import { getSupabase } from "@supabase/auth-helpers-sveltekit";
 
-export const GET: RequestHandler = async ({ params, setHeaders }) => {
-  const { data, error: err } = await db.from(SUPABASE_TABLE_NAME)
+export const GET: RequestHandler = async (request) => {
+  const { supabaseClient } = await getSupabase(request);
+  const { params, setHeaders } = request;
+  const { data, error: err } = await supabaseClient.from(SUPABASE_TABLE_NAME)
     .select("*")
     .eq("id", params.id);
 

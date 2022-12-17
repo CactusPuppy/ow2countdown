@@ -1,8 +1,5 @@
 <script lang="ts">
   import type { CountdownDate } from "$lib/types";
-  import { onMount } from "svelte";
-
-  import { parseISO } from "date-fns";
 
   export let event: CountdownDate | undefined = undefined;
 

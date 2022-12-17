@@ -16,7 +16,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@supabase/auth-helpers-sveltekit": "^0.8.6",
     "@supabase/supabase-js": "^2.1.0",
-    "@sveltejs/adapter-auto": "^1.0.0-next.83",
+    "@sveltejs/adapter-auto": "^1.0.0",
     "@sveltejs/kit": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",

@@ -47,6 +47,10 @@
 <label for="event__priority" class="mb-2 mt-4 text-lg optional-label">Priority</label>
 <input id="event__priority" name="priority" type="number" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="priority" bind:value={priority}>
 
+<slot name="submit">
+  <input type="submit" class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer" value="Submit">
+</slot>
+
 <style>
   .optional-label::after {
     content: "(optional)";

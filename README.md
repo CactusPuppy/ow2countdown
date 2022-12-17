@@ -25,7 +25,7 @@ To create a production version of your app:
 npm run build
 ```
 
-Environment variables for Supabase's URL and anonymous access token must be set as `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`, respectively.
+Environment variables for Supabase's URL and anonymous access token must be set as `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY`, respectively.
 
 You can preview the production build with `npm run preview`.
 

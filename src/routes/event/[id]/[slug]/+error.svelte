@@ -5,6 +5,7 @@
 
 <svelte:head>
   <title>404 | OW2 Countdown</title>
+  <meta name="robots" content="no-index">
 </svelte:head>
 
 

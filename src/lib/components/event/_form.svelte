@@ -21,6 +21,7 @@
     if (event.date) date = format(parseISO(event.date), "yyyy-LL-dd'T'HH:mm:ss"); // Localize datetime
     if (event.end_date) end_date = format(parseISO(event.end_date), "yyyy-LL-dd'T'HH:mm:ss").slice(0, 19); // Localize datetime
     priority = event?.priority || 0;
+    tags = event.tags;
   }
 </script>
 

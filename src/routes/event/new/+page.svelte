@@ -22,7 +22,7 @@
     }
     const endDate = data.get("end_date");
     if (typeof endDate === "string" && endDate != "") {
-      data.set("date", new Date(endDate).toISOString());
+      data.set("end_date", new Date(endDate).toISOString());
     }
 
     submitting = true;

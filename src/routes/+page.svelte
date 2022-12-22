@@ -69,9 +69,7 @@
 </script>
 
 <svelte:head>
-  <title>Overwatch 2 Countdown Clock</title>
-
-  <meta name="twitter:title" content="OW2Countdown.com | Live countdowns to important Overwatch 2 events">
+  <title>Home | OW2Countdown.com</title>
 
   <meta name="og:title" content="OW2Countdown.com | Live countdowns to important Overwatch 2 events" />
   <meta name="og:url" content="https://ow2countdown.com" />

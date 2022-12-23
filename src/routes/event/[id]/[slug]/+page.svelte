@@ -3,9 +3,11 @@
   import type { CountdownDate } from "$lib/types";
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
+  import Ow2CLink from "$lib/components/markdown/OW2CLink.svelte";
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
+  import SvelteMarkdown from "svelte-markdown";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
   import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -40,11 +42,9 @@
 </script>
 
 <svelte:head>
-  <title>{data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock</title>
+  <title>{data.event?.title ?? "Event"} | OW2Countdown.com</title>
 
-  <meta name="twitter:title" content={`${data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock`}/>
-
-  <meta name="og:title" content={`${data.event?.title ?? "Event"} Countdown | OW2 Countdown Clock`} />
+  <meta name="og:title" content={`${data.event?.title ?? "Event"} | OW2Countdown.com`} />
   <meta name="og:url" content={`https://ow2countdown.com/event/${data.event.id}`} />
 </svelte:head>
 
@@ -67,12 +67,17 @@
   <Timer start={now} end={parseISO(event.date)} id={event.id}/>
 </div>
 {#if event.description != null}
-  <p
+  <div
     class="mx-4 my-8 text-lg md:text-xl max-w-3xl event__description"
     in:fade={{ duration: 500, delay: 700 }}
   >
-    {@html event.description}
-  </p>
+    <SvelteMarkdown
+      source={event.description}
+      renderers={{
+        "link": Ow2CLink
+      }}
+    />
+  </div>
 {/if}
 {#if $page.data.session}
   <div class="sm:grid grid-cols-2 fixed bottom-8 right-8 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
@@ -118,5 +123,9 @@
   .event__description :global(a.link-wrap) {
     overflow-wrap: break-word;
     word-break: break-word;
+  }
+
+  .event__description :global(p) {
+    @apply pb-4;
   }
 </style>

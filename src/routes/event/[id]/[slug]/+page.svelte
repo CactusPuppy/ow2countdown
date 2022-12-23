@@ -3,6 +3,7 @@
   import type { CountdownDate } from "$lib/types";
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
+  import Ow2CLink from "$lib/components/markdown/OW2CLink.svelte";
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
@@ -70,7 +71,12 @@
     class="mx-4 my-8 text-lg md:text-xl max-w-3xl event__description"
     in:fade={{ duration: 500, delay: 700 }}
   >
-    <SvelteMarkdown source={event.description} />
+    <SvelteMarkdown
+      source={event.description}
+      renderers={{
+        "link": Ow2CLink
+      }}
+    />
   </div>
 {/if}
 {#if $page.data.session}

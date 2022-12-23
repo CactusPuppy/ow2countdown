@@ -124,4 +124,8 @@
     overflow-wrap: break-word;
     word-break: break-word;
   }
+
+  .event__description :global(p) {
+    @apply pb-4;
+  }
 </style>

@@ -6,6 +6,7 @@
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
+  import SvelteMarkdown from "svelte-markdown";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
   import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -65,12 +66,12 @@
   <Timer start={now} end={parseISO(event.date)} id={event.id}/>
 </div>
 {#if event.description != null}
-  <p
+  <div
     class="mx-4 my-8 text-lg md:text-xl max-w-3xl event__description"
     in:fade={{ duration: 500, delay: 700 }}
   >
-    {@html event.description}
-  </p>
+    <SvelteMarkdown source={event.description} />
+  </div>
 {/if}
 {#if $page.data.session}
   <div class="sm:grid grid-cols-2 fixed bottom-8 right-8 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden">

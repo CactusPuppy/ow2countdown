@@ -128,4 +128,8 @@
   .event__description :global(p) {
     @apply pb-4;
   }
+
+  .event__description :global(ul) {
+    @apply list-disc list-inside;
+  }
 </style>

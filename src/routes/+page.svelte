@@ -17,6 +17,8 @@
   let nextAttemptMarker: Date;
   let timeToNextAttempt: string;
 
+  let loading = true;
+
   let displayDates: CountdownDate[];
   // Gets the earliest date in each group
   $: if ($dates.errored !== true) displayDates = Object.values($dates.reduce((accumulator, date) => {
@@ -55,10 +57,11 @@
     }
   };
 
-  onMount(() => {
+  onMount(async () => {
     if (browser) now = new Date();
-    updateDates();
+    await updateDates();
     if (browser) animationRequest = window.requestAnimationFrame(updateTime);
+    loading = false;
   });
 
   onDestroy(() => {
@@ -86,6 +89,10 @@
         <EventCard {now} {date} />
       </div>
     {/each}
+  {:else if loading}
+    <div class="text-center">
+      <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">Loading...</h1>
+    </div>
   {:else}
       <div class="text-center">
         <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">No events found</h1>

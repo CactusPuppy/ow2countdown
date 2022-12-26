@@ -4,6 +4,7 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
   import Ow2CLink from "$lib/components/markdown/OW2CLink.svelte";
+import { titleToSlug } from '$lib/utils/event_helpers';
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
@@ -45,7 +46,7 @@
   <title>{data.event?.title ?? "Event"} | OW2Countdown.com</title>
 
   <meta name="og:title" content={`${data.event?.title ?? "Event"} | OW2Countdown.com`} />
-  <meta name="og:url" content={`https://ow2countdown.com/event/${data.event.id}`} />
+  <meta name="og:url" content={`https://ow2countdown.com/event/${data.event.id}/${titleToSlug(data.event.title)}`} />
 </svelte:head>
 
 <h1

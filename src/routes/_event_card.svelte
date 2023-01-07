@@ -38,7 +38,10 @@
     {/if}
   </p>
   {#if event.id !== -1 && displayDate !== null}
-    <p class="text-center text-lg md:text-xl lg:text-2xl">
+    <p
+      class="text-center text-lg md:text-xl lg:text-2xl"
+      in:fade={{duration: 500, delay: 350}}
+    >
       Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
     </p>
     <p

@@ -11,10 +11,12 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import type { CountdownDate } from "$lib/types";
   import Timer from "$lib/components/_timer.svelte";
-  import { titleToSlug } from "$lib/utils/event_helpers";
+  import { isEventHappeningNow, titleToSlug } from "$lib/utils/event_helpers";
 
   export let event: CountdownDate;
   export let now: Date;
+
+  $: displayDate = (isEventHappeningNow(event, now) && event.end_date) ? event.end_date : event?.date;
 </script>
 
 <div
@@ -36,6 +38,9 @@
     {/if}
   </p>
   {#if event.id !== -1 && displayDate !== null}
+    <p class="text-center text-lg md:text-xl lg:text-2xl">
+      Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
+    </p>
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
       in:fade="{{duration: 500, delay: 500}}">
@@ -45,7 +50,7 @@
     </p>
   {/if}
   <div class="flex justify-center">
-    <Timer start={now} end={parseISO(event.date)} id={event.id}/>
+    <Timer start={now} end={parseISO(displayDate)} id={event.id}/>
   </div>
 </div>
 

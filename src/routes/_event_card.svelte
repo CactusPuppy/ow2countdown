@@ -13,7 +13,7 @@
   import Timer from "$lib/components/_timer.svelte";
   import { titleToSlug } from "$lib/utils/event_helpers";
 
-  export let date: CountdownDate;
+  export let event: CountdownDate;
   export let now: Date;
 </script>
 
@@ -24,28 +24,28 @@
   <p
     class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
     in:fade="{{duration: 500, delay: 200}}">
-    <a href={`/event/${date.id}/${titleToSlug(date.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{date.title}</a>
-    {#if date.id !== -1}
+    <a href={`/event/${event.id}/${titleToSlug(event.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{event.title}</a>
+    {#if event.id !== -1}
       <a
         class="inline sm:absolute sm:right-0 sm:top-0 sm:mr-4 sm:mt-3 px-2 py-1 bg-zinc-500 hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-200 rounded-md text-lg transition-colors"
-        href={`/event/${date.id}/${titleToSlug(date.title)}`}
+        href={`/event/${event.id}/${titleToSlug(event.title)}`}
       >
         <FontAwesomeIcon icon={faCircleInfo} />
-        <span class="screenreader-only">{date.title + " Information"}</span>
+        <span class="screenreader-only">{event.title + " Information"}</span>
       </a>
     {/if}
   </p>
-  {#if date.id !== -1 && date.date !== null}
+  {#if event.id !== -1 && displayDate !== null}
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
       in:fade="{{duration: 500, delay: 500}}">
-      <CopyTimeDropdown class="ml-1" date={date}>
-        <span slot="button-text"><time datetime={date.date}>{format(parseISO(date.date), "PPPPp")}</time></span>
+      <CopyTimeDropdown class="ml-1" event={event}>
+        <span slot="button-text"><time datetime={displayDate}>{format(parseISO(displayDate), "PPPPp")}</time></span>
       </CopyTimeDropdown>
     </p>
   {/if}
   <div class="flex justify-center">
-    <Timer start={now} end={parseISO(date.date)} id={date.id}/>
+    <Timer start={now} end={parseISO(event.date)} id={event.id}/>
   </div>
 </div>
 

@@ -59,7 +59,7 @@ import { titleToSlug } from '$lib/utils/event_helpers';
   class="text-center text-lg md:text-xl lg:text-2xl"
   in:fade={{duration: 1000, delay: 500, easing: quintInOut}}>
   {#if event.date !== null}
-    <CopyTimeDropdown class="ml-1" date={event}>
+    <CopyTimeDropdown class="ml-1" event={event}>
       <span slot="button-text"><time datetime={event.date}>{format(parseISO(event.date), "PPPPp")}</time></span>
     </CopyTimeDropdown>
   {/if}

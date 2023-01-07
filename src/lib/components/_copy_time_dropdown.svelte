@@ -7,16 +7,16 @@
   import type { CountdownDate } from "$lib/types";
   import { format, parseISO } from "date-fns";
 
-  export let date : CountdownDate;
+  export let event : CountdownDate;
 
-  const dateObj = parseISO(date.date);
+  const dateObj = parseISO(event.date);
 
   async function copyDiscordTimestamp() {
     await navigator.clipboard.writeText(`<t:${Math.floor(dateObj.getTime() / 1000)}:f> (<t:${Math.floor(dateObj.getTime() / 1000)}:R>)`);
   }
 
   async function copyNormalTimestamp() {
-    await navigator.clipboard.writeText(format(parseISO(date.date), "PPPPp"))
+    await navigator.clipboard.writeText(format(parseISO(event.date), "PPPPp"))
   }
 </script>
 

@@ -20,7 +20,8 @@
 
 <div
   class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 sm:px-12 pt-8 pb-4 relative w-min"
-  in:fade="{{delay: additionalDelay}}">
+  in:fade="{{delay: additionalDelay}}"
+  out:fade>
   <p
     class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
     in:fade="{{duration: 500, delay: 200 + additionalDelay}}"

@@ -82,19 +82,19 @@
   <div class="fixed top-0 left-0 z-30 w-full text-center p-4 bg-[#f15047df] dark:bg-[#7F1D1DDF] dark:text-zinc-50">
     A problem arose while contacting the server for updated information. Don't refresh, we'll try to contact the server again for you {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}.</div>
 {/if}
-<div class="flex-grow flex flex-col gap-8 md:justify-center items-center my-8 w-full dark:text-zinc-50">
+<div class="grid grid-cols-1 gap-8 self-start items-center my-8 w-full dark:text-zinc-50">
   {#if displayDates?.length != undefined && displayDates.length > 0}
     {#each displayDates as event, eventIndex (event.id)}
-      <div animate:flip>
+      <div class="justify-self-center" animate:flip>
         <EventCard {now} {event} additionalDelay={eventIndex * 150} />
       </div>
     {/each}
   {:else if loading}
-    <div class="text-center">
+    <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
       <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">Loading...</h1>
     </div>
   {:else}
-      <div class="text-center">
+      <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-max text-center">
         <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">No events found</h1>
         <p class="text-xl">Next refresh {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}</p>
       </div>

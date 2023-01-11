@@ -19,7 +19,7 @@
 </script>
 
 <div class="wrapper min-h-[100vh] max-w-full overflow-x-hidden mx-2">
-  <main class="main__wrapper max-w-full m-auto">
+  <main class="main__wrapper max-w-full mx-auto">
     <slot />
   </main>
   <footer
@@ -37,10 +37,19 @@
   .wrapper {
     display: grid;
     grid-template-rows: 1fr auto;
+    /* align-items: center; */
   }
 
   .main__wrapper {
     max-width: min(calc(900px - 4rem + 20vw), 100%);
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    /* align-self: stretch; */
+  }
+
+  :global(.main__wrapper > *) {
+    grid-area: 1 / 1 / -1 / -1;
   }
 
   @media (min-width: 768px) {

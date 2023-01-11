@@ -6,8 +6,6 @@
 
   import { fade } from "svelte/transition";
 
-  import { navigating } from "$app/stores";
-
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import type { CountdownDate } from "$lib/types";
   import Timer from "$lib/components/_timer.svelte";
@@ -21,11 +19,11 @@
 
 <div
   class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 sm:px-12 pt-8 pb-4 relative w-min"
-  in:fade
-  out:fade={$navigating ? { duration: 0 } : {}}>
+  transition:fade>
   <p
     class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
-    in:fade="{{duration: 500, delay: 200}}">
+    in:fade="{{duration: 500, delay: 200}}"
+    out:fade>
     <a href={`/event/${event.id}/${titleToSlug(event.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{event.title}</a>
     {#if event.id !== -1}
       <a
@@ -41,12 +39,14 @@
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
       in:fade={{duration: 500, delay: 350}}
+      out:fade
     >
       Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
     </p>
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
-      in:fade="{{duration: 500, delay: 500}}">
+      in:fade="{{duration: 500, delay: 500}}"
+      out:fade>
       <CopyTimeDropdown class="ml-1" event={event}>
         <span slot="button-text"><time datetime={displayDate}>{format(parseISO(displayDate), "PPPPp")}</time></span>
       </CopyTimeDropdown>

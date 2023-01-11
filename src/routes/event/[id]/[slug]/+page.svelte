@@ -50,14 +50,16 @@ import { titleToSlug } from '$lib/utils/event_helpers';
 </svelte:head>
 
 <h1
-  class="mx-4 mt-6 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
+  class="mx-4 mt-10 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
   in:fade={{duration: 1000, delay: 0, easing: quintInOut}}
+  out:fade={{easing: quintInOut}}
 >
   {event.title}
 </h1>
 <p
   class="text-center text-lg md:text-xl lg:text-2xl"
-  in:fade={{duration: 1000, delay: 500, easing: quintInOut}}>
+  in:fade={{duration: 1000, delay: 500, easing: quintInOut}}
+  out:fade={{easing: quintInOut}}>
   {#if event.date !== null}
     <CopyTimeDropdown class="ml-1" event={event}>
       <span slot="button-text"><time datetime={event.date}>{format(parseISO(event.date), "PPPPp")}</time></span>
@@ -67,10 +69,11 @@ import { titleToSlug } from '$lib/utils/event_helpers';
 <div class="flex justify-center">
   <Timer start={now} end={parseISO(event.date)} id={event.id}/>
 </div>
-{#if event.description != null}
+{#if event.description}
   <div
     class="mx-4 my-8 text-lg md:text-xl max-w-3xl event__description"
     in:fade={{ duration: 500, delay: 700 }}
+    out:fade={{easing: quintInOut}}
   >
     <SvelteMarkdown
       source={event.description}

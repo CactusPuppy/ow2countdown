@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { navigating } from "$app/stores";
-
   import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
   import { FontAwesomeIcon } from "fontawesome-svelte";
 
@@ -78,7 +76,7 @@
       aria-labelledby="copy-dropdown-button"
       tabindex="-1"
       in:scale={{ duration: 100, start: 0.95 }}
-      out:scale={{ duration: $navigating ? 0 : 75, start: 0.95 }}
+      out:scale={{ duration: 75, start: 0.95 }}
       on:click={() => { setTimeout(() => isOpen = !isOpen, 500) }}
       on:keypress={(event) => {
         if (!([" ", "Spacebar", "Enter"].includes(event.key))) return;

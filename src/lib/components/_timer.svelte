@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { navigating } from "$app/stores";
 
   import { differenceInSeconds } from "date-fns";
   import { Confetti } from "svelte-confetti";
@@ -13,6 +12,7 @@
   export let start : Date;
   export let end : Date;
   export let id : Number;
+  export let additionalDelay = 0;
   $: diffInSeconds = Math.max(0, differenceInSeconds(end, start, { roundingMethod: "ceil" }));
   $: daysToGo = Math.floor(diffInSeconds / SECONDS_IN_A_DAY);
   $: totalSeconds = Math.ceil(diffInSeconds) % SECONDS_IN_A_DAY;
@@ -45,8 +45,8 @@
 
 <div class="relative flex justify-center gap-12 md:gap-20 lg:gap-28 my-6 w-80 md:w-[36rem] lg:w-[40rem]">
   {#each timerValues as timerValue, i (timerValue.units)}
-    <div in:fade="{{ duration: 500, delay: i * 150 + 700 }}"
-      out:fly="{{ duration: $navigating ? 0 : 500, y: 20 }}"
+    <div in:fade="{{ duration: 500, delay: i * 100 + 700 + additionalDelay }}"
+      out:fly="{{ duration: 500, y: 20 }}"
       animate:flip
     >
       <TimerSegment

@@ -4,7 +4,7 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
   import Ow2CLink from "$lib/components/markdown/OW2CLink.svelte";
-import { titleToSlug } from '$lib/utils/event_helpers';
+  import { isEventHappeningNow, titleToSlug } from '$lib/utils/event_helpers';
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
@@ -26,6 +26,7 @@ import { titleToSlug } from '$lib/utils/event_helpers';
 
   let now: Date;
 
+  $: dateStringToDisplay = (now && event.date && parseISO(event.date).getTime() < now.getTime() && event.end_date) ? event.end_date : event.date;
   let animationRequest: number;
   function updateTime() {
     now = new Date();
@@ -50,27 +51,37 @@ import { titleToSlug } from '$lib/utils/event_helpers';
 </svelte:head>
 
 <h1
-  class="mx-4 mt-6 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
+  class="mx-4 mt-10 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
   in:fade={{duration: 1000, delay: 0, easing: quintInOut}}
+  out:fade={{easing: quintInOut}}
 >
   {event.title}
 </h1>
 <p
   class="text-center text-lg md:text-xl lg:text-2xl"
-  in:fade={{duration: 1000, delay: 500, easing: quintInOut}}>
+  in:fade={{duration: 1000, delay: 450, easing: quintInOut}}
+  out:fade
+>
+  Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
+</p>
+<p
+  class="text-center text-lg md:text-xl lg:text-2xl"
+  in:fade={{duration: 1000, delay: 500, easing: quintInOut}}
+  out:fade={{easing: quintInOut}}>
   {#if event.date !== null}
     <CopyTimeDropdown class="ml-1" event={event}>
-      <span slot="button-text"><time datetime={event.date}>{format(parseISO(event.date), "PPPPp")}</time></span>
+      <span slot="button-text"><time datetime={dateStringToDisplay}>{format(parseISO(dateStringToDisplay), "PPPPp")}</time></span>
     </CopyTimeDropdown>
   {/if}
 </p>
 <div class="flex justify-center">
-  <Timer start={now} end={parseISO(event.date)} id={event.id}/>
+  <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id}/>
 </div>
-{#if event.description != null}
+{#if event.description}
   <div
     class="mx-4 my-8 text-lg md:text-xl max-w-3xl event__description"
     in:fade={{ duration: 500, delay: 700 }}
+    out:fade={{easing: quintInOut}}
   >
     <SvelteMarkdown
       source={event.description}

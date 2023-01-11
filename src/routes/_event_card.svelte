@@ -13,16 +13,17 @@
 
   export let event: CountdownDate;
   export let now: Date;
+  export let additionalDelay = 0;
 
   $: displayDate = (isEventHappeningNow(event, now) && event.end_date) ? event.end_date : event?.date;
 </script>
 
 <div
   class="bg-zinc-200 dark:bg-zinc-800 rounded-lg px-4 sm:px-12 pt-8 pb-4 relative w-min"
-  transition:fade>
+  in:fade="{{delay: additionalDelay}}">
   <p
     class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
-    in:fade="{{duration: 500, delay: 200}}"
+    in:fade="{{duration: 500, delay: 200 + additionalDelay}}"
     out:fade>
     <a href={`/event/${event.id}/${titleToSlug(event.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{event.title}</a>
     {#if event.id !== -1}
@@ -38,14 +39,14 @@
   {#if event.id !== -1 && displayDate !== null}
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
-      in:fade={{duration: 500, delay: 350}}
+      in:fade={{duration: 500, delay: 350 + additionalDelay}}
       out:fade
     >
       Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
     </p>
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
-      in:fade="{{duration: 500, delay: 500}}"
+      in:fade="{{duration: 500, delay: 500 + additionalDelay}}"
       out:fade>
       <CopyTimeDropdown class="ml-1" event={event}>
         <span slot="button-text"><time datetime={displayDate}>{format(parseISO(displayDate), "PPPPp")}</time></span>
@@ -53,7 +54,7 @@
     </p>
   {/if}
   <div class="flex justify-center">
-    <Timer start={now} end={parseISO(displayDate)} id={event.id}/>
+    <Timer start={now} end={parseISO(displayDate)} id={event.id} {additionalDelay} />
   </div>
 </div>
 

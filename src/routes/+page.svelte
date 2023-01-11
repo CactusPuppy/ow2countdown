@@ -84,9 +84,9 @@
 {/if}
 <div class="flex-grow flex flex-col gap-8 md:justify-center items-center my-8 w-full dark:text-zinc-50">
   {#if displayDates?.length != undefined && displayDates.length > 0}
-    {#each displayDates as event (event.id)}
+    {#each displayDates as event, eventIndex (event.id)}
       <div animate:flip>
-        <EventCard {now} {event} />
+        <EventCard {now} {event} additionalDelay={eventIndex * 150} />
       </div>
     {/each}
   {:else if loading}

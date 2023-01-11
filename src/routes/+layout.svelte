@@ -18,8 +18,8 @@
   });
 </script>
 
-<div class="wrapper min-h-[100vh] max-w-full overflow-x-hidden mx-2">
-  <main class="main__wrapper max-w-full mx-auto">
+<div class="wrapper min-h-screen max-w-full overflow-x-hidden mx-2">
+  <main class="main__wrapper max-w-full mx-auto relative">
     <slot />
   </main>
   <footer

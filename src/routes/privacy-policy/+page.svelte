@@ -11,6 +11,7 @@
     <li>Device OS (e.g. Android 10, Windows 11)</li>
     <li>Country (e.g. US, UK)</li>
     <li>When we received this information (e.g. 2020-10-31 09:06:30)</li>
+    <li>Which site referred you to OW2Countdown (e.g. google.com, reddit.com, etc.)</li>
   </ul>
   <p class="my-2">If you'd like to learn more about how Vercel processes this data on behalf of OW2Countdown.com, please read <a target="_blank" rel="noreferrer noopener" class="underline text-ow2-orange dark:text-ow2-light-orange" href="https://vercel.com/legal/privacy-policy">Vercel's Privacy Policy</a>.</p>
   <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Purpose</h2>

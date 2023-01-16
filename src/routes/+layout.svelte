@@ -1,7 +1,20 @@
 <script>
   import client from "$lib/client";
+  import { webVitals } from "$lib/webVitals";
+  import { browser } from "$app/environment";
+  import { page } from "$app/stores";
   import { invalidate } from "$app/navigation";
   import { onMount } from "svelte";
+
+  let analyticsID = import.meta.env.VERCEL_ANALYTICS_ID;
+
+  $: if (browser && analyticsID) {
+    webVitals({
+      page: $page.url.pathname,
+      params: $page.params,
+      analyticsID
+    });
+  }
 
   import "../app.css";
 

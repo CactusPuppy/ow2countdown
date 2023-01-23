@@ -9,13 +9,15 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import type { CountdownDate } from "$lib/types";
   import Timer from "$lib/components/_timer.svelte";
-  import { eventEffectiveDate, titleToSlug } from "$lib/utils/event_helpers";
+  import { eventEffectiveDate, eventRelationToNow, titleToSlug } from "$lib/utils/event_helpers";
 
   export let event: CountdownDate;
   export let now: Date;
   export let additionalDelay = 0;
 
   $: dateStringToDisplay = eventEffectiveDate(event, now);
+
+  $: displayVerb = eventRelationToNow(event, now);
 </script>
 
 <div
@@ -43,7 +45,7 @@
       in:fade={{duration: 500, delay: 350 + additionalDelay}}
       out:fade
     >
-      Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
+      Event {displayVerb} on
     </p>
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"

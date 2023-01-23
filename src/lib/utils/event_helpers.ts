@@ -23,3 +23,20 @@ export function eventEffectiveDate(event: CountdownDate, now?: Date) {
 
   return event.date;
 }
+
+export function eventRelationToNow(event: CountdownDate, now?: Date) {
+  if (parseISO(eventEffectiveDate(event)) < now) {
+    if (event.end_date) return "ended";
+    return "happened";
+  }
+
+  if (isEventHappeningNow(event, now)) {
+    return "ends";
+  }
+
+  if (event.end_date) {
+    return "begins";
+  }
+
+   return "occurs";
+}

@@ -70,7 +70,7 @@
     in:fade={{duration: 1000, delay: 500, easing: quintInOut}}
     out:fade={{easing: quintInOut}}>
     {#if event.date !== null}
-      <CopyTimeDropdown class="ml-1" event={event}>
+      <CopyTimeDropdown class="ml-1" date={parseISO(dateStringToDisplay)}>
         <span slot="button-text"><time datetime={dateStringToDisplay}>{format(parseISO(dateStringToDisplay), "PPPPp")}</time></span>
       </CopyTimeDropdown>
     {/if}

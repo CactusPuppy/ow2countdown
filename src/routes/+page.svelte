@@ -12,6 +12,7 @@
 
   import { dates } from "../stores/dates";
   import EventCard from "./_event_card.svelte";
+  import { eventEffectiveDate } from "$lib/utils/event_helpers";
 
   let now : Date;
   let nextAttemptMarker: Date;
@@ -20,17 +21,34 @@
   let loading = true;
 
   let displayDates: CountdownDate[];
-  // Gets the earliest date in each group
-  $: if ($dates.errored !== true) displayDates = Object.values($dates.reduce((accumulator, date) => {
-    const itemKey = (date?.group != undefined && date.group != "") ? `GROUP-${date?.group}` : `ID-${date.id}`;
-    if (accumulator[itemKey] === undefined) {
-      accumulator[itemKey] = date;
-    } else
-          if (compareAsc(parseISO(date.date), parseISO(accumulator[itemKey].date)) < 0) {
-      accumulator[itemKey] = date;
+  // Gets the earliest date in each group, then orders the dates
+  // (no specified datetime events inherently are treated as inifinitely far in the future)
+  $: if ($dates.errored !== true) {
+      displayDates = Object.values($dates.reduce((accumulator, date) => {
+        const itemKey = (date?.group != undefined && date.group != "") ? `GROUP-${date?.group}` : `ID-${date.id}`;
+        if (accumulator[itemKey] === undefined) {
+          accumulator[itemKey] = date;
+        } else
+              if (compareAsc(parseISO(date.date), parseISO(accumulator[itemKey].date)) < 0) {
+          accumulator[itemKey] = date;
+        }
+        return accumulator;
+      }, {} as Record<string, CountdownDate>))
+      .sort((event1, event2) => {
+        if (event1.priority != event2.priority) return event2.priority - event1.priority;
+
+        const event1EffectiveDate = eventEffectiveDate(event1, now);
+        const event2EffectiveDate = eventEffectiveDate(event2, now);
+
+        // If both events have no specified effective date, they are equivalent
+        if (!event1EffectiveDate && !event2EffectiveDate) return 0;
+
+        if (!event1EffectiveDate) return 1;
+        if (!event2EffectiveDate) return -1;
+
+        return parseISO(event1EffectiveDate).getTime() - parseISO(event2EffectiveDate).getTime();
+      });
     }
-    return accumulator;
-  }, {} as Record<string, CountdownDate>));
 
   let animationRequest : number;
   function updateTime(timestamp : DOMHighResTimeStamp) {

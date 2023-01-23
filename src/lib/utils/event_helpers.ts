@@ -15,3 +15,11 @@ export function isEventHappeningNow(event: CountdownDate, now?: Date) {
     && parseISO(event.date) < now
     && parseISO(event.end_date) > now;
 }
+
+export function eventEffectiveDate(event: CountdownDate, now?: Date) {
+  if (now == undefined) now = new Date();
+
+  if (parseISO(event.date) < now && event.end_date) return event.end_date;
+
+  return event.date;
+}

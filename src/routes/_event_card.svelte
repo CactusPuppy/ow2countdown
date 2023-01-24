@@ -39,7 +39,7 @@
       </a>
     {/if}
   </p>
-  {#if event.id !== -1 && dateStringToDisplay !== null}
+  {#if dateStringToDisplay !== null}
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
       in:fade={{duration: 500, delay: 350 + additionalDelay}}

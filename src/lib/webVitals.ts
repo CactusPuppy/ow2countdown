@@ -20,7 +20,7 @@ export interface MetricsOptions {
 function sendToAnalytics(metric: Metric, options: MetricsOptions) {
   const page = Object.entries(options.params).reduce(
     (acc, [key, value]) => acc.replace(value.toString(), `[${key}]`),
-    options.path
+    options.path ?? ""
   );
 
   const body = {

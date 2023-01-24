@@ -4,7 +4,7 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
   import Ow2CLink from "$lib/components/markdown/OW2CLink.svelte";
-  import { isEventHappeningNow, titleToSlug } from '$lib/utils/event_helpers';
+  import { eventRelationToNow, titleToSlug } from '$lib/utils/event_helpers';
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
@@ -32,6 +32,8 @@
     now = new Date();
     animationRequest = requestAnimationFrame(updateTime);
   }
+
+  $: displayVerb = eventRelationToNow(event, now);
 
   onMount(() => {
     if (browser) now = new Date();
@@ -63,14 +65,14 @@
     in:fade={{duration: 1000, delay: 450, easing: quintInOut}}
     out:fade
   >
-    Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
+    Event {displayVerb} on
   </p>
   <p
     class="text-center text-lg md:text-xl lg:text-2xl"
     in:fade={{duration: 1000, delay: 500, easing: quintInOut}}
     out:fade={{easing: quintInOut}}>
     {#if event.date !== null}
-      <CopyTimeDropdown class="ml-1" event={event}>
+      <CopyTimeDropdown class="ml-1" date={parseISO(dateStringToDisplay)}>
         <span slot="button-text"><time datetime={dateStringToDisplay}>{format(parseISO(dateStringToDisplay), "PPPPp")}</time></span>
       </CopyTimeDropdown>
     {/if}

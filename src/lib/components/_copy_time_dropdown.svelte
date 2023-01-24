@@ -4,19 +4,16 @@
   import { FontAwesomeIcon } from "fontawesome-svelte";
   import Dropdown from "./_dropdown.svelte";
   import CopyTimeButton from "./_copy_time_button.svelte";
-  import type { CountdownDate } from "$lib/types";
-  import { format, parseISO } from "date-fns";
+  import { format } from "date-fns";
 
-  export let event : CountdownDate;
-
-  const dateObj = parseISO(event.date);
+  export let date : Date;
 
   async function copyDiscordTimestamp() {
-    await navigator.clipboard.writeText(`<t:${Math.floor(dateObj.getTime() / 1000)}:f> (<t:${Math.floor(dateObj.getTime() / 1000)}:R>)`);
+    await navigator.clipboard.writeText(`<t:${Math.floor(date.getTime() / 1000)}:f> (<t:${Math.floor(date.getTime() / 1000)}:R>)`);
   }
 
   async function copyNormalTimestamp() {
-    await navigator.clipboard.writeText(format(parseISO(event.date), "PPPPp"))
+    await navigator.clipboard.writeText(format(date, "PPPPp"))
   }
 </script>
 

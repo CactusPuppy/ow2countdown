@@ -9,13 +9,15 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import type { CountdownDate } from "$lib/types";
   import Timer from "$lib/components/_timer.svelte";
-  import { isEventHappeningNow, titleToSlug } from "$lib/utils/event_helpers";
+  import { eventEffectiveDate, eventRelationToNow, titleToSlug } from "$lib/utils/event_helpers";
 
   export let event: CountdownDate;
   export let now: Date;
   export let additionalDelay = 0;
 
-  $: displayDate = (isEventHappeningNow(event, now) && event.end_date) ? event.end_date : event?.date;
+  $: dateStringToDisplay = eventEffectiveDate(event, now);
+
+  $: displayVerb = eventRelationToNow(event, now);
 </script>
 
 <div
@@ -37,25 +39,25 @@
       </a>
     {/if}
   </p>
-  {#if event.id !== -1 && displayDate !== null}
+  {#if event.id !== -1 && dateStringToDisplay !== null}
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
       in:fade={{duration: 500, delay: 350 + additionalDelay}}
       out:fade
     >
-      Event {isEventHappeningNow(event, now) ? "ends" : "begins"} on
+      Event {displayVerb} on
     </p>
     <p
       class="text-center text-lg md:text-xl lg:text-2xl"
       in:fade="{{duration: 500, delay: 500 + additionalDelay}}"
       out:fade>
-      <CopyTimeDropdown class="ml-1" event={event}>
-        <span slot="button-text"><time datetime={displayDate}>{format(parseISO(displayDate), "PPPPp")}</time></span>
+      <CopyTimeDropdown class="ml-1" date={parseISO(dateStringToDisplay)} {now}>
+        <span slot="button-text"><time datetime={dateStringToDisplay}>{format(parseISO(dateStringToDisplay), "PPPPp")}</time></span>
       </CopyTimeDropdown>
     </p>
   {/if}
   <div class="flex justify-center">
-    <Timer start={now} end={parseISO(displayDate)} id={event.id} {additionalDelay} />
+    <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} {additionalDelay} />
   </div>
 </div>
 

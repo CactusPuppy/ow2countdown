@@ -5,6 +5,7 @@
   import Timer from "$lib/components/_timer.svelte";
   import Ow2CLink from "$lib/components/markdown/OW2CLink.svelte";
   import { eventRelationToNow, titleToSlug } from '$lib/utils/event_helpers';
+  import { markdownToPlaintext } from "$lib/utils/string_helpers";
   import type { PageData } from "./$types";
 
   import { format, parseISO } from "date-fns";
@@ -23,6 +24,10 @@
   export let data: PageData;
   let event: CountdownDate;
   $: event = data.event;
+
+  const maxOGDescriptionLength = 200;
+  $: plaintextDescription = markdownToPlaintext(event.description);
+  $: ogDescription = plaintextDescription.length >= maxOGDescriptionLength ? `${plaintextDescription.substring(0, maxOGDescriptionLength)}...` : plaintextDescription;
 
   let now: Date;
 
@@ -48,7 +53,9 @@
 <svelte:head>
   <title>{data.event?.title ?? "Event"} | OW2Countdown.com</title>
 
+  <meta name="description" content={ogDescription}/>
   <meta name="og:title" content={`${data.event?.title ?? "Event"} | OW2Countdown.com`} />
+  <meta name="og:description" content={ogDescription}/>
   <meta name="og:url" content={`https://ow2countdown.com/event/${data.event.id}/${titleToSlug(data.event.title)}`} />
 </svelte:head>
 

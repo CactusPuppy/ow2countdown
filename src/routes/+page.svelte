@@ -93,7 +93,13 @@
   <title>Home | OW2Countdown.com</title>
 
   <meta name="og:title" content="OW2Countdown.com | Live countdowns to important Overwatch 2 events" />
+  <meta name="og:description" content="Count down the time left until important Overwatch 2 events while seeing the times in your timezone! Visit an event page to get more information about the event, or copy the date and time down for later use." />
+
   <meta name="og:url" content="https://ow2countdown.com" />
+  <meta name="og:image" content="https://ow2countdown.com/og-image.jpg" />
+  <meta name="og:image:alt" content="OW2Countdown Logo" />
+  <meta name="og:image:width" content="600" />
+  <meta name="og:image:height" content="600" />
 </svelte:head>
 
 {#if $dates.errored}

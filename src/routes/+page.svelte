@@ -13,6 +13,7 @@
   import { dates } from "../stores/dates";
   import EventCard from "./_event_card.svelte";
   import { eventEffectiveDate } from "$lib/utils/event_helpers";
+  import { fade } from "svelte/transition";
 
   let now : Date;
   let nextAttemptMarker: Date;
@@ -114,18 +115,18 @@
       </div>
     {/each}
   {:else if loading}
-    <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" transition:fade>
       <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">Loading...</h1>
     </div>
   {:else}
-      <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-max text-center">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max text-center" transition:fade>
         <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">No events found</h1>
         <p class="text-xl">Next refresh {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}</p>
       </div>
   {/if}
 </div>
 {#if $page.data.session}
-  <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
+  <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200 shadow-lg shadow-gray-900">
     <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
   </a>
 {/if}

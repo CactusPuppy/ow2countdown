@@ -69,7 +69,7 @@
   {#if isOpen}
     <div
       bind:this={menuEl}
-      class="origin-top-right absolute mt-1 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="origin-top-right absolute mt-1 rounded-md shadow-lg shadow-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none"
       style={`${menuOpenDirection}: 0px`}
       role="menu"
       aria-orientation="vertical"

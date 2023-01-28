@@ -31,7 +31,12 @@
     <a href={`/event/${event.id}/${titleToSlug(event.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{event.title}</a>
     {#if event.id !== -1}
       <a
-        class="inline sm:absolute sm:right-0 sm:top-0 sm:mr-4 sm:mt-3 px-2 py-1 bg-zinc-500 hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-200 rounded-md text-lg transition-colors"
+        class="inline sm:absolute sm:right-0 sm:top-0 sm:mr-4 sm:mt-3 px-2 py-1
+          bg-zinc-500 hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600
+          hover:shadow-md hover:shadow-gray-900 hover:active:shadow
+          hover:-translate-y-[0.1rem] hover:active:translate-y-0
+          text-zinc-200 rounded-md text-lg
+          transition-colors transition-transform transition-shadow"
         href={`/event/${event.id}/${titleToSlug(event.title)}`}
       >
         <FontAwesomeIcon icon={faCircleInfo} />

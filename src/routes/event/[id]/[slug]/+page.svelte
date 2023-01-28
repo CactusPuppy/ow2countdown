@@ -107,7 +107,7 @@
   </div>
 {/if}
 {#if $page.data.session}
-  <div class="sm:grid grid-cols-2 fixed bottom-8 right-8 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+  <div class="sm:grid grid-cols-2 fixed bottom-8 right-8 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden shadow-lg shadow-gray-900">
     <p class="p-4 pr-2 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
       <a href={`/event/${event.id}/edit`} class="" data-sveltekit-reload>
         <FontAwesomeIcon icon={faPencil}/><span class="pl-2 font-semibold">Edit Event</span>

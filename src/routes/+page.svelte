@@ -114,11 +114,11 @@
       </div>
     {/each}
   {:else if loading}
-    <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
       <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">Loading...</h1>
     </div>
   {:else}
-      <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-max text-center">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max text-center">
         <h1 class="text-5xl mb-4 text-ow2-orange dark:text-ow2-light-orange">No events found</h1>
         <p class="text-xl">Next refresh {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}</p>
       </div>

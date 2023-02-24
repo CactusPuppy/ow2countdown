@@ -56,7 +56,7 @@
 <div class={`relative z-10 ${$$props.class}`} bind:this={dropdownMenu}>
   <button
     type="button"
-    class="justify-center rounded-md px-2 py-1"
+    class="justify-center rounded-md px-2 py-1 focus:underline hover:underline"
     aria-label="copy-dropdown-button"
     aria-expanded="true"
     aria-haspopup="true"

@@ -1,14 +1,17 @@
 import { SUPABASE_TABLE_NAME } from "$env/static/private";
-import db from "$lib/db";
+import { getSupabase } from "@supabase/auth-helpers-sveltekit";
 import type { CountdownDate } from "$lib/types";
 import { type RequestHandler, error } from "@sveltejs/kit";
 import { compareAsc, parseISO } from "date-fns";
+import { titleToSlug } from "$lib/utils/event_helpers";
 
-export const GET: RequestHandler = async({ request, setHeaders }) => {
+export const GET: RequestHandler = async(fullRequest) => {
+  const { supabaseClient } = await getSupabase(fullRequest);
+  const { request, setHeaders } = fullRequest;
   const requestURL = new URL(request.url);
   const host = requestURL.host;
 
-  const { data, error: err } = await db.from(SUPABASE_TABLE_NAME).select('*');
+  const { data, error: err } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*');
 
   if (err) throw error(500, "Internal Server Error");
 
@@ -32,7 +35,7 @@ export const GET: RequestHandler = async({ request, setHeaders }) => {
 
     ${ (data as CountdownDate[]).sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime()).map(date => `
       <url>
-        <loc>${requestURL.protocol}//${host}/event/${date.id}</loc>
+        <loc>${requestURL.protocol}//${host}/event/${date.id}/${titleToSlug(date.title)}</loc>
         <changefreq>hourly</changefreq>
         <priority>${ compareAsc(parseISO(date.date), new Date()) > 0 ? "0.8" : "0.5" }</priority>
       </url>

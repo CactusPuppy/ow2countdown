@@ -4,12 +4,13 @@ import { getSupabase } from "@supabase/auth-helpers-sveltekit";
 import { formatISO } from "date-fns";
 import { SUPABASE_TABLE_NAME } from '$env/static/private'
 
-export const DATES_PAGE_SIZE = 25;
 
 export const GET: RequestHandler = async (request) => {
   const { supabaseClient } = await getSupabase(request);
   const { params, setHeaders } = request;
   const pageNum = Number.parseInt(params["page"], 10) || 0;
+
+  const DATES_PAGE_SIZE = 25;
 
   let query = supabaseClient.from(SUPABASE_TABLE_NAME)
     .select("*")

@@ -22,7 +22,7 @@
 
   let eventDurationInSeconds: number;
   let timeRemainingInSeconds: number;
-  $: if (isEventHappeningNow(event)) {
+  $: if (isEventHappeningNow(event, now)) {
     eventDurationInSeconds = differenceInSeconds(parseISO(event.date), parseISO(event.end_date));
     timeRemainingInSeconds = differenceInSeconds(now, parseISO(event.end_date), { roundingMethod: "ceil" })
   }
@@ -69,7 +69,7 @@
       </CopyTimeDropdown>
     </p>
   {/if}
-  {#if isEventHappeningNow(event)}
+  {#if isEventHappeningNow(event, now)}
     <div
       class="mt-2.5"
       in:fade="{{duration: 500, delay: 600 + additionalDelay}}">

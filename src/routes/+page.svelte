@@ -125,7 +125,7 @@
   {/if}
 </div>
 {#if $page.data.session}
-  <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200 shadow-lg shadow-gray-900">
+  <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200 shadow-lg shadow-gray-900 z-10">
     <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
   </a>
 {/if}

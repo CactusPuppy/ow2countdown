@@ -51,10 +51,9 @@
       });
     }
 
-  let animationRequest : number;
-  function updateTime(timestamp : DOMHighResTimeStamp) {
+  let timeUpdateInterval : NodeJS.Timer;
+  function updateTime() {
     now = new Date();
-    animationRequest = requestAnimationFrame(updateTime);
     if (nextAttemptMarker !== undefined) {
       timeToNextAttempt = formatDistanceStrict(nextAttemptMarker, now, { unit: "second", roundingMethod: "ceil" });
     }
@@ -79,13 +78,13 @@
   onMount(async () => {
     if (browser) now = new Date();
     await updateDates();
-    if (browser) animationRequest = window.requestAnimationFrame(updateTime);
+    if (browser) timeUpdateInterval = setInterval(updateTime, 100);
     loading = false;
   });
 
   onDestroy(() => {
     clearTimeout(dateUpdateTimer);
-    if (browser) window.cancelAnimationFrame(animationRequest);
+    if (browser) clearInterval(timeUpdateInterval);
   })
 
 </script>
@@ -110,7 +109,7 @@
 <div class="grid grid-cols-1 gap-8 self-start items-center my-8 w-full dark:text-zinc-50">
   {#if displayDates?.length != undefined && displayDates.length > 0}
     {#each displayDates as event, eventIndex (event.id)}
-      <div class="justify-self-center" animate:flip>
+      <div class="justify-self-center" animate:flip="{{duration: 500}}">
         <EventCard {now} {event} additionalDelay={eventIndex * 150} />
       </div>
     {/each}

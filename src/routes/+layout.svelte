@@ -53,7 +53,6 @@
   .wrapper {
     display: grid;
     grid-template-rows: 1fr auto;
-    /* align-items: center; */
   }
 
   .main__wrapper {

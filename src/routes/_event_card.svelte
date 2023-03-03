@@ -62,7 +62,7 @@
     </p>
   {/if}
   <div class="flex justify-center">
-    <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} {additionalDelay} />
+    <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={additionalDelay + 700} />
   </div>
 </div>
 

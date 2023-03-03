@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { format, parseISO } from "date-fns"
+  import { differenceInSeconds, format, parseISO } from "date-fns"
 
   import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
   import { FontAwesomeIcon } from "fontawesome-svelte";
@@ -9,7 +9,8 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import type { CountdownDate } from "$lib/types";
   import Timer from "$lib/components/_timer.svelte";
-  import { eventEffectiveDate, eventRelationToNow, titleToSlug } from "$lib/utils/event_helpers";
+  import { eventEffectiveDate, eventRelationToNow, titleToSlug, isEventHappeningNow } from "$lib/utils/event_helpers";
+  import ProgressBar from "$lib/components/_progress_bar.svelte";
 
   export let event: CountdownDate;
   export let now: Date;
@@ -18,6 +19,13 @@
   $: dateStringToDisplay = eventEffectiveDate(event, now);
 
   $: displayVerb = eventRelationToNow(event, now);
+
+  let eventDurationInSeconds: number;
+  let timeRemainingInSeconds: number;
+  $: if (isEventHappeningNow(event, now)) {
+    eventDurationInSeconds = differenceInSeconds(parseISO(event.date), parseISO(event.end_date));
+    timeRemainingInSeconds = differenceInSeconds(now, parseISO(event.end_date), { roundingMethod: "ceil" })
+  }
 </script>
 
 <div
@@ -61,8 +69,15 @@
       </CopyTimeDropdown>
     </p>
   {/if}
+  {#if isEventHappeningNow(event, now)}
+    <div
+      class="mt-2.5"
+      in:fade="{{duration: 500, delay: 600 + additionalDelay}}">
+      <ProgressBar progress={100 - timeRemainingInSeconds / eventDurationInSeconds * 100} />
+    </div>
+  {/if}
   <div class="flex justify-center">
-    <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} {additionalDelay} />
+    <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={additionalDelay + 700} />
   </div>
 </div>
 

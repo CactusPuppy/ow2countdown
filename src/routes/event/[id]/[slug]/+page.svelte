@@ -4,11 +4,11 @@
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
   import Ow2CLink from "$lib/components/markdown/OW2CLink.svelte";
-  import { eventRelationToNow, titleToSlug } from '$lib/utils/event_helpers';
+  import { eventRelationToNow, titleToSlug, isEventHappeningNow } from '$lib/utils/event_helpers';
   import { markdownToPlaintext } from "$lib/utils/string_helpers";
   import type { PageData } from "./$types";
 
-  import { format, parseISO } from "date-fns";
+  import { format, parseISO, differenceInSeconds } from "date-fns";
   import SvelteMarkdown from "svelte-markdown";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
@@ -20,6 +20,7 @@
   import { fade } from "svelte/transition";
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
+  import ProgressBar from "$lib/components/_progress_bar.svelte";
 
   export let data: PageData;
   let event: CountdownDate;
@@ -39,6 +40,13 @@
   }
 
   $: displayVerb = eventRelationToNow(event, now);
+
+  let eventDurationInSeconds: number;
+  let timeRemainingInSeconds: number;
+  $: if (isEventHappeningNow(event, now)) {
+    eventDurationInSeconds = differenceInSeconds(parseISO(event.date), parseISO(event.end_date));
+    timeRemainingInSeconds = differenceInSeconds(now, parseISO(event.end_date), { roundingMethod: "ceil" })
+  }
 
   onMount(() => {
     if (browser) now = new Date();
@@ -89,6 +97,13 @@
     {/if}
   </p>
 </div>
+{#if isEventHappeningNow(event, now)}
+  <div
+    class="mt-2.5 w-3/4"
+    in:fade="{{duration: 500, delay: 600}}">
+    <ProgressBar progress={100 - timeRemainingInSeconds / eventDurationInSeconds * 100} />
+  </div>
+{/if}
 <div class="flex justify-center">
   <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={700}/>
 </div>

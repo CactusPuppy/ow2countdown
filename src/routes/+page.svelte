@@ -23,7 +23,7 @@
 
   let displayDates: CountdownDate[];
   // Gets the earliest date in each group, then orders the dates
-  // (no specified datetime events inherently are treated as inifinitely far in the future)
+  // (no specified datetime events inherently are treated as infinitely far in the future)
   $: if ($dates.errored !== true) {
       displayDates = Object.values($dates.reduce((accumulator, date) => {
         const itemKey = (date?.group != undefined && date.group != "") ? `GROUP-${date?.group}` : `ID-${date.id}`;

@@ -31,8 +31,8 @@
   $: ogDescription = plaintextDescription.length >= maxOGDescriptionLength ? `${plaintextDescription.substring(0, maxOGDescriptionLength)}...` : plaintextDescription;
 
   let now: Date;
-
-  $: dateStringToDisplay = (now && event.date && parseISO(event.date).getTime() < now.getTime() && event.end_date) ? event.end_date : event.date;
+  const EVENT_ARRIVAL_LINGER_TIME_SECONDS = 3;
+  $: dateStringToDisplay = (now && event.date && now.getTime() > parseISO(event.date).getTime() + EVENT_ARRIVAL_LINGER_TIME_SECONDS * 1000 && event.end_date) ? event.end_date : event.date;
   let animationRequest: number;
   function updateTime() {
     now = new Date();

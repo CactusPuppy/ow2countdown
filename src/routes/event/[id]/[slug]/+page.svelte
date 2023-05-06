@@ -22,6 +22,8 @@
   import { goto } from "$app/navigation";
   import ProgressBar from "$lib/components/_progress_bar.svelte";
 
+  import EmbedBuilder from "./_embed_builder.svelte";
+
   export let data: PageData;
   let event: CountdownDate;
   $: event = data.event;
@@ -152,6 +154,10 @@
     </form>
   </div>
 {/if}
+
+<h2 class="text-2xl">Stream Browser Source Builder</h2>
+
+<EmbedBuilder {event} />
 
 <style>
   .event__title {

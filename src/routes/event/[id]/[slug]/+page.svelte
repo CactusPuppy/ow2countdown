@@ -13,7 +13,7 @@
   import SvelteMarkdown from "svelte-markdown";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
-  import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+  import { faPencil, faTrash, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
   import { quintInOut } from "svelte/easing";
   import { browser } from "$app/environment";
@@ -50,6 +50,8 @@
     eventDurationInSeconds = differenceInSeconds(parseISO(event.date), parseISO(event.end_date));
     timeRemainingInSeconds = differenceInSeconds(now, parseISO(event.end_date), { roundingMethod: "ceil" })
   }
+
+  let isEmbedBuilderOpen = false;
 
   onMount(() => {
     if (browser) now = new Date();
@@ -157,9 +159,36 @@
   </div>
 {/if}
 
-<h2 class="text-2xl">Stream Browser Source Builder</h2>
+<a href="/"
+    class="max-w-3xl px-6 py-3 md:px-8 md:py-4
+      text-lg md:text-xl focus:underline hover:underline text-ow2-orange dark:text-ow2-light-orange
+      rounded-md cursor-pointer
+      bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700
+      hover:shadow-lg hover:shadow-gray-900 hover:-translate-y-0.5 hover:active:shadow hover:active:translate-y-0
+      transition-colors transition-shadow transition-transform"
+    in:fade={{ duration: 500, delay: 900, easing: quintInOut }}
+    out:fade={{ easing: quintInOut }}
+  >
+    View All Events
+  </a>
 
-<EmbedBuilder {event} />
+<button
+  aria-expanded="true"
+  aria-haspopup="true"
+  on:click={ () => isEmbedBuilderOpen = !isEmbedBuilderOpen }
+  class="flex items-center"
+>
+  <p class="text-2xl">Stream Embed Builder</p>
+  <div class={"ml-4 transition-transform" + (isEmbedBuilderOpen ? " rotate-90" : "")}>
+    <FontAwesomeIcon icon={faChevronRight} />
+  </div>
+</button>
+
+{#if isEmbedBuilderOpen}
+  <div transition:fade>
+    <EmbedBuilder {event} />
+  </div>
+{/if}
 
 <style>
   .event__title {

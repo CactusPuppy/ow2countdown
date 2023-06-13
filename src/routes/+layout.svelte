@@ -31,7 +31,7 @@
   });
 </script>
 
-<div class="wrapper min-h-screen max-w-full overflow-x-hidden mx-2">
+<div class="wrapper min-h-screen max-w-[100dvw] overflow-x-hidden px-2">
   <main class="main__wrapper max-w-full mx-auto relative">
     <slot />
   </main>

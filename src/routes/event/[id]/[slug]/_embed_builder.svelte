@@ -49,28 +49,28 @@
 
 <div class="flex flex-col items-center max-w-full" transition:fade>
   <div class="embed_build__options">
-    <div>
+    <div class="min-w-max">
       <label class="embed-option">
         <input class="embed-option__input" type="checkbox" name="title" bind:checked={embedOptions["title"]} />
         <span class="embed-option__span">Title</span>
       </label>
     </div>
 
-    <div>
+    <div class="min-w-max">
       <label class="embed-option">
         <input class="embed-option__input" type="checkbox" name="timestamp" bind:checked={embedOptions["timestamp"]} />
         <span class="embed-option__span">Timestamp</span>
       </label>
     </div>
 
-    <div>
+    <div class="min-w-max">
       <label class="embed-option">
         <input class="embed-option__input" type="checkbox" name="progress_bar" bind:checked={embedOptions["progress_bar"]} />
         <span class="embed-option__span">Progress Bar</span>
       </label>
     </div>
 
-    <div>
+    <div class="min-w-max">
       <label class="embed-option">
         <input class="embed-option__input" type="checkbox" name="dark_mode" bind:checked={embedOptions["dark_mode"]} />
         <span class="embed-option__span">Dark Mode</span>
@@ -79,7 +79,7 @@
   </div>
   <button
     on:click={handleClick}
-    class="flex items-center relative max-w-sm sm:max-w-md md:max-w-xl lg:max-w-2xl mt-4 rounded bg-zinc-200 dark:bg-zinc-800 p-1 cursor-pointer font-mono text-ow2-orange dark:text-ow2-light-orange whitespace-nowrap"
+    class="flex items-center relative max-w-xs sm:max-w-md md:max-w-xl lg:max-w-2xl mt-4 rounded bg-zinc-200 dark:bg-zinc-800 p-1 cursor-pointer font-mono text-ow2-orange dark:text-ow2-light-orange whitespace-nowrap"
   >
     <FontAwesomeIcon icon={faCopy} />
     <p class="ml-2 overflow-hidden">{"https://ow2countdown.com" + finalPath}</p>
@@ -106,6 +106,7 @@
 <style>
   .embed_build__options {
     display: flex;
+    flex-wrap: wrap;
     gap: 1.25rem;
     max-width: 100%;
   }

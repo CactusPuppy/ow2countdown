@@ -185,9 +185,7 @@
 </button>
 
 {#if isEmbedBuilderOpen}
-  <div transition:fade>
-    <EmbedBuilder {event} />
-  </div>
+  <EmbedBuilder {event} />
 {/if}
 
 <style>

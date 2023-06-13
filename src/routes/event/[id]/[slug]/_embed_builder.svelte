@@ -24,7 +24,7 @@
   $: {
     let options = Object.entries(embedOptions).filter(([key, value]) => value && key != "dark_mode").map(([key, value]) => [key, "1"]);
     options.push(["theme", (embedOptions["dark_mode"] ? "dark" : "light")])
-    finalPath = `${baseEmbedURL}?${(new URLSearchParams())}`;
+    finalPath = `${baseEmbedURL}?${(new URLSearchParams(options))}`;
   }
 
   async function handleClick() {

@@ -193,6 +193,7 @@
 <style>
   .event__title {
     white-space: pre-line;
+    text-wrap: balance;
   }
 
   .event__description {

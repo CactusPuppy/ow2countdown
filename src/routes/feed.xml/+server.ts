@@ -23,7 +23,7 @@ export const GET: RequestHandler = async(fullRequest) => {
     "cache-control": "public, max-age: 600"
   });
 
-  const items = (data as CountdownDate[]).sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime()).map(date => {return {
+  const items = (data as CountdownDate[]).sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime()).slice(0,20).map(date => {
     item: {
       title: date.title,
       link: `${requestURL.protocol}//${host}/event/${date.id}/${titleToSlug(date.title)}`,

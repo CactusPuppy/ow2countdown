@@ -78,7 +78,7 @@
 
 <h1
   class="mx-4 mt-10 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
-  in:fade={{duration: 1000, delay: 0, easing: quintInOut}}
+  in:fade={{duration: 500, delay: 0, easing: quintInOut}}
   out:fade={{easing: quintInOut}}
 >
   {event.title}
@@ -86,14 +86,14 @@
 <div>
   <p
     class="text-center text-lg md:text-xl lg:text-2xl"
-    in:fade={{duration: 1000, delay: 450, easing: quintInOut}}
+    in:fade={{duration: 500, delay: 150, easing: quintInOut}}
     out:fade
   >
     Event {displayVerb} on
   </p>
   <p
     class="text-center text-lg md:text-xl lg:text-2xl"
-    in:fade={{duration: 1000, delay: 500, easing: quintInOut}}
+    in:fade={{duration: 500, delay: 300, easing: quintInOut}}
     out:fade={{easing: quintInOut}}>
     {#if event.date !== null}
       <CopyTimeDropdown class="ml-1" date={parseISO(dateStringToDisplay)}>
@@ -105,12 +105,12 @@
 {#if isEventHappeningNow(event, now)}
   <div
     class="mt-2.5 w-3/4"
-    in:fade="{{duration: 500, delay: 600}}">
+    in:fade="{{duration: 500, delay: 450}}">
     <ProgressBar progress={100 - timeRemainingInSeconds / eventDurationInSeconds * 100} />
   </div>
 {/if}
 <div class="flex justify-center">
-  <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={700}/>
+  <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={600}/>
 </div>
 {#if event.description}
   <div
@@ -166,7 +166,7 @@
       bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700
       hover:shadow-lg hover:shadow-gray-900 hover:-translate-y-0.5 hover:active:shadow hover:active:translate-y-0
       transition-colors transition-shadow transition-transform"
-    in:fade={{ duration: 500, delay: 900, easing: quintInOut }}
+    in:fade={{ duration: 500, delay: 850, easing: quintInOut }}
     out:fade={{ easing: quintInOut }}
   >
     View All Events
@@ -177,6 +177,8 @@
   aria-haspopup="true"
   on:click={ () => isEmbedBuilderOpen = !isEmbedBuilderOpen }
   class="flex items-center"
+  in:fade={{ duration: 500, delay: 1000, easing: quintInOut }}
+  out:fade={{ easing: quintInOut }}
 >
   <p class="text-2xl">Stream Embed Builder</p>
   <div class={"ml-4 transition-transform" + (isEmbedBuilderOpen ? " rotate-90" : "")}>
@@ -191,6 +193,7 @@
 <style>
   .event__title {
     white-space: pre-line;
+    text-wrap: balance;
   }
 
   .event__description {

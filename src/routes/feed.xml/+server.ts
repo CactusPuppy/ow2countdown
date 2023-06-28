@@ -2,8 +2,8 @@ import { SUPABASE_TABLE_NAME } from "$env/static/private";
 import { getSupabase } from "@supabase/auth-helpers-sveltekit";
 import type { CountdownDate } from "$lib/types";
 import { type RequestHandler, error } from "@sveltejs/kit";
-import { formatRFC7231, parseISO } from "date-fns";
-import { titleToSlug } from "$lib/utils/event_helpers";
+import { formatRFC7231, parseISO, isAfter, sub } from "date-fns";
+import { eventEffectiveDate, titleToSlug } from "$lib/utils/event_helpers";
 import { toXML } from "jstoxml";
 import { markdownToPlaintext } from "$lib/utils/string_helpers";
 
@@ -23,15 +23,24 @@ export const GET: RequestHandler = async(fullRequest) => {
     "cache-control": "public, max-age: 600"
   });
 
-  const items = (data as CountdownDate[]).sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime()).slice(0,20).map(date => {
-    item: {
-      title: date.title,
-      link: `${requestURL.protocol}//${host}/event/${date.id}/${titleToSlug(date.title)}`,
-      guid: `${requestURL.protocol}//${host}/event/${date.id}/${titleToSlug(date.title)}`,
-      description: markdownToPlaintext(date.description),
-      pubDate: formatRFC7231(parseISO(date.created_at))
-    }
-  };})
+  const nowDate = new Date();
+
+  const items = (data as CountdownDate[])
+    .sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime())
+    .filter((event) => isAfter(parseISO(eventEffectiveDate(event, nowDate)), sub(nowDate, { weeks: 1 }))).map(event => {
+    const baseItem = {
+      title: event.title,
+      link: `${requestURL.protocol}//${host}/event/${event.id}/${titleToSlug(event.title)}`,
+      guid: `${requestURL.protocol}//${host}/event/${event.id}/${titleToSlug(event.title)}`,
+      description: `${event.date ? `Event Date: ${formatRFC7231(parseISO(event.date))} | ` : ""}${event.end_date ? `Event End Date: ${formatRFC7231(parseISO(event.end_date))} | ` : ""}${markdownToPlaintext(event.description)}`,
+      pubDate: formatRFC7231(parseISO(event.created_at)),
+    };
+    if (event.date) baseItem["eventDate"] = formatRFC7231(parseISO(event.date));
+    if (event.end_date) baseItem["eventEndDate"] = formatRFC7231(parseISO(event.end_date));
+    return {
+      item: baseItem
+    };
+  })
 
   const body = toXML({
     _name: "rss",

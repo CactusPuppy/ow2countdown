@@ -27,7 +27,7 @@ export const GET: RequestHandler = async(fullRequest) => {
   const nowDate = new Date();
 
   const items = (data as CountdownDate[])
-    .sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime())
+    .sort((a, b) => parseISO(b.created_at).getTime() - parseISO(a.created_at).getTime())
     .filter((event) => isAfter(parseISO(eventEffectiveDate(event, nowDate)), sub(nowDate, { weeks: 1 }))).map(event => {
     const baseItem = {
       title: event.title,

@@ -4,7 +4,8 @@ import type { CountdownDate } from "$lib/types";
 import { type RequestHandler, error } from "@sveltejs/kit";
 import { formatRFC7231, parseISO, isAfter, sub } from "date-fns";
 import { eventEffectiveDate, titleToSlug } from "$lib/utils/event_helpers";
-import { toXML } from "jstoxml";
+import jstoxml from "jstoxml";
+const { toXML } = jstoxml;
 import { markdownToPlaintext } from "$lib/utils/string_helpers";
 
 

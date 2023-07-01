@@ -8,7 +8,7 @@
   import type { CountdownDate } from "$lib/types";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
-  import { faPlus } from "@fortawesome/free-solid-svg-icons";
+  import { faPlus, faRssSquare } from "@fortawesome/free-solid-svg-icons";
 
   import { dates } from "../stores/dates";
   import EventCard from "./_event_card.svelte";
@@ -106,13 +106,15 @@
   <div class="fixed top-0 left-0 z-30 w-full text-center p-4 bg-[#f15047df] dark:bg-[#7F1D1DDF] dark:text-zinc-50">
     A problem arose while contacting the server for updated information. Don't refresh, we'll try to contact the server again for you {nextAttemptMarker !== undefined && compareAsc(now, nextAttemptMarker) < 0 ? `in ${timeToNextAttempt}` : "soon"}.</div>
 {/if}
-<div class="grid grid-cols-1 gap-8 self-start items-center my-8 w-full dark:text-zinc-50">
+<div class="min-h-full items-center my-8 w-full dark:text-zinc-50">
   {#if displayDates?.length != undefined && displayDates.length > 0}
-    {#each displayDates as event, eventIndex (event.id)}
-      <div class="justify-self-center" animate:flip="{{duration: 500}}">
-        <EventCard {now} {event} additionalDelay={eventIndex * 150} />
-      </div>
-    {/each}
+    <div class="events-wrapper flex flex-col mx-auto items-center gap-8">
+      {#each displayDates as event, eventIndex (event.id)}
+        <div class="justify-self-center" animate:flip="{{duration: 500}}">
+          <EventCard {now} {event} additionalDelay={eventIndex * 150} />
+        </div>
+      {/each}
+    </div>
   {:else if loading}
     <div class="absolute top-[45vh] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" transition:fade>
       <h1 class="text-5xl text-ow2-orange dark:text-ow2-light-orange">Loading...</h1>
@@ -125,7 +127,18 @@
   {/if}
 </div>
 {#if $page.data.session}
-  <a href="/event/new" class="fixed bottom-8 right-8 p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200 shadow-lg shadow-gray-900 z-10">
+  <a
+    href="/event/new"
+    class="block self-end justify-self-end p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline
+      transition-colors ease-out duration-200 shadow-lg shadow-gray-900 z-10"
+  >
     <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
   </a>
 {/if}
+
+<style>
+  .events-wrapper {
+    max-width: min(calc(1200px - 4rem + 20vw), 100%);
+    /* align-self: stretch; */
+  }
+</style>

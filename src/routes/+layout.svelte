@@ -34,8 +34,8 @@
   });
 </script>
 
-<div class="wrapper min-h-screen max-w-[100dvw] px-2">
-  <header class="grid grid-cols-3 justify-items-center items-center w-full mt-4 px-4 dark:text-white">
+<div class="wrapper min-h-screen max-w-[100dvw]">
+  <header class="grid grid-cols-3 justify-items-center items-center w-full py-2 px-4 dark:text-white">
     <div class="justify-self-start w-12"><a href="/">
       <Ow2CountdownLogo />
     </a></div>

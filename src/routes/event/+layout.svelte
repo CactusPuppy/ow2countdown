@@ -1,4 +1,4 @@
-<div class="width-limiter mx-auto">
+<div class="width-limiter relative mx-auto">
   <slot />
 </div>
 

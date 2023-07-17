@@ -61,7 +61,7 @@
       <a href="/privacy-policy" class="text-ow2-orange dark:text-ow2-light-orange underline">Privacy Policy</a>
     </p>
     <p class="text-xs text-zinc-500 dark:text-zinc-400 text-right">
-      This site and its creator are not affiliated with Overwatch or Blizzard Entertainment.
+      This site is not affiliated with Overwatch or Blizzard Entertainment.
       <br />Overwatch 2 and the Overwatch 2 logo are ©2022 Blizzard Entertainment, Inc.
     </p>
   </footer>

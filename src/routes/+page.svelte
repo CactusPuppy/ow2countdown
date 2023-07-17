@@ -8,7 +8,7 @@
   import type { CountdownDate } from "$lib/types";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
-  import { faPlus, faRssSquare } from "@fortawesome/free-solid-svg-icons";
+  import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
   import { dates } from "../stores/dates";
   import EventCard from "./_event_card.svelte";

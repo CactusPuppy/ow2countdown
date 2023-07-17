@@ -39,24 +39,26 @@
     <div class="justify-self-start w-12"><a href="/">
       <Ow2CountdownLogo />
     </a></div>
-    <nav class="flex gap-10 text-2xl items-center justify-center">
+    <nav class="flex gap-10 text-lg sm:text-2xl items-center justify-center">
       <a href="/" class="hover:underline focus-visible:underline">Home</a>
-      <a href="/privacy-policy" class="hover:underline focus-visible:underline">About</a>
+      <a href="/about" class="hover:underline focus-visible:underline">About</a>
     </nav>
     <div class="justify-self-end flex items-center justify-center gap-4 text-2xl">
       <a href="/feed.xml" target="_blank"><RssFeedIcon /></a>
       <a href="https://github.com/CactusPuppy/ow2countdown" target="_blank" rel="noreferrer noopener"><GitHubIcon /></a>
     </div>
   </header>
+
   <main class="main__wrapper w-full mx-auto relative">
     <slot />
   </main>
+
   <footer
     class="flex justify-between gap-2 px-2 pt-4 mt-8 mb-2 w-full overflow-y-visible border-t-[1px] border-t-zinc-400 dark:border-t-zinc-700"
   >
     <p class="text-xs text-zinc-500 dark:text-zinc-400 text-left">
       Created by CactusPuppy  |  <a href="https://github.com/CactusPuppy/ow2countdown" rel="noreferrer noopener" target="_blank" class="text-ow2-orange dark:text-ow2-light-orange underline">GitHub</a><br>
-      <a href="/privacy-policy" target="_self" class="text-ow2-orange dark:text-ow2-light-orange underline">Privacy Policy</a>
+      <a href="/privacy-policy" class="text-ow2-orange dark:text-ow2-light-orange underline">Privacy Policy</a>
     </p>
     <p class="text-xs text-zinc-500 dark:text-zinc-400 text-right">
       This site and its creator are not affiliated with Overwatch or Blizzard Entertainment.

@@ -21,14 +21,16 @@
   $: baseEmbedURL = `/event/${event.id}/${titleToSlug(event.title)}/embed`;
 
   let finalPath: string;
+  let finalURL: string;
   $: {
     let options = Object.entries(embedOptions).filter(([key, value]) => value && key != "dark_mode").map(([key, value]) => [key, "1"]);
     options.push(["theme", (embedOptions["dark_mode"] ? "dark" : "light")])
     finalPath = `${baseEmbedURL}?${(new URLSearchParams(options))}`;
+    finalURL = window.location.origin + finalPath;
   }
 
   async function handleClick() {
-    await navigator.clipboard.writeText("https://ow2countdown.com" + finalPath);
+    await navigator.clipboard.writeText(finalURL);
     fadeInOutCopyConfirmation();
   }
 
@@ -82,7 +84,7 @@
     class="flex items-center relative max-w-xs sm:max-w-md md:max-w-xl lg:max-w-2xl mt-4 rounded bg-zinc-200 dark:bg-zinc-800 p-1 cursor-pointer font-mono text-ow2-orange dark:text-ow2-light-orange whitespace-nowrap"
   >
     <FontAwesomeIcon icon={faCopy} />
-    <p class="ml-2 overflow-hidden">{"https://ow2countdown.com" + finalPath}</p>
+    <p class="ml-2 overflow-hidden">{finalURL}</p>
     <div class="absolute inset-0 opacity-0 bg-zinc-200 dark:bg-zinc-800 pointer-events-none" bind:this={copyNotification}>
       <p class="m-auto translate-y-1">(copied)</p>
     </div>

@@ -3,6 +3,7 @@
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
+  import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
 
   let loading = false;
 
@@ -29,7 +30,7 @@
   }
 </script>
 
-<div class="flex flex-col justify-center dark:text-white">
+<WidthLimiter class="mx-auto flex flex-col justify-center dark:text-white">
   <h1 class="text-3xl mb-4">Login</h1>
   {#if loginError}
     <div class="bg-red-500 dark:bg-red-700 px-3 py-2 rounded-sm">
@@ -52,4 +53,4 @@
       <input type="submit" class="bg-ow2-orange rounded-xl mt-1 px-2 py-1 text-lg font-semibold cursor-pointer text-white" value={ loading ? "Redirecting..." : "Login" } disabled={ loading } />
     </div>
   </form>
-</div>
+</WidthLimiter>

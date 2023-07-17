@@ -126,8 +126,8 @@
       </div>
   {/if}
 
-  {#if $page.data.session}
-    <div class="sticky bottom-8 my-[-2rem] flex flex-row-reverse pr-4 sm:pr-8 z-20 pointer-events-none">
+  <div class={`sticky bottom-8 ${$page.data.session ? "my-[-2rem]" : "hidden"} flex flex-row-reverse pr-4 sm:pr-8 z-20 pointer-events-none`} transition:fade>
+    {#if $page.data.session && !loading}
       <a
         href="/event/new"
         class="block pointer-events-auto p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline
@@ -135,8 +135,8 @@
       >
         <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
       </a>
-    </div>
-  {/if}
+    {/if}
+  </div>
 </div>
 
 

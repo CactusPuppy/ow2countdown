@@ -104,7 +104,7 @@
 </div>
 {#if isEventHappeningNow(event, now)}
   <div
-    class="mt-2.5 w-3/4"
+    class="mt-2.5 w-3/4 max-w-[48rem]"
     in:fade="{{duration: 500, delay: 600}}">
     <ProgressBar progress={100 - timeRemainingInSeconds / eventDurationInSeconds * 100} />
   </div>

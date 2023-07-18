@@ -12,3 +12,7 @@ body {
     @apply bg-zinc-900;
   }
 }
+
+.text-balance {
+  text-wrap: balance;
+}

@@ -11,6 +11,12 @@
   $: event = data.event;
 </script>
 
+<svelte:head>
+  <title>{data.event?.title ?? "Event"} Embed</title>
+  <meta name="og:title" content={`${data.event?.title ?? "Event"} Embed`} />
+  <meta name="robots" content="noindex" />
+</svelte:head>
+
 <Embed
   title={$page.url.searchParams.has("title")}
   timestamp={$page.url.searchParams.has("timestamp")}

@@ -53,7 +53,7 @@
   });
 </script>
 
-<div class={`relative z-10 ${$$props.class}`} bind:this={dropdownMenu}>
+<div class={`relative ${$$props.class}`} bind:this={dropdownMenu}>
   <button
     type="button"
     class="justify-center rounded-md px-2 py-1 focus:underline hover:underline"
@@ -69,7 +69,7 @@
   {#if isOpen}
     <div
       bind:this={menuEl}
-      class="origin-top-right absolute mt-1 rounded-md shadow-lg shadow-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="origin-top-right absolute mt-1 rounded-md shadow-lg shadow-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
       style={`${menuOpenDirection}: 0px`}
       role="menu"
       aria-orientation="vertical"

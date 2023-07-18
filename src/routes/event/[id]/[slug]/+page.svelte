@@ -77,7 +77,7 @@
 </svelte:head>
 
 <h1
-  class="mx-4 mt-10 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
+  class="m-4 mt-1 tracking-tight text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
   in:fade={{duration: 500, delay: 0, easing: quintInOut}}
   out:fade={{easing: quintInOut}}
 >
@@ -109,12 +109,12 @@
     <ProgressBar progress={100 - timeRemainingInSeconds / eventDurationInSeconds * 100} />
   </div>
 {/if}
-<div class="flex justify-center">
+<div class="my-4 flex justify-center">
   <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={600}/>
 </div>
 {#if event.description}
   <div
-    class="mx-4 my-8 text-lg md:text-xl max-w-3xl event__description"
+    class="mx-4 mt-2 text-lg md:text-xl max-w-3xl event__description"
     in:fade={{ duration: 500, delay: 700 }}
     out:fade={{easing: quintInOut}}
   >
@@ -129,23 +129,23 @@
 {/if}
 
 <a href="/"
-    class="max-w-3xl px-6 py-3 md:px-8 md:py-4
-      text-lg md:text-xl focus:underline hover:underline text-ow2-orange dark:text-ow2-light-orange
-      rounded-md cursor-pointer
-      bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700
-      hover:shadow-lg hover:shadow-gray-900 hover:-translate-y-0.5 hover:active:shadow hover:active:translate-y-0
-      transition-colors transition-shadow transition-transform"
-    in:fade={{ duration: 500, delay: 850, easing: quintInOut }}
-    out:fade={{ easing: quintInOut }}
-  >
-    View All Events
-  </a>
+  class="max-w-3xl mt-2 px-6 py-3 md:px-8 md:py-4
+    text-lg md:text-xl focus:underline hover:underline text-ow2-orange dark:text-ow2-light-orange
+    rounded-md cursor-pointer
+    bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700
+    hover:shadow-lg hover:shadow-gray-900 hover:-translate-y-0.5 hover:active:shadow hover:active:translate-y-0
+    transition-colors transition-shadow transition-transform"
+  in:fade={{ duration: 500, delay: 850, easing: quintInOut }}
+  out:fade={{ easing: quintInOut }}
+>
+  View All Events
+</a>
 
 <button
   aria-expanded="true"
   aria-haspopup="true"
   on:click={ () => isEmbedBuilderOpen = !isEmbedBuilderOpen }
-  class="flex items-center"
+  class="mt-4 flex items-center"
   in:fade={{ duration: 500, delay: 1000, easing: quintInOut }}
   out:fade={{ easing: quintInOut }}
 >
@@ -155,11 +155,13 @@
   </div>
 </button>
 
-{#if isEmbedBuilderOpen}
-  <EmbedBuilder {event} />
-{/if}
+<div class="mt-2">
+  {#if isEmbedBuilderOpen}
+    <EmbedBuilder {event} />
+  {/if}
+</div>
 
-<div class={`w-screen pr-8 pointer-events-none flex flex-row-reverse sticky bottom-8 ${$page.data.session ? "mb-[-1rem] mt-[-2rem]" : "hidden"}`}>
+<div class={`w-screen pr-8 pointer-events-none flex flex-row-reverse sticky bottom-8 ${$page.data.session ? "mb-[-1rem] mt-[-3rem]" : "hidden"}`}>
   {#if $page.data.session}
     <div class="pointer-events-auto sm:grid grid-cols-2 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden shadow-lg shadow-gray-900">
       <p class="p-4 pr-2 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">

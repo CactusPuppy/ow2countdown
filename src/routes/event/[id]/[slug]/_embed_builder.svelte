@@ -50,7 +50,7 @@
 </script>
 
 <div class="flex flex-col items-center max-w-full" transition:fade>
-  <div class="embed_build__options">
+  <div class="embed_build__options px-4">
     <div class="min-w-max">
       <label class="embed-option">
         <input class="embed-option__input" type="checkbox" name="title" bind:checked={embedOptions["title"]} />

@@ -43,7 +43,7 @@
   }
 </script>
 
-<div class="relative flex justify-center gap-12 md:gap-20 lg:gap-28 my-6 w-80 md:w-[36rem] lg:w-[40rem]">
+<div class="relative flex justify-center gap-12 md:gap-20 lg:gap-28 w-80 md:w-[36rem] lg:w-[40rem]">
   {#each timerValues as timerValue, i (timerValue.units)}
     <div in:fade="{{ duration: 500, delay: i * 100 + additionalDelay }}"
       out:fly="{{ duration: 500, y: 20 }}"

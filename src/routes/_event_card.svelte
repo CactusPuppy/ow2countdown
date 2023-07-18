@@ -33,7 +33,7 @@
   in:fade="{{delay: additionalDelay}}"
   out:fade>
   <p
-    class="text-center text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
+    class="text-center text-balance text-xl md:text-2xl lg:text-3xl whitespace-pre-line"
     in:fade="{{duration: 500, delay: 200 + additionalDelay}}"
     out:fade>
     <a href={`/event/${event.id}/${titleToSlug(event.title)}`} class="text-ow2-orange dark:text-ow2-light-orange hover:underline focus:underline">{event.title}</a>

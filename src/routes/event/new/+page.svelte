@@ -35,7 +35,7 @@
 </script>
 
 
-<div>
+<div class="px-2">
   <h1 class="text-4xl m-8 font-bold text-center text-ow2-orange dark:text-ow2-light-orange">Create a new event</h1>
   <form
     method="POST"

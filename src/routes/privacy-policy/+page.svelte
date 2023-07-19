@@ -4,7 +4,7 @@
 </script>
 
 <div
-  class="mx-auto max-w-prose dark:text-zinc-50 text-xl"
+  class="px-2 mx-auto max-w-prose dark:text-zinc-50 text-xl"
   in:fade={{ duration: 300, delay: $navigating ? 200 : 0 }}
 >
   <h1 class="tracking-tight my-6 text-2xl sm:text-3xl md:text-4xl font-bold text-ow2-orange dark:text-ow2-light-orange">OW2Countdown's Privacy Policy</h1>

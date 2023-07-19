@@ -30,7 +30,7 @@
   }
 </script>
 
-<WidthLimiter class="mx-auto flex flex-col justify-center dark:text-white">
+<WidthLimiter class="px-2 mx-auto flex flex-col justify-center dark:text-white">
   <h1 class="text-3xl mb-4">Login</h1>
   {#if loginError}
     <div class="bg-red-500 dark:bg-red-700 px-3 py-2 rounded-sm">

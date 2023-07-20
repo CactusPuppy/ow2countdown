@@ -45,7 +45,7 @@
   })
 </script>
 
-<WidthLimiter vagueWidthInPx={600} class="mx-auto w-full flex flex-col gap-2 items-center dark:text-zinc-50">
+<div class="max-w-4xl mx-auto w-full flex flex-col gap-2 items-center dark:text-zinc-50">
   {#if title}
     <h1 class="mx-4 mt-2 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange">{event.title}</h1>
   {/if}
@@ -75,4 +75,4 @@
   <div class="mt-4">
     <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={700}/>
   </div>
-</WidthLimiter>
+</div>

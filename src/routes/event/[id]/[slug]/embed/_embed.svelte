@@ -8,6 +8,7 @@
 
   import { differenceInSeconds, format, parseISO } from "date-fns";
   import { formatInTimeZone } from "date-fns-tz";
+  import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
 
   export let title: boolean;
   export let timestamp: boolean;
@@ -44,7 +45,7 @@
   })
 </script>
 
-<div class="w-full flex flex-col gap-2 items-center dark:text-zinc-50">
+<WidthLimiter vagueWidthInPx={600} class="mx-auto w-full flex flex-col gap-2 items-center dark:text-zinc-50">
   {#if title}
     <h1 class="mx-4 mt-2 text-center text-5xl text-ow2-orange dark:text-ow2-light-orange">{event.title}</h1>
   {/if}
@@ -72,4 +73,4 @@
     </div>
   {/if}
   <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={700}/>
-</div>
+</WidthLimiter>

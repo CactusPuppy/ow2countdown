@@ -72,5 +72,7 @@
       <ProgressBar progress={100 - timeRemainingInSeconds / eventDurationInSeconds * 100} />
     </div>
   {/if}
-  <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={700}/>
+  <div class="mt-4">
+    <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={700}/>
+  </div>
 </WidthLimiter>

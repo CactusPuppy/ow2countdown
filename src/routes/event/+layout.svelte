@@ -1,9 +1,8 @@
-<div class="width-limiter relative mx-auto">
-  <slot />
-</div>
+<script>
 
-<style>
-  .width-limiter {
-    max-width: min(calc(900px - 4rem + 20vw), 100%);
-  }
-</style>
+  import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
+
+</script>
+<WidthLimiter class="relative mx-auto dark:text-zinc-50">
+  <slot />
+</WidthLimiter>

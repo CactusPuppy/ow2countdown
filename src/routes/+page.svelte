@@ -126,16 +126,21 @@
       </div>
   {/if}
 
-  <div class={`sticky bottom-8 ${$page.data.session ? "my-[-2rem]" : "hidden"} flex flex-row-reverse pr-4 sm:pr-8 z-20 pointer-events-none`} transition:fade>
-    {#if $page.data.session && !loading}
-      <a
-        href="/event/new"
-        class="block pointer-events-auto p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline
-          transition-colors ease-out duration-200 shadow-lg shadow-gray-900"
-      >
-        <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
-      </a>
-    {/if}
+  <div class="absolute w-screen top-0 bottom-0 pointer-events-none">
+    <div class="relative grid grid-rows-[1fr,auto] h-full w-full">
+      <div></div>
+      <div class={`sticky bottom-8 flex flex-row-reverse pr-4 sm:pr-8 z-20 pointer-events-none`} transition:fade>
+        {#if $page.data.session && !loading}
+          <a
+            href="/event/new"
+            class="block pointer-events-auto p-4 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline
+              transition-colors ease-out duration-200 shadow-lg shadow-gray-900"
+          >
+            <FontAwesomeIcon icon={faPlus}/><span class="pl-2 font-semibold">New Event</span>
+          </a>
+        {/if}
+      </div>
+    </div>
   </div>
 </div>
 

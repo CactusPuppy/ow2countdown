@@ -77,9 +77,9 @@
 </svelte:head>
 
 <div
-  class="min-h-full grid grid-rows-[1fr,auto] dark:text-zinc-50"
+  class="min-h-full grid grid-rows-[1fr,auto] justify-items-center"
 >
-  <div>
+  <div class="flex flex-col items-center">
     <h1
       class="m-4 mt-1 tracking-tight text-center text-5xl text-ow2-orange dark:text-ow2-light-orange event__title"
       in:fade={{duration: 500, delay: 0, easing: quintInOut}}
@@ -167,37 +167,42 @@
       {/if}
     </div>
 
-    <div class={`w-screen pr-8 pointer-events-none flex flex-row-reverse sticky bottom-8 ${$page.data.session ? "mb-[-1rem] mt-[-3rem]" : "hidden"}`}>
-      {#if $page.data.session}
-        <div class="pointer-events-auto sm:grid grid-cols-2 rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden shadow-lg shadow-gray-900">
-          <p class="p-4 pr-2 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
-            <a href={`/event/${event.id}/edit`} class="" data-sveltekit-reload>
-              <FontAwesomeIcon icon={faPencil}/><span class="pl-2 font-semibold">Edit Event</span>
-            </a>
-          </p>
-          <form
-            class="p-4 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200 text-red-700 dark:text-red-400"
-            action={`/event/${event.id}/destroy`}
-            method="POST"
-            use:enhance={({ cancel }) => {
-              if (!window.confirm(`Are you sure you want to delete '${event.title}'?`)) {
-                cancel();
-              }
-              return async ({ result }) => {
-                if (result.type == "success" || result.type == "redirect") {
-                  goto("/");
-                } else {
-                  alert("Something went wrong. Sorry about that!");
+  </div>
+  <div class="absolute w-screen top-0 bottom-0 pointer-events-none" transition:fade>
+    <div class="relative grid grid-rows-[1fr,auto] h-full w-full">
+      <div></div>
+      <div class={`sticky flex flex-row-reverse bottom-8`}>
+        {#if $page.data.session}
+          <div class="pointer-events-auto mr-8 sm:flex rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden shadow-lg shadow-gray-900">
+            <p class="p-4 pr-5 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
+              <a href={`/event/${event.id}/edit`} class="" data-sveltekit-reload>
+                <FontAwesomeIcon icon={faPencil}/><span class="pl-2 font-semibold">Edit Event</span>
+              </a>
+            </p>
+            <form
+              class="p-4 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200 text-red-700 dark:text-red-400"
+              action={`/event/${event.id}/destroy`}
+              method="POST"
+              use:enhance={({ cancel }) => {
+                if (!window.confirm(`Are you sure you want to delete '${event.title}'?`)) {
+                  cancel();
                 }
-              };
-            }}
-          >
-            <button type="submit">
-              <FontAwesomeIcon icon={faTrash}/><span class="pl-2 font-semibold">Delete Event</span>
-            </button>
-          </form>
-        </div>
-      {/if}
+                return async ({ result }) => {
+                  if (result.type == "success" || result.type == "redirect") {
+                    goto("/");
+                  } else {
+                    alert("Something went wrong. Sorry about that!");
+                  }
+                };
+              }}
+            >
+              <button type="submit">
+                <FontAwesomeIcon icon={faTrash}/><span class="pl-2 font-semibold">Delete Event</span>
+              </button>
+            </form>
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
 </div>

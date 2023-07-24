@@ -168,7 +168,7 @@
     </div>
 
   </div>
-  <div class="absolute w-screen top-0 bottom-0 pointer-events-none" transition:fade>
+  <div class="absolute w-full top-0 bottom-0 pointer-events-none" transition:fade>
     <div class="relative grid grid-rows-[1fr,auto] h-full w-full">
       <div></div>
       <div class={`sticky flex flex-row-reverse bottom-8`}>

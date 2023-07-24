@@ -126,7 +126,7 @@
       </div>
   {/if}
 
-  <div class="absolute w-screen top-0 bottom-0 pointer-events-none">
+  <div class="absolute w-full top-0 bottom-0 pointer-events-none">
     <div class="relative grid grid-rows-[1fr,auto] h-full w-full">
       <div></div>
       <div class={`sticky bottom-8 flex flex-row-reverse pr-4 sm:pr-8 z-20 pointer-events-none`} transition:fade>

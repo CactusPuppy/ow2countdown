@@ -6,6 +6,7 @@
   import { onMount } from "svelte";
 
   import type { ActionData } from "./$types";
+  import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
 
   let submitting = false;
 
@@ -35,8 +36,8 @@
 </script>
 
 
-<div class="px-2">
-  <h1 class="text-4xl m-8 font-bold text-center text-ow2-orange dark:text-ow2-light-orange">Create a new event</h1>
+<WidthLimiter vagueWidthInPx={400} class="mx-auto">
+  <h1 class="text-4xl mt-4 mb-2 font-bold text-center text-ow2-orange dark:text-ow2-light-orange">Create a new event</h1>
   <form
     method="POST"
     class="dark:text-white flex flex-col "
@@ -52,4 +53,4 @@
     </EventForm>
 
   </form>
-</div>
+</WidthLimiter>

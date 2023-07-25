@@ -7,6 +7,7 @@
   import Heading from "$lib/components/markdown/Heading.svelte";
   import { eventRelationToNow, titleToSlug, isEventHappeningNow } from '$lib/utils/event_helpers';
   import { markdownToPlaintext } from "$lib/utils/string_helpers";
+  import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
   import type { PageData } from "./$types";
 
   import { format, parseISO, differenceInSeconds } from "date-fns";
@@ -118,7 +119,7 @@
     </div>
     {#if event.description}
       <div
-        class="mx-4 mt-2 text-lg md:text-xl max-w-3xl event__description"
+        class="mx-4 mt-2 text-lg md:text-xl max-w-prose event__description"
         in:fade={{ duration: 500, delay: 700 }}
         out:fade={{easing: quintInOut}}
       >
@@ -166,7 +167,6 @@
         <EmbedBuilder {event} />
       {/if}
     </div>
-
   </div>
   <div class="absolute w-full top-0 bottom-0 pointer-events-none" transition:fade>
     <div class="relative grid grid-rows-[1fr,auto] h-full w-full">

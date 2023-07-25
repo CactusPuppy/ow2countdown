@@ -36,7 +36,7 @@
 </script>
 
 
-<WidthLimiter vagueWidthInPx={400} class="mx-auto px-2">
+<WidthLimiter vagueWidthInPx={300} class="w-full mx-auto px-2">
   <h1 class="text-4xl mt-2 mb-4 font-bold tracking-tight text-center text-ow2-orange dark:text-ow2-light-orange">Create a new event</h1>
   <form
     method="POST"

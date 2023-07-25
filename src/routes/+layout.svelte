@@ -49,7 +49,7 @@
     </div>
   </header>
 
-  <main class="main__wrapper w-full mx-auto relative">
+  <main class="main__wrapper w-full relative dark:text-zinc-50">
     <slot />
   </main>
 

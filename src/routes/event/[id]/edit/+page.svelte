@@ -41,7 +41,7 @@
   }
 </script>
 
-<WidthLimiter vagueWidthInPx={400} class="mx-auto">
+<WidthLimiter vagueWidthInPx={300} class="w-full mx-auto">
   <h1 class="text-4xl m-8 font-bold text-center text-ow2-orange dark:text-ow2-light-orange whitespace-pre-line">Edit {event.title}</h1>
 
   <form

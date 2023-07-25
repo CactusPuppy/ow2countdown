@@ -7,6 +7,7 @@
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import type { ActionResult } from "@sveltejs/kit";
+  import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
 
   let submitting = false;
 
@@ -40,7 +41,7 @@
   }
 </script>
 
-<div>
+<WidthLimiter vagueWidthInPx={400} class="mx-auto">
   <h1 class="text-4xl m-8 font-bold text-center text-ow2-orange dark:text-ow2-light-orange whitespace-pre-line">Edit {event.title}</h1>
 
   <form
@@ -57,4 +58,4 @@
       </div>
     </EventForm>
   </form>
-</div>
+</WidthLimiter>

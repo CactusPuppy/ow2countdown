@@ -8,6 +8,7 @@
   import Ow2CountdownLogo from "$lib/svgs/OW2CountdownLogo.svelte";
   import RssFeedIcon from "$lib/svgs/RSSFeedIcon.svelte";
   import GitHubIcon from "$lib/svgs/GitHubIcon.svelte";
+  import DiscordIcon from "$lib/svgs/DiscordIcon.svelte";
 
   let analyticsID = import.meta.env.VERCEL_ANALYTICS_ID;
 
@@ -35,15 +36,16 @@
 </script>
 
 <div class="wrapper min-h-screen max-w-[100dvw]">
-  <header class="grid grid-cols-3 justify-items-center items-center w-full py-2 px-4 dark:text-white">
+  <header class="flex justify-between sm:grid sm:grid-cols-3 justify-items-center items-center w-full py-2 px-4 dark:text-white">
     <div class="justify-self-start w-12"><a href="/">
       <Ow2CountdownLogo />
     </a></div>
-    <nav class="flex gap-10 text-lg sm:text-2xl items-center justify-center">
+    <nav class="flex gap-4 sm:gap-10 text-lg sm:text-2xl items-center justify-center">
       <a href="/" class="hover:underline focus-visible:underline">Home</a>
       <a href="/about" class="hover:underline focus-visible:underline">About</a>
     </nav>
     <div class="justify-self-end flex items-center justify-center gap-4 text-2xl">
+      <a href="/discord" target="_blank"><DiscordIcon /></a>
       <a href="/feed.xml" target="_blank"><RssFeedIcon /></a>
       <a href="https://github.com/CactusPuppy/ow2countdown" target="_blank" rel="noreferrer noopener"><GitHubIcon /></a>
     </div>

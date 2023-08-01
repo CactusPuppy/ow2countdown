@@ -25,6 +25,7 @@
   import ProgressBar from "$lib/components/_progress_bar.svelte";
 
   import EmbedBuilder from "./_embed_builder.svelte";
+  import Image from "$lib/components/markdown/Image.svelte";
 
   export let data: PageData;
   let event: CountdownDate;
@@ -127,7 +128,8 @@
           source={event.description}
           renderers={{
             "link": Ow2CLink,
-            "heading": Heading
+            "heading": Heading,
+            "image": Image
           }}
         />
       </div>

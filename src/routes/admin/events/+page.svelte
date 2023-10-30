@@ -5,7 +5,8 @@
   import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
   import Spinner from "$lib/components/_spinner.svelte";
   import { FontAwesomeIcon } from "fontawesome-svelte";
-  import { faPlus } from "@fortawesome/free-solid-svg-icons";
+  import { faPlus, faPencil, faEye, faTrash } from "@fortawesome/free-solid-svg-icons";
+  import { enhance } from "$app/forms";
 
   let isLoading = writable(true);
   let events = writable([]);
@@ -15,7 +16,7 @@
 
   async function fetchEvents(page: number) {
     isLoading.set(true);
-    const response = await fetch(`/api/events?include_past=true&page=${page}&page_size=${pageSize}&order_by=id&order_direction=desc&v=2`);
+    const response = await fetch(`/api/events?include_past=true&page=${page}&page_size=${pageSize}&order_by=id&order_direction=desc&v=2&ts=${Date.now()}`);
     const data = await response.json();
     events.set(data.data);
     totalPages = data.meta.total_pages;
@@ -53,7 +54,7 @@
   });
 </script>
 
-<WidthLimiter vagueWidthInPx={600} class="w-full mx-auto px-2">
+<WidthLimiter vagueWidthInPx={700} class="w-full mx-auto px-2">
   <h1 class="text-4xl mt-2 mb-4 font-bold tracking-tight text-center text-ow2-orange dark:text-ow2-light-orange">All Events</h1>
 
   {#if $isLoading}
@@ -71,30 +72,58 @@
     </div>
 
     <table class="table table-auto w-full rounded-lg overflow-hidden px-4 md:px-8 pt-6 pb-2 relative">
-      <thead class="bg-zinc-300 dark:bg-zinc-800">
+      <thead class="bg-zinc-300 dark:bg-zinc-800 text-left">
         <tr>
-          <th class="px-6 py-3">ID</th>
-          <th class="px-6 py-3">Title</th>
-          <th class="px-6 py-3">Date</th>
-          <th class="px-6 py-3">End Date</th>
-          <th class="px-6 py-3">Status</th>
-          <th class="px-6 py-3">Actions</th>
+          <th class="px-4 py-3">ID</th>
+          <th class="px-4 py-3">Title</th>
+          <th class="px-4 py-3">Date</th>
+          <th class="px-4 py-3">End Date</th>
+          <th class="px-4 py-3">Status</th>
+          <th class="px-4 py-3">Actions</th>
         </tr>
       </thead>
       <tbody class="events_list bg-zinc-200 dark:bg-zinc-700">
         {#each $events as event (event.id)}
           <tr>
-            <td class="px-6 py-4">{event.id}</td>
-            <td class="px-6 py-4">{event.title}</td>
-            <td class="px-6 py-4 whitespace-pre">{formatDate(event.date)}</td>
-            <td class="px-6 py-4 whitespace-pre">{formatDate(event.end_date)}</td>
-            <td class="px-6 py-4 whitespace-pre">{getState(event)}</td>
-            <td class="px-6 py-4">
-              <a href={`/event/${event.id}/edit`} data-sveltekit-reload>
+            <td class="px-4 py-3 text-center">{event.id}</td>
+            <td class="px-4 py-3">{event.title}</td>
+            <td class="px-4 py-3 whitespace-pre">{formatDate(event.date)}</td>
+            <td class="px-4 py-3 whitespace-pre">{formatDate(event.end_date)}</td>
+            <td class="px-4 py-3 whitespace-pre">{getState(event)}</td>
+            <td class="px-2 py-3 text-center">
+              <a href={`/event/${event.id}`}>
                 <button class="bg-zinc-800 bg-opacity-30 hover:bg-zinc-600 rounded-lg px-3 py-2">
-                  Edit
+                  <FontAwesomeIcon icon={faEye}/>
                 </button>
               </a>
+
+              <a class="ml-0.5" href={`/event/${event.id}/edit`}>
+                <button class="bg-zinc-800 bg-opacity-30 hover:bg-zinc-600 rounded-lg px-3 py-2">
+                  <FontAwesomeIcon icon={faPencil}/>
+                </button>
+              </a>
+
+              <form
+                class="inline-block ml-0.5"
+                action={`/event/${event.id}/destroy`}
+                method="POST"
+                use:enhance={({ cancel }) => {
+                if (!window.confirm(`Are you sure you want to delete '${event.title}'?`)) {
+                  cancel();
+                }
+                return async ({ result }) => {
+                  if (result.type == "success" || result.type == "redirect") {
+                    changePage(0)
+                  } else {
+                    alert("Something went wrong. Sorry about that!");
+                  }
+                };
+              }}
+              >
+                <button type="submit" class="bg-red-700 bg-opacity-50 hover:bg-red-600 rounded-lg px-3 py-2">
+                  <FontAwesomeIcon icon={faTrash}/>
+                </button>
+              </form>
             </td>
           </tr>
         {/each}

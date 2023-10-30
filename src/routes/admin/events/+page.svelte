@@ -90,7 +90,7 @@
             <td class="px-4 py-3 whitespace-pre">{formatDate(event.date)}</td>
             <td class="px-4 py-3 whitespace-pre">{formatDate(event.end_date)}</td>
             <td class="px-4 py-3 whitespace-pre">{getState(event)}</td>
-            <td class="px-2 py-3 text-center">
+            <td class="px-2 py-3 text-center whitespace-nowrap">
               <a href={`/event/${event.id}`}>
                 <button class="bg-zinc-800 bg-opacity-30 hover:bg-zinc-600 rounded-lg px-3 py-2">
                   <FontAwesomeIcon icon={faEye}/>

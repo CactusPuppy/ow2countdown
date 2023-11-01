@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import { format } from "date-fns";
@@ -50,6 +52,11 @@
   }
 
   onMount(() => {
+    // if the user isn't logged in, redirect them to the login page
+    if (!$page.data.session) {
+      return goto("/login");
+    }
+
     fetchEvents(currentPage);
   });
 </script>

@@ -30,25 +30,25 @@
     fetchEvents(currentPage);
   }
 
-  function formatDate(date) {
-    if (!date) return 'null';
+  function formatDate(date?: string) {
+    if (!date) return "null";
 
-    const d1 = format(new Date(date), 'EEEE do MMM yyyy');
-    const d2 = format(new Date(date), 'yyyy-MM-dd h:mm a');
+    const d1 = format(new Date(date), "EEEE do MMM yyyy");
+    const d2 = format(new Date(date), "yyyy-MM-dd h:mm a");
 
     return `${d1}\n${d2}`;
   }
 
   function getState(event) {
-    if (event.date == null || event.end_date == null) return 'Active';
+    if (event.date == null || event.end_date == null) return "Active";
 
     const now = new Date();
     const startDate = new Date(event.date);
     const endDate = new Date(event.end_date);
 
-    if (now < startDate) return 'Upcoming';
-    if (now > endDate) return 'Ended';
-    return 'Active';
+    if (now < startDate) return "Upcoming";
+    if (now > endDate) return "Ended";
+    return "Active";
   }
 
   onMount(() => {
@@ -119,7 +119,7 @@
                   cancel();
                 }
                 return async ({ result }) => {
-                  if (result.type == "success" || result.type == "redirect") {
+                  if (result.type === "success" || result.type === "redirect") {
                     changePage(0)
                   } else {
                     alert("Something went wrong. Sorry about that!");

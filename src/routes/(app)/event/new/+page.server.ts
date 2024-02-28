@@ -1,5 +1,5 @@
 import { fail, redirect, type Actions } from "@sveltejs/kit";
-import { entriesToEventObject } from "../../../stores/dates";
+import { entriesToEventObject } from "../../../../stores/dates";
 import { SUPABASE_TABLE_NAME } from "$env/static/private";
 import type { CountdownDate } from "$lib/types";
 import { getSupabase } from "@supabase/auth-helpers-sveltekit";

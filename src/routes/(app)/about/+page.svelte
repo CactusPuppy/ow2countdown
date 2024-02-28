@@ -15,7 +15,7 @@
   <p class="my-2">To suggest an Overwatch 2 event for addition to the site, or to contact the OW2Countdown team for any other reason, please visit the <a href="/discord" target="_blank" class="text-ow2-orange dark:text-ow2-light-orange underline">OW2Countdown Discord</a>.</p>
 
   <h2 class="uppercase font-bold my-4">Informational Accuracy Policy</h2>
-  <p class="my-2">OW2Countdown is committed to providing accurate and reliably-sourced information. This means that OW2Countdown will not cover nor source leaks, rumors, gossip, or any other sources of unofficial information.</p>
+  <p class="my-2">OW2Countdown is committed to providing accurate and reliably-sourced information. This means that OW2Countdown will not cover or source leaks, rumors, gossip, or any other sources of unofficial information.</p>
 
   <h2 class="uppercase font-bold my-4">Legal</h2>
   <ul class="list-disc list-inside">

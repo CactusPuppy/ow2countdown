@@ -10,8 +10,8 @@
   import { FontAwesomeIcon } from "fontawesome-svelte";
   import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-  import { dates } from "../stores/dates";
-  import EventCard from "./_event_card.svelte";
+  import { dates } from "../../stores/dates";
+  import EventCard from "../_event_card.svelte";
   import { eventEffectiveDate } from "$lib/utils/event_helpers";
   import { fade } from "svelte/transition";
 

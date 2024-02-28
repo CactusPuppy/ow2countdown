@@ -6,6 +6,8 @@
 
   import Embed from "./_embed.svelte";
 
+  import "../../../../../../app.css";
+
   export let data: PageData;
   let event: CountdownDate;
   $: event = data.event;

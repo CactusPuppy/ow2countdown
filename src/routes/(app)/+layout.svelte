@@ -20,7 +20,7 @@
     });
   }
 
-  import "../app.css";
+  import "../../app.css";
 
   onMount(() => {
     const {

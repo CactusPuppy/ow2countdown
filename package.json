@@ -33,7 +33,7 @@
     "marked": "^4.2.12",
     "postcss": "^8.4.31",
     "sanitize-html": "^2.12.1",
-    "svelte": "^3.54.0",
+    "svelte": "^4.2.19",
     "svelte-check": "^2.2.6",
     "svelte-confetti": "^1.2.2",
     "svelte-markdown": "^0.2.3",

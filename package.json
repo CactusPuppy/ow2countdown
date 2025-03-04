@@ -17,7 +17,7 @@
     "@supabase/auth-helpers-sveltekit": "^0.8.6",
     "@supabase/supabase-js": "^2.1.0",
     "@sveltejs/adapter-vercel": "^2.4.3",
-    "@sveltejs/kit": "^1.15.2",
+    "@sveltejs/kit": "^2.8.3",
     "@types/jstoxml": "^2.0.2",
     "@types/sanitize-html": "^2.8.0",
     "@typescript-eslint/eslint-plugin": "^5.10.1",

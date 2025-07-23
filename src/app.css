@@ -1,8 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@100;400;500&family=Fira+Code:wght@300&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
+
+@theme {
+  --color-ow2-light-orange: hsl(26, 100%, 55%);
+  --color-ow2-orange: hsl(22, 100%, 38%);
+  --color-ow2-logo-orange: "#ed6516";
+
+  --font-sans: "Barlow", "sans-serif";
+  --font-mono: "Fira Code", "monospace";
+}
 
 body {
   @apply bg-zinc-50;

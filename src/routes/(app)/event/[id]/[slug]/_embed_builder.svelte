@@ -106,6 +106,7 @@
 </div>
 
 <style>
+  @reference "../../../../../app.css";
   .embed_build__options {
     display: flex;
     flex-wrap: wrap;

@@ -1,17 +1,16 @@
 import { SUPABASE_TABLE_NAME } from "$env/static/private";
-import { getSupabase } from "@supabase/auth-helpers-sveltekit";
 import type { CountdownDate } from "$lib/types";
 import { type RequestHandler, error } from "@sveltejs/kit";
 import { compareAsc, parseISO } from "date-fns";
 import { titleToSlug } from "$lib/utils/event_helpers";
 
 export const GET: RequestHandler = async(fullRequest) => {
-  const { supabaseClient } = await getSupabase(fullRequest);
+  const { supabase } = fullRequest.locals;
   const { request, setHeaders } = fullRequest;
   const requestURL = new URL(request.url);
   const host = requestURL.host;
 
-  const { data, error: err } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*');
+  const { data, error: err } = await supabase.from(SUPABASE_TABLE_NAME).select('*');
 
   if (err) throw error(500, "Internal Server Error");
 

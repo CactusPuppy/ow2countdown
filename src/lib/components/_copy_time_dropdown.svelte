@@ -5,11 +5,12 @@
   import Dropdown from "./_dropdown.svelte";
   import CopyTimeButton from "./_copy_time_button.svelte";
   import { format } from "date-fns";
+  import { dateToDiscordTimestamp } from "$lib/utils/date_format_helpers";
 
   export let date : Date;
 
   async function copyDiscordTimestamp() {
-    await navigator.clipboard.writeText(`<t:${Math.floor(date.getTime() / 1000)}:f> (<t:${Math.floor(date.getTime() / 1000)}:R>)`);
+    await navigator.clipboard.writeText(`${dateToDiscordTimestamp(date, "f")} (${dateToDiscordTimestamp(date, "R")})`);
   }
 
   async function copyNormalTimestamp() {

@@ -34,6 +34,7 @@ export const GET: RequestHandler = async(fullRequest) => {
       link: `${requestURL.protocol}//${host}/event/${event.id}/${titleToSlug(event.title)}`,
       guid: `${requestURL.protocol}//${host}/event/${event.id}/${titleToSlug(event.title)}`,
       description: `${event.date ? `Event Date: ${formatRFC7231(parseISO(event.date))} | ` : ""}${event.end_date ? `Event End Date: ${formatRFC7231(parseISO(event.end_date))} | ` : ""}${markdownToPlaintext(event.description)}`,
+      cleanDescription: `${markdownToPlaintext(event.description)}`,
       pubDate: formatRFC7231(parseISO(event.created_at)),
     };
     if (event.date) baseItem["eventDate"] = formatRFC7231(parseISO(event.date));

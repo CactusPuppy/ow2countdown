@@ -7,6 +7,7 @@ import { eventEffectiveDate, titleToSlug } from "$lib/utils/event_helpers";
 import jstoxml from "jstoxml";
 const { toXML } = jstoxml;
 import { markdownToPlaintext } from "$lib/utils/string_helpers";
+import { dateToDiscordTimestamp } from "$lib/utils/date_format_helpers";
 
 
 export const GET: RequestHandler = async(fullRequest) => {
@@ -39,11 +40,13 @@ export const GET: RequestHandler = async(fullRequest) => {
     };
     if (event.date) {
       baseItem["eventDate"] = formatRFC7231(parseISO(event.date));
-      baseItem["eventTimestamp"] = parseISO(event.date).getTime();
+      baseItem["eventTimestamp"] = Math.floor(parseISO(event.date).getTime() / 1000);
+      baseItem["eventDiscordTimestamp"] = `${dateToDiscordTimestamp(parseISO(event.date))} (${dateToDiscordTimestamp(parseISO(event.date), "R")})`;
     }
     if (event.end_date) {
       baseItem["eventEndDate"] = formatRFC7231(parseISO(event.end_date));
-      baseItem["eventEndTimestamp"] = parseISO(event.end_date).getTime();
+      baseItem["eventEndTimestamp"] = Math.floor(parseISO(event.end_date).getTime() / 1000);
+      baseItem["eventEndDiscordTimestamp"] = `${dateToDiscordTimestamp(parseISO(event.end_date))} (${dateToDiscordTimestamp(parseISO(event.end_date), "R")})`;
     }
     return {
       item: baseItem

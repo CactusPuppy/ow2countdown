@@ -210,6 +210,7 @@
 </div>
 
 <style>
+  @reference "../../../../../app.css";
   .event__title {
     white-space: pre-line;
     text-wrap: balance;

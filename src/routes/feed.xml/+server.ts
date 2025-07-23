@@ -1,5 +1,5 @@
 import { SUPABASE_TABLE_NAME } from "$env/static/private";
-import { getSupabase } from "@supabase/auth-helpers-sveltekit";
+import {  } from "@supabase/ssr";
 import type { CountdownDate } from "$lib/types";
 import { type RequestHandler, error } from "@sveltejs/kit";
 import { formatRFC7231, parseISO, isAfter, sub } from "date-fns";
@@ -10,12 +10,12 @@ import { markdownToPlaintext } from "$lib/utils/string_helpers";
 
 
 export const GET: RequestHandler = async(fullRequest) => {
-  const { supabaseClient } = await getSupabase(fullRequest);
-  const { request, setHeaders } = fullRequest;
+  const { request, setHeaders, locals } = fullRequest;
+  const { supabase } = locals;
   const requestURL = new URL(request.url);
   const host = requestURL.host;
 
-  const { data, error: err } = await supabaseClient.from(SUPABASE_TABLE_NAME).select('*');
+  const { data, error: err } = await supabase.from(SUPABASE_TABLE_NAME).select('*');
 
   if (err) throw error(500, "Internal Server Error");
 

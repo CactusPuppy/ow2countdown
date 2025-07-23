@@ -1,6 +1,5 @@
 import { error, json, type RequestEvent } from "@sveltejs/kit"
 import type { RequestHandler } from "@sveltejs/kit";
-import { getSupabase } from "@supabase/auth-helpers-sveltekit";
 import { formatISO } from "date-fns";
 import { SUPABASE_TABLE_NAME } from '$env/static/private'
 
@@ -12,11 +11,11 @@ const SUPPORTED_ORDER_BY = ["date", "id"];
 const SUPPORTED_VERSIONS = [1, 2];
 
 export const GET: RequestHandler = async (request) => {
-  const { supabaseClient } = await getSupabase(request);
+  const { supabase } = request.locals;
   const { setHeaders } = request;
   const filters = getRequestFilters(request);
 
-  let query = supabaseClient.from(SUPABASE_TABLE_NAME)
+  let query = supabase.from(SUPABASE_TABLE_NAME)
       .select("*", { count: filters.version === 2 ? "exact" : undefined })
 
   // if there is no order by, use the default sort of priority and date which is used by the homepage

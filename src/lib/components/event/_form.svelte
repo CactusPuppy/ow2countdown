@@ -26,7 +26,7 @@
 </script>
 
 <label for="event__title" class="mb-2 text-lg">Title</label>
-<textarea id="event__title" name="title" type="text" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Title" rows="1" bind:value={title} />
+<textarea id="event__title" name="title" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Title" rows="1" bind:value={title} />
 
 <label for="event__description" class="mb-2 mt-4 text-lg optional-label">Description</label>
 <textarea id="event__description" name="description" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Description" rows="5" bind:value={description}></textarea>
@@ -51,6 +51,7 @@
 </slot>
 
 <style>
+  @reference "../../../app.css";
   .optional-label::after {
     content: "(optional)";
     @apply text-zinc-500;

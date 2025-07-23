@@ -37,8 +37,14 @@ export const GET: RequestHandler = async(fullRequest) => {
       cleanDescription: `${markdownToPlaintext(event.description)}`,
       pubDate: formatRFC7231(parseISO(event.created_at)),
     };
-    if (event.date) baseItem["eventDate"] = formatRFC7231(parseISO(event.date));
-    if (event.end_date) baseItem["eventEndDate"] = formatRFC7231(parseISO(event.end_date));
+    if (event.date) {
+      baseItem["eventDate"] = formatRFC7231(parseISO(event.date));
+      baseItem["eventTimestamp"] = parseISO(event.date).getTime();
+    }
+    if (event.end_date) {
+      baseItem["eventEndDate"] = formatRFC7231(parseISO(event.end_date));
+      baseItem["eventEndTimestamp"] = parseISO(event.end_date).getTime();
+    }
     return {
       item: baseItem
     };

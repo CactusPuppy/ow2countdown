@@ -41,12 +41,10 @@ export const GET: RequestHandler = async(fullRequest) => {
     if (event.date) {
       baseItem["eventDate"] = formatRFC7231(parseISO(event.date));
       baseItem["eventTimestamp"] = Math.floor(parseISO(event.date).getTime() / 1000);
-      baseItem["eventDiscordTimestamp"] = `${dateToDiscordTimestamp(parseISO(event.date))} (${dateToDiscordTimestamp(parseISO(event.date), "R")})`;
     }
     if (event.end_date) {
       baseItem["eventEndDate"] = formatRFC7231(parseISO(event.end_date));
       baseItem["eventEndTimestamp"] = Math.floor(parseISO(event.end_date).getTime() / 1000);
-      baseItem["eventEndDiscordTimestamp"] = `${dateToDiscordTimestamp(parseISO(event.end_date))} (${dateToDiscordTimestamp(parseISO(event.end_date), "R")})`;
     }
     return {
       item: baseItem

@@ -2,7 +2,7 @@
   import EventForm from "$lib/components/event/_form.svelte";
   import { enhance } from "$app/forms";
   import type { CountdownDate } from "$lib/types";
-  import type { ActionData, PageData } from "./$types";
+  import type { ActionData, PageData, SubmitFunction } from "./$types";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
@@ -20,14 +20,14 @@
     if (!$page.data.session) goto("/");
   });
 
-  const handleFormSubmit = ({ data }: { data: FormData }) => {
-    const date = data.get("date");
+  const handleFormSubmit: SubmitFunction = ({ formData }: { formData: FormData }) => {
+    const date = formData.get("date");
     if (typeof date === "string" && date != "") {
-      data.set("date", new Date(date).toISOString());
+      formData.set("date", new Date(date).toISOString());
     }
-    const endDate = data.get("end_date");
+    const endDate = formData.get("end_date");
     if (typeof endDate === "string" && endDate != "") {
-      data.set("end_date", new Date(endDate).toISOString());
+      formData.set("end_date", new Date(endDate).toISOString());
     }
     submitting = true;
 

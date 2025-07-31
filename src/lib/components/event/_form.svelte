@@ -1,18 +1,26 @@
 <script lang="ts">
   import type { CountdownDate } from "$lib/types";
   import { parseISO, format } from "date-fns";
+  import { browser } from "$app/environment";
 
-  export let event: CountdownDate | undefined = undefined;
+  const { event }: { event?: CountdownDate } = $props();
 
-  let title: string;
-  let description: string;
-  let group: string;
-  let date: string;
-  let end_date: string;
-  let tags: string;
-  let priority: number = 0;
+  let title = $state("");
+  let description = $state("");
+  let group = $state("");
+  let date = $state("");
+  let end_date = $state("");
+  let tags = $state("");
+  let priority = $state(0);
 
-  if (event !== undefined) setEventData(event);
+  const AUTO_SAVE_KEY = "ow2countdown_new_event_draft";
+
+  if (event !== undefined) {
+    setEventData(event);
+  } else {
+    // Load from localStorage if creating a new event
+    loadFromLocalStorage();
+  }
 
   function setEventData(event: CountdownDate) {
     title = event.title;
@@ -23,10 +31,64 @@
     priority = event?.priority || 0;
     tags = event.tags;
   }
+
+  function loadFromLocalStorage() {
+    if (!browser) return;
+
+    try {
+      const saved = localStorage.getItem(AUTO_SAVE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        title = data.title || "";
+        description = data.description || "";
+        group = data.group || "";
+        date = data.date || "";
+        end_date = data.end_date || "";
+        tags = data.tags || "";
+        priority = data.priority || 0;
+      }
+    } catch (error) {
+      console.warn("Failed to load form data from localStorage:", error);
+    }
+  }
+
+  function saveToLocalStorage() {
+    if (!browser || event !== undefined) return;
+
+    try {
+      const formData = {
+        title,
+        description,
+        group,
+        date,
+        end_date,
+        tags,
+        priority
+      };
+      localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(formData));
+    } catch (error) {
+      console.warn("Failed to save form data to localStorage:", error);
+    }
+  }
+
+  function clearLocalStorage() {
+    if (!browser) return;
+    try {
+      localStorage.removeItem(AUTO_SAVE_KEY);
+    } catch (error) {
+      console.warn("Failed to clear form data from localStorage:", error);
+    }
+  }
+
+  // Auto-save whenever form data changes using Svelte 5 $effect rune
+  $effect(saveToLocalStorage);
+
+  // Export clearLocalStorage function for parent components to use after successful form submission
+  export { clearLocalStorage };
 </script>
 
 <label for="event__title" class="mb-2 text-lg">Title</label>
-<textarea id="event__title" name="title" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Title" rows="1" bind:value={title} />
+<textarea id="event__title" name="title" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Title" rows="1" bind:value={title}></textarea>
 
 <label for="event__description" class="mb-2 mt-4 text-lg optional-label">Description</label>
 <textarea id="event__description" name="description" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Description" rows="5" bind:value={description}></textarea>

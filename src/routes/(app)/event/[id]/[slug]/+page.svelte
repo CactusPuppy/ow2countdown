@@ -79,7 +79,7 @@
 </svelte:head>
 
 <div
-  class="min-h-full grid grid-rows-[1fr,auto] justify-items-center"
+  class="min-h-full grid grid-rows-[1fr_auto] justify-items-center"
 >
   <div class="flex flex-col items-center">
     <h1
@@ -171,7 +171,7 @@
     </div>
   </div>
   <div class="absolute w-full top-0 bottom-0 pointer-events-none" transition:fade>
-    <div class="relative grid grid-rows-[1fr,auto] h-full w-full">
+    <div class="relative grid grid-rows-[1fr_auto] h-full w-full">
       <div></div>
       <div class={`sticky flex flex-row-reverse bottom-8`}>
         {#if $page.data.session}

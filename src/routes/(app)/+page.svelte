@@ -51,7 +51,7 @@
       });
     }
 
-  let timeUpdateInterval : NodeJS.Timer;
+  let timeUpdateInterval : NodeJS.Timeout;
   function updateTime() {
     now = new Date();
     if (nextAttemptMarker !== undefined) {

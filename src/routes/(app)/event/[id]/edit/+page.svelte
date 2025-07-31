@@ -50,12 +50,14 @@
     use:enhance={handleFormSubmit}
   >
     <EventForm event={event}>
-      <div slot="submit">
-        {#if form?.error}
-          <p class="w-full bg-red-300 dark:bg-red-700 text-center mt-4 py-1 rounded-sm">{form.error}</p>
-        {/if}
-        <input type="submit" class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer" value={submitting ? "Loading..." : "Save"}>
-      </div>
+      {#snippet submitButton()}
+        <div>
+          {#if form?.error}
+            <p class="w-full bg-red-300 dark:bg-red-700 text-center mt-4 py-1 rounded-sm">{form.error}</p>
+          {/if}
+          <input type="submit" class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer" value={submitting ? "Loading..." : "Save"}>
+        </div>
+      {/snippet}
     </EventForm>
   </form>
 </WidthLimiter>

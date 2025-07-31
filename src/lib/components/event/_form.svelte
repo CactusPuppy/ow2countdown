@@ -1,9 +1,13 @@
+<script module>
+  export const AUTO_SAVE_KEY = "ow2countdown_new_event_draft";
+</script>
 <script lang="ts">
   import type { CountdownDate } from "$lib/types";
   import { parseISO, format } from "date-fns";
   import { browser } from "$app/environment";
+  import type { Snippet } from "svelte";
 
-  const { event }: { event?: CountdownDate } = $props();
+  const { event, submitButton }: { event?: CountdownDate, submitButton: Snippet } = $props();
 
   let title = $state("");
   let description = $state("");
@@ -12,8 +16,6 @@
   let end_date = $state("");
   let tags = $state("");
   let priority = $state(0);
-
-  const AUTO_SAVE_KEY = "ow2countdown_new_event_draft";
 
   if (event !== undefined) {
     setEventData(event);
@@ -88,13 +90,13 @@
 </script>
 
 <label for="event__title" class="mb-2 text-lg">Title</label>
-<textarea id="event__title" name="title" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Title" rows="1" bind:value={title}></textarea>
+<textarea id="event__title" name="title" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Title" required rows="1" bind:value={title}></textarea>
 
 <label for="event__description" class="mb-2 mt-4 text-lg optional-label">Description</label>
 <textarea id="event__description" name="description" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Description" rows="5" bind:value={description}></textarea>
 
-<label for="event__date" class="mb-2 mt-4 text-lg optional-label">Start Date</label>
-<input id="event__date" name="date" type="datetime-local" class="px-2 py-1 rounded-sm dark:bg-zinc-800" step=1 bind:value={date}>
+<label for="event__date" class="mb-2 mt-4 text-lg">Start Date</label>
+<input id="event__date" name="date" type="datetime-local" class="px-2 py-1 rounded-sm dark:bg-zinc-800" required step=1 bind:value={date}>
 
 <label for="event__end-date" class="mb-2 mt-4 text-lg optional-label">End Date</label>
 <input id="event__end-date" name="end_date" type="datetime-local" class="px-2 py-1 rounded-sm dark:bg-zinc-800" step=1 bind:value={end_date}>
@@ -108,12 +110,15 @@
 <label for="event__priority" class="mb-2 mt-4 text-lg optional-label">Priority</label>
 <input id="event__priority" name="priority" type="number" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="priority" bind:value={priority}>
 
-<slot name="submit">
-  <input type="submit" class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer" value="Submit">
-</slot>
+{@render submitButton()}
 
 <style>
   @reference "../../../app.css";
+  label:has(+ :required)::after {
+    content: "*";
+    @apply text-red-400;
+    @apply pl-1;
+  }
   .optional-label::after {
     content: "(optional)";
     @apply text-zinc-500;

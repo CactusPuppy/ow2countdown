@@ -5,7 +5,7 @@
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
 
-  import type { ActionData } from "./$types";
+  import type { ActionData, SubmitFunction } from "./$types";
   import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
 
   let submitting = false;
@@ -16,14 +16,14 @@
     if (!$page.data.session) goto("/");
   });
 
-  const handleFormSubmit = ({ data }: { data: FormData}) => {
-    const date = data.get("date");
+  const handleFormSubmit: SubmitFunction = ({ formData }) => {
+    const date = formData.get("date");
     if (typeof date === "string" && date != "") {
-      data.set("date", new Date(date).toISOString());
+      formData.set("date", new Date(date).toISOString());
     }
-    const endDate = data.get("end_date");
+    const endDate = formData.get("end_date");
     if (typeof endDate === "string" && endDate != "") {
-      data.set("end_date", new Date(endDate).toISOString());
+      formData.set("end_date", new Date(endDate).toISOString());
     }
 
     submitting = true;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import EventForm from "$lib/components/event/_form.svelte";
+  import EventForm, { AUTO_SAVE_KEY } from "$lib/components/event/_form.svelte";
   import { enhance } from "$app/forms";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
@@ -28,8 +28,9 @@
 
     submitting = true;
 
-    return async ({update}) => {
+    return async ({update, result}) => {
       submitting = false;
+      if (result.type === "redirect" || result.type === "success") localStorage.removeItem(AUTO_SAVE_KEY);
       update();
     };
   }
@@ -44,12 +45,14 @@
     use:enhance={handleFormSubmit}
   >
     <EventForm>
-      <div slot="submit">
-        {#if form?.error}
-          <p class="w-full bg-red-300 dark:bg-red-700 text-center mt-4 py-1 rounded-sm">{form.error}</p>
-        {/if}
-        <input type="submit" class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer" value={submitting ? "Loading..." : "Create"}>
-      </div>
+      {#snippet submitButton()}
+        <div>
+          {#if form?.error}
+            <p class="w-full bg-red-300 dark:bg-red-700 text-center mt-4 py-1 rounded-sm">{form.error}</p>
+          {/if}
+          <input type="submit" class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer" value={submitting ? "Loading..." : "Create"}>
+        </div>
+      {/snippet}
     </EventForm>
 
   </form>

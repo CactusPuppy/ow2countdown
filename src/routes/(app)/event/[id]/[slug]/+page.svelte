@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import type { CountdownDate } from "$lib/types";
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
   import Timer from "$lib/components/_timer.svelte";
@@ -7,7 +7,6 @@
   import Heading from "$lib/components/markdown/Heading.svelte";
   import { eventRelationToNow, titleToSlug, isEventHappeningNow } from '$lib/utils/event_helpers';
   import { markdownToPlaintext } from "$lib/utils/string_helpers";
-  import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
   import type { PageData } from "./$types";
 
   import { format, parseISO, differenceInSeconds } from "date-fns";
@@ -174,7 +173,7 @@
     <div class="relative grid grid-rows-[1fr_auto] h-full w-full">
       <div></div>
       <div class={`sticky flex flex-row-reverse bottom-8`}>
-        {#if $page.data.session}
+        {#if page.data.session}
           <div class="pointer-events-auto mr-8 sm:flex rounded-md dark:text-white bg-zinc-200 dark:bg-zinc-800 overflow-hidden shadow-lg shadow-gray-900">
             <p class="p-4 pr-5 hover:bg-zinc-300 hover:dark:bg-zinc-700 hover:underline transition-colors ease-out duration-200">
               <a href={`/event/${event.id}/edit`} class="" data-sveltekit-reload>

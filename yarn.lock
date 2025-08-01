@@ -1480,6 +1480,11 @@ fsevents@~2.3.2, fsevents@~2.3.3:
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
+github-slugger@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/github-slugger/-/github-slugger-2.0.0.tgz#52cf2f9279a21eb6c59dd385b410f0c0adda8f1a"
+  integrity sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==
+
 glob-parent@^5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz#869832c58034fe68a4093c17dc15e8340d8401c4"
@@ -1768,6 +1773,18 @@ magic-string@^0.30.11, magic-string@^0.30.17, magic-string@^0.30.5:
   integrity sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.5.0"
+
+marked-gfm-heading-id@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/marked-gfm-heading-id/-/marked-gfm-heading-id-4.1.2.tgz#65c5e28bce7581206a2073e4d2df8e02daceb2fb"
+  integrity sha512-EQ1WiEGHJh0C8viU+hbXbhHyWTDgEia2i96fiSemm2wdYER6YBw/9QI5TB6YFTqFfmMOxBFXPcPJtlgD0fVV2w==
+  dependencies:
+    github-slugger "^2.0.0"
+
+marked-mangle@^1.1.11:
+  version "1.1.11"
+  resolved "https://registry.yarnpkg.com/marked-mangle/-/marked-mangle-1.1.11.tgz#d743093b5f48ce964e5594764915abdf05c364f6"
+  integrity sha512-BUZiRqPooKZZhC7e8aDlzqkZt4MKkbJ/VY22b8iqrI3fJdnWmSyc7/uujDkrMszZrKURrXsYVUfgdWG6gEspcA==
 
 marked@^5.1.2:
   version "5.1.2"

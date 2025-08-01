@@ -32,7 +32,6 @@
     "eslint-plugin-svelte3": "^4.0.0",
     "fontawesome-svelte": "^3.0.0",
     "jstoxml": "^7.0.1",
-    "marked": "^16.1.1",
     "postcss": "^8.4.31",
     "sanitize-html": "^2.17.0",
     "svelte": "^5.36.13",

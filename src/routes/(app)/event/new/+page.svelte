@@ -13,7 +13,7 @@
   export let form: ActionData;
 
   onMount(() => {
-    if (!$page.data.session) goto("/");
+    if (!$page.data.user) goto("/");
   });
 
   const handleFormSubmit: SubmitFunction = ({ formData }) => {
@@ -28,32 +28,43 @@
 
     submitting = true;
 
-    return async ({update, result}) => {
+    return async ({ update, result }) => {
       submitting = false;
-      if (result.type === "redirect" || result.type === "success") localStorage.removeItem(AUTO_SAVE_KEY);
+      if (result.type === "redirect" || result.type === "success")
+        localStorage.removeItem(AUTO_SAVE_KEY);
       update();
     };
-  }
+  };
 </script>
 
-
 <WidthLimiter vagueWidthInPx={300} class="w-full mx-auto px-2">
-  <h1 class="text-4xl mt-2 mb-4 font-bold tracking-tight text-center text-ow2-orange dark:text-ow2-light-orange">Create a new event</h1>
+  <h1
+    class="text-4xl mt-2 mb-4 font-bold tracking-tight text-center text-ow2-orange dark:text-ow2-light-orange"
+  >
+    Create a new event
+  </h1>
   <form
     method="POST"
-    class="dark:text-white flex flex-col "
+    class="dark:text-white flex flex-col"
     use:enhance={handleFormSubmit}
   >
     <EventForm>
       {#snippet submitButton()}
         <div>
           {#if form?.error}
-            <p class="w-full bg-red-300 dark:bg-red-700 text-center mt-4 py-1 rounded-sm">{form.error}</p>
+            <p
+              class="w-full bg-red-300 dark:bg-red-700 text-center mt-4 py-1 rounded-sm"
+            >
+              {form.error}
+            </p>
           {/if}
-          <input type="submit" class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer" value={submitting ? "Loading..." : "Create"}>
+          <input
+            type="submit"
+            class="bg-ow2-orange dark:bg-ow2-light-orange mt-4 px-2 py-1 w-min text-lg font-semibold rounded-md cursor-pointer"
+            value={submitting ? "Loading..." : "Create"}
+          />
         </div>
       {/snippet}
     </EventForm>
-
   </form>
 </WidthLimiter>

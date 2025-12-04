@@ -4,12 +4,13 @@ import { SUPABASE_TABLE_NAME } from "$env/static/private";
 
 export const actions: Actions = {
   default: async (event) => {
-    const { session, supabase } = event.locals;
-    if (!session) {
+    const { user, supabase } = event.locals;
+    if (!user) {
       return fail(401, { error: "Unauthorized" });
     }
 
-    const { error, status, statusText } = await supabase.from(SUPABASE_TABLE_NAME)
+    const { error, status, statusText } = await supabase
+      .from(SUPABASE_TABLE_NAME)
       .delete()
       .eq("id", event.params.id);
 
@@ -18,5 +19,5 @@ export const actions: Actions = {
     }
 
     throw redirect(301, `/`);
-  }
-}
+  },
+};

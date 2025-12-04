@@ -21,19 +21,26 @@
   let tags = $state("");
   let priority = $state(0);
 
-  if (event !== undefined) {
-    setEventData(event);
-  } else {
-    // Load from localStorage if creating a new event
-    loadFromLocalStorage();
+  if (browser) {
+    if (event !== undefined) {
+      setEventData(event);
+    } else {
+      // Load from localStorage if creating a new event
+      loadFromLocalStorage();
+    }
   }
 
   function setEventData(event: CountdownDate) {
     title = event.title;
     description = event.description;
     group = event.group;
-    if (event.date) date = format(parseISO(event.date), "yyyy-LL-dd'T'HH:mm:ss"); // Localize datetime
-    if (event.end_date) end_date = format(parseISO(event.end_date), "yyyy-LL-dd'T'HH:mm:ss").slice(0, 19); // Localize datetime
+    if (event.date)
+      date = format(parseISO(event.date), "yyyy-LL-dd'T'HH:mm:ss"); // Localize datetime
+    if (event.end_date)
+      end_date = format(
+        parseISO(event.end_date),
+        "yyyy-LL-dd'T'HH:mm:ss",
+      ).slice(0, 19); // Localize datetime
     priority = event?.priority || 0;
     tags = event.tags;
   }

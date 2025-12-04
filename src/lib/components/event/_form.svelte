@@ -1,13 +1,17 @@
 <script module>
   export const AUTO_SAVE_KEY = "ow2countdown_new_event_draft";
 </script>
+
 <script lang="ts">
   import type { CountdownDate } from "$lib/types";
   import { parseISO, format } from "date-fns";
   import { browser } from "$app/environment";
   import type { Snippet } from "svelte";
 
-  const { event, submitButton }: { event?: CountdownDate, submitButton: Snippet } = $props();
+  const {
+    event,
+    submitButton,
+  }: { event?: CountdownDate; submitButton: Snippet } = $props();
 
   let title = $state("");
   let description = $state("");
@@ -65,7 +69,7 @@
         date,
         end_date,
         tags,
-        priority
+        priority,
       };
       localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(formData));
     } catch (error) {
@@ -89,26 +93,85 @@
   export { clearLocalStorage };
 </script>
 
-<label for="event__title" class="mb-2 text-lg">Title</label>
-<textarea id="event__title" name="title" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Title" required rows="1" bind:value={title}></textarea>
+{@debug event}
 
-<label for="event__description" class="mb-2 mt-4 text-lg optional-label">Description</label>
-<textarea id="event__description" name="description" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Description" rows="5" bind:value={description}></textarea>
+<label for="event__title" class="mb-2 text-lg">Title</label>
+<textarea
+  id="event__title"
+  name="title"
+  class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800"
+  placeholder="Title"
+  required
+  rows="1"
+  bind:value={title}
+></textarea>
+
+<label for="event__description" class="mb-2 mt-4 text-lg optional-label"
+  >Description</label
+>
+<textarea
+  id="event__description"
+  name="description"
+  class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800"
+  placeholder="Description"
+  rows="5"
+  bind:value={description}
+></textarea>
 
 <label for="event__date" class="mb-2 mt-4 text-lg">Start Date</label>
-<input id="event__date" name="date" type="datetime-local" class="px-2 py-1 rounded-sm dark:bg-zinc-800" required step=1 bind:value={date}>
+<input
+  id="event__date"
+  name="date"
+  type="datetime-local"
+  class="px-2 py-1 rounded-sm dark:bg-zinc-800"
+  required
+  step="1"
+  bind:value={date}
+/>
 
-<label for="event__end-date" class="mb-2 mt-4 text-lg optional-label">End Date</label>
-<input id="event__end-date" name="end_date" type="datetime-local" class="px-2 py-1 rounded-sm dark:bg-zinc-800" step=1 bind:value={end_date}>
+<label for="event__end-date" class="mb-2 mt-4 text-lg optional-label"
+  >End Date</label
+>
+<input
+  id="event__end-date"
+  name="end_date"
+  type="datetime-local"
+  class="px-2 py-1 rounded-sm dark:bg-zinc-800"
+  step="1"
+  bind:value={end_date}
+/>
 
 <label for="event__group" class="mb-2 mt-4 text-lg optional-label">Group</label>
-<input id="event__group" name="group" type="text" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="Group Name" bind:value={group}>
+<input
+  id="event__group"
+  name="group"
+  type="text"
+  class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800"
+  placeholder="Group Name"
+  bind:value={group}
+/>
 
 <label for="event__tags" class="mb-2 mt-4 text-lg optional-label">Tags</label>
-<input id="event__tags" name="tags" type="text" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="tag1, tag2, etc." bind:value={tags}>
+<input
+  id="event__tags"
+  name="tags"
+  type="text"
+  class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800"
+  placeholder="tag1, tag2, etc."
+  bind:value={tags}
+/>
 
-<label for="event__priority" class="mb-2 mt-4 text-lg optional-label">Priority</label>
-<input id="event__priority" name="priority" type="number" class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800" placeholder="priority" bind:value={priority}>
+<label for="event__priority" class="mb-2 mt-4 text-lg optional-label"
+  >Priority</label
+>
+<input
+  id="event__priority"
+  name="priority"
+  type="number"
+  class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800"
+  placeholder="priority"
+  bind:value={priority}
+/>
 
 {@render submitButton()}
 

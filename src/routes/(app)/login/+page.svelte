@@ -11,13 +11,13 @@
   let email: string;
 
   onMount(() => {
-    if ($page.data.session) goto("/");
-  })
+    if ($page.data.user) goto("/");
+  });
 
-  const login = async() => {
+  const login = async () => {
     loading = true;
     let { data, error } = await client.auth.signInWithOtp({
-      email: email
+      email: email,
     });
 
     if (error) {
@@ -27,7 +27,7 @@
     }
 
     loading = false;
-  }
+  };
 </script>
 
 <WidthLimiter class="px-2 mx-auto flex flex-col justify-center dark:text-white">
@@ -38,19 +38,29 @@
     </div>
   {/if}
 
-
-  <form on:submit|preventDefault={ login }>
+  <form on:submit|preventDefault={login}>
     <p>
-      Sign in with your email below.<br>
-      <b>If you don't already have an account, this page is of no use to you.</b>
+      Sign in with your email below.<br />
+      <b>If you don't already have an account, this page is of no use to you.</b
+      >
     </p>
 
     <div class="mt-2">
-      <input type="email" placeholder="Email" bind:value={ email } class="px-2 py-1 w-1/2 min-w-[15rem] rounded-md bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300" />
+      <input
+        type="email"
+        placeholder="Email"
+        bind:value={email}
+        class="px-2 py-1 w-1/2 min-w-[15rem] rounded-md bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300"
+      />
     </div>
 
     <div class="mt-4">
-      <input type="submit" class="bg-ow2-orange rounded-xl mt-1 px-2 py-1 text-lg font-semibold cursor-pointer text-white" value={ loading ? "Redirecting..." : "Login" } disabled={ loading } />
+      <input
+        type="submit"
+        class="bg-ow2-orange rounded-xl mt-1 px-2 py-1 text-lg font-semibold cursor-pointer text-white"
+        value={loading ? "Redirecting..." : "Login"}
+        disabled={loading}
+      />
     </div>
   </form>
 </WidthLimiter>

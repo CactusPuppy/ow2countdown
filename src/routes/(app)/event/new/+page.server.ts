@@ -5,8 +5,8 @@ import type { CountdownDate } from "$lib/types";
 
 export const actions: Actions = {
   default: async (event) => {
-    const { session, supabase } = event.locals;
-    if (!session) {
+    const { user, supabase } = event.locals;
+    if (!user) {
       return fail(401, { error: "Unauthorized" });
     }
 
@@ -18,9 +18,12 @@ export const actions: Actions = {
 
     const eventData = entriesToEventObject(data.entries());
 
-    const { data: returnedData, error, status, statusText } = await supabase.from(SUPABASE_TABLE_NAME)
-      .insert(eventData)
-      .select();
+    const {
+      data: returnedData,
+      error,
+      status,
+      statusText,
+    } = await supabase.from(SUPABASE_TABLE_NAME).insert(eventData).select();
 
     if (error) {
       return fail(status, { error: statusText });
@@ -28,5 +31,5 @@ export const actions: Actions = {
     const returnedEvent = <CountdownDate>returnedData[0];
 
     throw redirect(302, `/event/${returnedEvent.id}`);
-  }
-}
+  },
+};

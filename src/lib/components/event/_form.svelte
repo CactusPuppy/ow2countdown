@@ -100,8 +100,6 @@
   export { clearLocalStorage };
 </script>
 
-{@debug event}
-
 <label for="event__title" class="mb-2 text-lg">Title</label>
 <textarea
   id="event__title"

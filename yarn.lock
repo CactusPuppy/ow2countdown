@@ -897,6 +897,11 @@
     "@typescript-eslint/types" "8.38.0"
     eslint-visitor-keys "^4.2.1"
 
+"@vercel/analytics@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-2.0.1.tgz#d7d7bd37af7cfbeea95db5f132ae4889f4d26407"
+  integrity sha512-MTQG6V9qQrt1tsDeF+2Uoo5aPjqbVPys1xvnIftXSJYG2SrwXRHnqEvVoYID7BTruDz4lCd2Z7rM1BdkUehk2g==
+
 "@vercel/nft@^0.29.2":
   version "0.29.4"
   resolved "https://registry.yarnpkg.com/@vercel/nft/-/nft-0.29.4.tgz#e56b07d193776bcf67b31ac4da065ceb8e8d362e"
@@ -914,11 +919,6 @@
     node-gyp-build "^4.2.2"
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
-
-"@vercel/speed-insights@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@vercel/speed-insights/-/speed-insights-1.2.0.tgz#1656c3596d4ec02d93d301ca45944c1b9b245186"
-  integrity sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==
 
 abbrev@^3.0.0:
   version "3.0.1"

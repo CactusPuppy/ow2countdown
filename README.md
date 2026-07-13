@@ -1,12 +1,12 @@
-# Overwatch 2 Countdown Clock
+# OWCountdown
 
-A countdown clock to important dates for Overwatch 2
+A countdown clock to important dates for Overwatch
 
 ![](https://i.imgur.com/GKIba9d.gif)
 
 ## Tech Stack
 
-[ow2countdown.com](https://ow2countdown.com) uses [SvelteKit](https://kit.svelte.dev/) backed by [Supabase](https://supabase.com/)
+[owcountdown.com](https://owcountdown.com) uses [SvelteKit](https://kit.svelte.dev/) backed by [Supabase](https://supabase.com/)
 
 ![svelte icon](https://github.com/sveltejs/branding/blob/master/svelte-horizontal.png)
 ![supabase icon](https://raw.githubusercontent.com/supabase/supabase/master/packages/common/assets/images/supabase-logo-wordmark--dark.svg#gh-dark-mode-only)

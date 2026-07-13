@@ -89,7 +89,7 @@
     </p>
     <p class="text-xs text-zinc-500 dark:text-zinc-400 text-right">
       This site is not affiliated with Overwatch or Blizzard Entertainment.
-      <br />Overwatch 2 and the Overwatch 2 logo are ©2022 Blizzard
+      <br />Overwatch and the Overwatch logo are ©2022 Blizzard
       Entertainment, Inc.
     </p>
   </footer>

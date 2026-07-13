@@ -59,11 +59,11 @@ export const GET: RequestHandler = async(fullRequest) => {
     ],
     _content: {
       channel: [
-        { title: "OW2Countdown" },
-        { description: "Count down to important Overwatch 2 events" },
+        { title: "OWCountdown" },
+        { description: "Count down to important Overwatch events" },
         { link: `${requestURL.protocol}//${requestURL.host}/` },
         { language: "en-us" },
-        { _name: "atom:link", _attrs: { href: "http://ow2countdown.com/feed.xml", rel: "self", type: "application/rss+xml" } },
+        { _name: "atom:link", _attrs: { href: "http://owcountdown.com/feed.xml", rel: "self", type: "application/rss+xml" } },
         ...[items]
       ]
     }

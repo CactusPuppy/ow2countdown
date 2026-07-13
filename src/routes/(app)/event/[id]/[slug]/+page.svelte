@@ -91,20 +91,20 @@
 </script>
 
 <svelte:head>
-  <title>{data.event?.title ?? "Event"} | OW2Countdown.com</title>
+  <title>{data.event?.title ?? "Event"} | OWCountdown.com</title>
 
   <meta name="description" content={ogDescription} />
   <meta
     name="og:title"
-    content={`${data.event?.title ?? "Event"} | OW2Countdown.com`}
+    content={`${data.event?.title ?? "Event"} | OWCountdown.com`}
   />
   <meta name="og:description" content={ogDescription} />
   <meta
     name="og:url"
-    content={`https://ow2countdown.com/event/${data.event.id}/${titleToSlug(data.event.title)}`}
+    content={`https://owcountdown.com/event/${data.event.id}/${titleToSlug(data.event.title)}`}
   />
-  <meta name="og:image" content="https://ow2countdown.com/og-image.jpg" />
-  <meta name="og:image:alt" content="OW2Countdown Logo" />
+  <meta name="og:image" content="https://owcountdown.com/og-image.jpg" />
+  <meta name="og:image:alt" content="OWCountdown Logo" />
   <meta name="og:image:width" content="600" />
   <meta name="og:image:height" content="600" />
 </svelte:head>

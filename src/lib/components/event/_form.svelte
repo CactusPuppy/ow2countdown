@@ -7,6 +7,7 @@
   import { parseISO, format } from "date-fns";
   import { browser } from "$app/environment";
   import type { Snippet } from "svelte";
+  import Tags from "../form/Tags.svelte";
 
   const {
     event,
@@ -18,7 +19,7 @@
   let group = $state("");
   let date = $state("");
   let end_date = $state("");
-  let tags = $state("");
+  let tags = $state([] as string[]);
   let priority = $state(0);
 
   if (browser) {
@@ -42,7 +43,7 @@
         "yyyy-LL-dd'T'HH:mm:ss",
       ).slice(0, 19); // Localize datetime
     priority = event?.priority || 0;
-    tags = event.tags;
+    tags = event.tags?.split(",") ?? [];
   }
 
   function loadFromLocalStorage() {
@@ -108,8 +109,7 @@
   placeholder="Title"
   required
   rows="1"
-  bind:value={title}
-></textarea>
+  bind:value={title}></textarea>
 
 <label for="event__description" class="mb-2 mt-4 text-lg optional-label"
   >Description</label
@@ -120,8 +120,7 @@
   class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800"
   placeholder="Description"
   rows="5"
-  bind:value={description}
-></textarea>
+  bind:value={description}></textarea>
 
 <label for="event__date" class="mb-2 mt-4 text-lg">Start Date</label>
 <input
@@ -157,14 +156,15 @@
 />
 
 <label for="event__tags" class="mb-2 mt-4 text-lg optional-label">Tags</label>
-<input
+<!-- <input
   id="event__tags"
   name="tags"
   type="text"
   class="w-full px-2 py-1 rounded-sm dark:bg-zinc-800"
   placeholder="tag1, tag2, etc."
   bind:value={tags}
-/>
+/> -->
+<Tags bind:tags />
 
 <label for="event__priority" class="mb-2 mt-4 text-lg optional-label"
   >Priority</label

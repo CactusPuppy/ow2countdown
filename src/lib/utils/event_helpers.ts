@@ -40,3 +40,9 @@ export function eventRelationToNow(event: CountdownDate, now?: Date) {
 
    return "occurs";
 }
+
+export const TAGS_DELIMITER = ",";
+
+export function splitTags(tags: string): string[] {
+  return tags.split(TAGS_DELIMITER).map(tag => tag.trim()).filter(tag => tag.length > 0);
+}

@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import type { CountdownDate } from "$lib/types";
+  import type { CountdownDateWithTags } from "$lib/types";
   import { parseISO, format } from "date-fns";
   import { browser } from "$app/environment";
   import type { Snippet } from "svelte";
@@ -12,7 +12,7 @@
   const {
     event,
     submitButton,
-  }: { event?: CountdownDate; submitButton: Snippet } = $props();
+  }: { event?: CountdownDateWithTags; submitButton: Snippet } = $props();
 
   let title = $state("");
   let description = $state("");
@@ -31,7 +31,7 @@
     }
   }
 
-  function setEventData(event: CountdownDate) {
+  function setEventData(event: CountdownDateWithTags) {
     title = event.title;
     description = event.description;
     group = event.group;
@@ -43,7 +43,7 @@
         "yyyy-LL-dd'T'HH:mm:ss",
       ).slice(0, 19); // Localize datetime
     priority = event?.priority || 0;
-    tags = event.tags?.split(",") ?? [];
+    tags = event.tags ?? [];
   }
 
   function loadFromLocalStorage() {
@@ -58,7 +58,7 @@
         group = data.group || "";
         date = data.date || "";
         end_date = data.end_date || "";
-        tags = data.tags || "";
+        tags = data.tags || [];
         priority = data.priority || 0;
       }
     } catch (error) {

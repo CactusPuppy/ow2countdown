@@ -1,6 +1,6 @@
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import { entriesToEventObject } from "../../../../../stores/dates";
-import { SUPABASE_TABLE_NAME } from "$env/static/private";
+import { splitTags } from "$lib/utils/event_helpers";
 
 export const actions: Actions = {
   default: async (event) => {
@@ -18,11 +18,13 @@ export const actions: Actions = {
     }
 
     const eventData = entriesToEventObject(data.entries());
+    const tagNames = splitTags(String(data.get("tags") ?? ""));
 
-    const { error, status, statusText } = await supabase
-      .from(SUPABASE_TABLE_NAME)
-      .update(eventData)
-      .eq("id", id);
+    const { error, status, statusText } = await supabase.rpc("save_event", {
+      event_id: Number.parseInt(id, 10),
+      event_data: eventData,
+      tag_names: tagNames,
+    });
 
     if (error) {
       return fail(status, { error: statusText });

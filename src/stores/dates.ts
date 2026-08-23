@@ -6,7 +6,7 @@ const MIN_BACKOFF = 10;
 const MAX_BACKOFF = 60;
 const BACKOFF_VARIANCE = 0.5;
 
-export const CountdownDateKeys: (keyof CountdownDate)[] = ["date", "description", "end_date", "group", "priority", "tags", "title"];
+export const CountdownDateKeys: (keyof CountdownDate)[] = ["date", "description", "end_date", "group", "priority", "title"];
 
 export type CountdownDateContainer = CountdownDate[] & {errored?: boolean};
 

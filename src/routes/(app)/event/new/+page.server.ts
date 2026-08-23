@@ -1,6 +1,6 @@
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import { entriesToEventObject } from "../../../../stores/dates";
-import { SUPABASE_TABLE_NAME } from "$env/static/private";
+import { splitTags } from "$lib/utils/event_helpers";
 import type { CountdownDate } from "$lib/types";
 
 export const actions: Actions = {
@@ -17,18 +17,23 @@ export const actions: Actions = {
     }
 
     const eventData = entriesToEventObject(data.entries());
+    const tagNames = splitTags(String(data.get("tags") ?? ""));
 
     const {
       data: returnedData,
       error,
       status,
       statusText,
-    } = await supabase.from(SUPABASE_TABLE_NAME).insert(eventData).select();
+    } = await supabase.rpc("save_event", {
+      event_id: null,
+      event_data: eventData,
+      tag_names: tagNames,
+    });
 
     if (error) {
       return fail(status, { error: statusText });
     }
-    const returnedEvent = <CountdownDate>returnedData[0];
+    const returnedEvent = <CountdownDate>returnedData;
 
     throw redirect(302, `/event/${returnedEvent.id}`);
   },

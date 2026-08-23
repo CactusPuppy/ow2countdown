@@ -82,8 +82,6 @@
       <ProgressBar progress={100 - timeRemainingInSeconds / eventDurationInSeconds * 100} />
     </div>
   {/if}
-  {#if event.tags}
-  {/if}
   <div class="flex justify-center my-6">
     <Timer start={now} end={parseISO(dateStringToDisplay)} id={event.id} additionalDelay={additionalDelay + 700} />
   </div>

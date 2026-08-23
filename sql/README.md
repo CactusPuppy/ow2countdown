@@ -11,10 +11,13 @@ Apply files in numeric filename order:
 1. `001_tags_schema.sql` — creates the `tags` and `event_tags` tables, the
    case-insensitive unique index on tag names, RLS policies, and the
    `save_event` transactional write function.
-2. `002_...` (future) — one-time migration of legacy comma-delimited
-   `tags` data into the normalized schema (plan 01-02).
-3. `003_...` (future) — drops the legacy `tags` column from
-   `upcoming_events_staging` once the migration is verified (plan 01-04).
+2. `002_migrate_legacy_tags.sql` — one-time migration of legacy
+   comma-delimited `tags` data into the normalized schema (plan 01-02).
+3. `003_drop_legacy_tags_column.sql` — drops the legacy `tags` column from
+   `upcoming_events_staging` (plan 01-04). **Irreversible.** Only run this
+   after `scripts/verify-tag-migration.mjs` has passed against this same
+   database — an unverified drop destroys the only copy of the original
+   tag text, recoverable afterwards only via a database backup restore.
 
 ## How to apply
 

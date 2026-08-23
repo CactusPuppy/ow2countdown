@@ -18,7 +18,6 @@ export interface Database {
           description: string | null
           group: string | null
           priority: number
-          tags: string | null
           end_date: string | null
         }
         Insert: {
@@ -29,7 +28,6 @@ export interface Database {
           description?: string | null
           group?: string | null
           priority?: number
-          tags?: string | null
           end_date?: string | null
         }
         Update: {
@@ -40,7 +38,6 @@ export interface Database {
           description?: string | null
           group?: string | null
           priority?: number
-          tags?: string | null
           end_date?: string | null
         }
       }

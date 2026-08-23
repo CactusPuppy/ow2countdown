@@ -33,6 +33,16 @@
 
 begin;
 
+-- NOTE: a CTE (WITH ... AS (...)) is scoped to the single statement it is
+-- attached to -- it does not carry over to the next statement, even inside
+-- the same transaction. Each INSERT below therefore repeats the full
+-- legacy/normalized/parsed parse chain rather than sharing one definition
+-- across statements. This is deliberate, not duplication left in by mistake.
+
+-- Insert distinct tag names. The ON CONFLICT target matches the
+-- tags_name_lower_key unique index created in sql/001_tags_schema.sql, so a
+-- name already present (case-insensitively) is left untouched -- D-02's
+-- first-entered-casing rule.
 with legacy as (
   select
     id as event_id,
@@ -71,17 +81,44 @@ distinct_names as (
   from parsed
   where tag_name is not null
 )
-
--- Insert distinct tag names. The ON CONFLICT target matches the
--- tags_name_lower_key unique index created in sql/001_tags_schema.sql, so a
--- name already present (case-insensitively) is left untouched -- D-02's
--- first-entered-casing rule.
 insert into public.tags (name)
 select tag_name
 from distinct_names
 on conflict (lower(name)) do nothing;
 
--- Link each event to every tag parsed from its legacy value.
+-- Link each event to every tag parsed from its legacy value. Same parse
+-- chain as above, repeated because the previous statement's CTEs are out of
+-- scope here (see note at the top of this file).
+with legacy as (
+  select
+    id as event_id,
+    tags as raw_tags
+  from public.upcoming_events_staging
+  where tags is not null
+    and btrim(tags) <> ''
+),
+normalized as (
+  select
+    event_id,
+    case
+      when left(btrim(replace(replace(raw_tags, '“', '"'), '”', '"')), 1) = '['
+       and right(btrim(replace(replace(raw_tags, '“', '"'), '”', '"')), 1) = ']'
+      then substring(
+             btrim(replace(replace(raw_tags, '“', '"'), '”', '"'))
+             from 2
+             for length(btrim(replace(replace(raw_tags, '“', '"'), '”', '"'))) - 2
+           )
+      else btrim(replace(replace(raw_tags, '“', '"'), '”', '"'))
+    end as inner_text
+  from legacy
+),
+parsed as (
+  select
+    event_id,
+    nullif(btrim(btrim(elem, ' '), '"'), '') as tag_name
+  from normalized,
+       regexp_split_to_table(inner_text, ',') as elem
+)
 insert into public.event_tags (event_id, tag_id)
 select distinct p.event_id, t.id
 from parsed p

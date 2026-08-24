@@ -21,14 +21,21 @@
  * outlive the process that created them, sitting in the database for a
  * developer's manual visual pass.
  *
- * Three fixtures cover the visual cases DISP-03 and the UI-SPEC's
- * long-name backstop need eyes on:
+ * Five fixtures cover the visual cases DISP-03, the UI-SPEC's long-name
+ * backstop, and Phase 3's AND-semantics filter demonstration need eyes on:
  *   1. neutral — two ordinary short tags, no color override
  *   2. colored — one tag, colored directly on public.tags to #9146FF
  *      after creation (the sanctioned way to set a color: TAGS-05 /
  *      Phase 1 D-13 — save_event's write path never touches tags.color)
  *   3. wrapping — one ~60-character tag name plus several short tags, to
  *      exercise both the truncation backstop and row-wrapping
+ *   4. and-both (gsd-visual-and-both) — carries both AND-demo tags, so
+ *      selecting the shared tag then also selecting the second one narrows
+ *      down to just this event
+ *   5. and-shared (gsd-visual-and-shared) — carries only the shared
+ *      AND-demo tag, so selecting the shared tag alone shows this event
+ *      alongside gsd-visual-and-both, proving AND (not OR) semantics once
+ *      the second tag is also selected
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -56,9 +63,14 @@ const TITLE_PREFIX = "gsd-visual-";
 const NEUTRAL_TITLE = `${TITLE_PREFIX}neutral-demo`;
 const COLORED_TITLE = `${TITLE_PREFIX}colored-demo`;
 const WRAPPING_TITLE = `${TITLE_PREFIX}wrapping-demo`;
+const AND_BOTH_TITLE = `${TITLE_PREFIX}and-both`;
+const AND_SHARED_TITLE = `${TITLE_PREFIX}and-shared`;
 
 const TAG_NEUTRAL_ONE = "gsd-visual-tag-neutral-one";
 const TAG_NEUTRAL_TWO = "gsd-visual-tag-neutral-two";
+
+const TAG_SHARED = "gsd-visual-tag-shared";
+const TAG_ONLY_ONE = "gsd-visual-tag-only-one";
 
 const TAG_COLORED = "gsd-visual-tag-colored";
 const TAG_COLOR_HEX = "#9146FF";
@@ -83,6 +95,8 @@ const ALL_FIXTURE_TAG_NAMES = [
   TAG_COLORED,
   TAG_LONG_NAME,
   ...WRAPPING_EXTRA_TAGS,
+  TAG_SHARED,
+  TAG_ONLY_ONE,
 ];
 
 function farFutureDate() {
@@ -127,6 +141,16 @@ async function seed() {
   //    force the chip row onto a second line.
   const wrapping = await createFixtureEvent(WRAPPING_TITLE, [TAG_LONG_NAME, ...WRAPPING_EXTRA_TAGS]);
   created.push({ title: WRAPPING_TITLE, id: wrapping.id });
+
+  // 4 & 5. AND-semantics demo — two events sharing one tag, only one of
+  //    which also carries a second tag. Selecting the shared tag alone
+  //    shows both; adding the second tag narrows to exactly and-both,
+  //    making AND (not OR) semantics demonstrable by eye.
+  const andBoth = await createFixtureEvent(AND_BOTH_TITLE, [TAG_SHARED, TAG_ONLY_ONE]);
+  created.push({ title: AND_BOTH_TITLE, id: andBoth.id });
+
+  const andShared = await createFixtureEvent(AND_SHARED_TITLE, [TAG_SHARED]);
+  created.push({ title: AND_SHARED_TITLE, id: andShared.id });
 
   console.log("Seeded visual fixtures:");
   for (const event of created) {

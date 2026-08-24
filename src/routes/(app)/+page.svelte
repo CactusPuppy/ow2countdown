@@ -11,7 +11,7 @@
   import { onDestroy, onMount } from "svelte";
   import { flip } from "svelte/animate";
 
-  import type { CountdownDate } from "$lib/types";
+  import type { CountdownDateWithTags } from "$lib/types";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
   import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -27,7 +27,7 @@
 
   let loading = true;
 
-  let displayDates: CountdownDate[];
+  let displayDates: CountdownDateWithTags[];
   // Gets the earliest date in each group, then orders the dates
   // (no specified datetime events inherently are treated as infinitely far in the future)
   $: if ($dates.errored !== true) {
@@ -50,7 +50,7 @@
           }
           return accumulator;
         },
-        {} as Record<string, CountdownDate>,
+        {} as Record<string, CountdownDateWithTags>,
       ),
     ).sort((event1, event2) => {
       if (event1.priority != event2.priority)

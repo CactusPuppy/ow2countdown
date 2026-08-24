@@ -2,6 +2,7 @@ import { error, json, type RequestEvent } from "@sveltejs/kit"
 import type { RequestHandler } from "@sveltejs/kit";
 import { formatISO } from "date-fns";
 import { SUPABASE_TABLE_NAME } from '$env/static/private'
+import type { EventTag } from "$lib/types";
 
 const DEFAULT_VERSION = 1;
 const DEFAULT_PAGE_SIZE = 25;
@@ -16,7 +17,7 @@ export const GET: RequestHandler = async (request) => {
   const filters = getRequestFilters(request);
 
   let query = supabase.from(SUPABASE_TABLE_NAME)
-      .select("*", { count: filters.version === 2 ? "exact" : undefined })
+      .select("*, event_tags(tags(name, color))", { count: filters.version === 2 ? "exact" : undefined })
 
   // if there is no order by, use the default sort of priority and date which is used by the homepage
   if (!filters.orderBy) {
@@ -42,17 +43,32 @@ export const GET: RequestHandler = async (request) => {
     "cache-control": "public, max-age=60"
   })
 
+  // Flatten the embedded join into a plain `tags: {name, color}[]` per row
+  // and drop the raw `event_tags` embed property, so every event object
+  // keeps its existing shape plus a `tags` field and nothing else new. This
+  // runs once, ahead of the version branch, so both the v1 plain array and
+  // the v2 {meta, data} envelope are fed from the same transformed array.
+  const flattenedData = (data ?? []).map((row) => {
+    const { event_tags: eventTags, ...event } = row;
+    const tags: EventTag[] = (eventTags ?? [])
+      .map((link: { tags: EventTag | null }) => link.tags)
+      .filter((tag: EventTag | null): tag is EventTag => tag !== null)
+      .sort((a: EventTag, b: EventTag) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+
+    return { ...event, tags };
+  });
+
   if (filters.version === 2) {
     return json({
       meta: {
         total: count,
         total_pages: Math.ceil(count / filters.pageSize)
       },
-      data
+      data: flattenedData
     });
   }
 
-  return json(data);
+  return json(flattenedData);
 }
 
 function getRequestFilters (request: RequestEvent) {

@@ -43,7 +43,7 @@
         "yyyy-LL-dd'T'HH:mm:ss",
       ).slice(0, 19); // Localize datetime
     priority = event?.priority || 0;
-    tags = event.tags ?? [];
+    tags = (event.tags ?? []).map((tag) => tag.name);
   }
 
   function loadFromLocalStorage() {

@@ -7,12 +7,12 @@
   import { fade } from "svelte/transition";
 
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
-  import type { CountdownDate } from "$lib/types";
+  import type { CountdownDateWithTags } from "$lib/types";
   import Timer from "$lib/components/_timer.svelte";
   import { eventEffectiveDate, eventRelationToNow, titleToSlug, isEventHappeningNow } from "$lib/utils/event_helpers";
   import ProgressBar from "$lib/components/_progress_bar.svelte";
 
-  export let event: CountdownDate;
+  export let event: CountdownDateWithTags;
   export let now: Date;
   export let additionalDelay = 0;
 
@@ -43,6 +43,21 @@
       {event.title}
     </a>
   </p>
+  {#if event.tags.length > 0}
+    <ul
+      data-testid="event-tags"
+      class="flex flex-wrap justify-center gap-2 list-none mt-1"
+      in:fade={{duration: 500, delay: 275 + additionalDelay}}
+      out:fade
+    >
+      {#each event.tags as tag (tag.name)}
+        <li
+          class="px-2 py-1 rounded-full text-xs font-medium leading-tight bg-zinc-300 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-50 max-w-[12rem] truncate"
+          title={tag.name}
+        >{tag.name}</li>
+      {/each}
+    </ul>
+  {/if}
   {#if event.id !== -1}
     <div
       class="absolute right-0 top-0 md:mr-3 md:mt-3 px-2 py-1

@@ -92,3 +92,37 @@ export function filterEventsByTags(
     selectedTagNames.every((name) => event.tags.some((tag) => tag.name === name)),
   );
 }
+
+// Narrows a selection down to only the names still carried by some event in
+// the current list — the client-presentation fix for D-12: when the only
+// event(s) carrying a selected tag drop out of the dataset (e.g. on a
+// background poll), that name would otherwise keep constraining
+// filterEventsByTags forever, emptying the page with no selected chip left
+// visible to explain why. Compares by exact tag.name string, the same
+// identity rule distinctSortedTags and filterEventsByTags use, so all three
+// helpers agree on what "the same tag" means.
+//
+// Deliberately NOT folded into filterEventsByTags itself: that predicate
+// must stay a pure carries-all test, because Phase 4's server-side `tags`
+// query param reuses the same semantics and a partner request naming a tag
+// no event carries must correctly return zero results, not silently
+// everything. This narrowing is a client-only presentation concern.
+//
+// Pure derivation — never mutates selectedTagNames, so a tag that returns to
+// the dataset on a later poll is still selected and immediately narrows the
+// list again rather than the visitor's choice having been destroyed.
+export function activeTagNames(
+  events: CountdownDateWithTags[],
+  selectedTagNames: string[],
+): string[] {
+  if (selectedTagNames.length === 0) return selectedTagNames;
+
+  const carriedNames = new Set<string>();
+  for (const event of events) {
+    for (const tag of event.tags) {
+      carriedNames.add(tag.name);
+    }
+  }
+
+  return selectedTagNames.filter((name) => carriedNames.has(name));
+}

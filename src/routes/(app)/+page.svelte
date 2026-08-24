@@ -19,7 +19,7 @@
   import { dates } from "../../stores/dates";
   import EventCard from "../_event_card.svelte";
   import FilterPanel from "$lib/components/FilterPanel.svelte";
-  import { eventEffectiveDate, filterEventsByTags } from "$lib/utils/event_helpers";
+  import { activeTagNames, eventEffectiveDate, filterEventsByTags } from "$lib/utils/event_helpers";
   import { fade } from "svelte/transition";
 
   let now: Date;
@@ -74,8 +74,14 @@
   }
 
   let selectedTags: string[] = [];
+  // A tag the panel no longer offers (its only carrying event(s) dropped out
+  // on a poll) stops constraining the list here rather than silently
+  // emptying the page — the selection itself is left untouched, so the tag
+  // re-applies immediately if it returns (D-12).
+  let effectiveTags: string[];
+  $: effectiveTags = activeTagNames(displayDates ?? [], selectedTags);
   let filteredDates: CountdownDateWithTags[];
-  $: filteredDates = filterEventsByTags(displayDates ?? [], selectedTags);
+  $: filteredDates = filterEventsByTags(displayDates ?? [], effectiveTags);
 
   let timeUpdateInterval: NodeJS.Timeout;
   function updateTime() {

@@ -126,3 +126,21 @@ export function activeTagNames(
 
   return selectedTagNames.filter((name) => carriedNames.has(name));
 }
+
+// FilterPanel's selected/unselected opacity treatment (D-06) and its Clear
+// control (D-16) must reflect what the filter is actually enforcing, not the
+// raw selection, because D-12 deliberately preserves a selection whose tag
+// has temporarily vanished. This is the panel-side companion to
+// activeTagNames' parent-side narrowing: over the same event list, this
+// predicate agrees with activeTagNames(...).length > 0. Compares by exact
+// tag.name string, the same identity rule distinctSortedTags,
+// filterEventsByTags and activeTagNames use.
+export function hasActiveSelection(
+  availableTags: EventTag[],
+  selectedTagNames: string[],
+): boolean {
+  if (selectedTagNames.length === 0) return false;
+
+  const availableNames = new Set(availableTags.map((tag) => tag.name));
+  return selectedTagNames.some((name) => availableNames.has(name));
+}

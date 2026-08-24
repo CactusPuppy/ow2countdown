@@ -3,6 +3,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { formatISO } from "date-fns";
 import { SUPABASE_TABLE_NAME } from '$env/static/private'
 import type { EventTag } from "$lib/types";
+import { compareTagNames } from "$lib/utils/event_helpers";
 
 const DEFAULT_VERSION = 1;
 const DEFAULT_PAGE_SIZE = 25;
@@ -53,7 +54,7 @@ export const GET: RequestHandler = async (request) => {
     const tags: EventTag[] = (eventTags ?? [])
       .map((link: { tags: EventTag | null }) => link.tags)
       .filter((tag: EventTag | null): tag is EventTag => tag !== null)
-      .sort((a: EventTag, b: EventTag) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+      .sort(compareTagNames);
 
     return { ...event, tags };
   });

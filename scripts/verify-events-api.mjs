@@ -164,6 +164,18 @@ async function main() {
   const TAG_FILTER = `gsd-filter-${SUFFIX}`;
   const TAG_FILTER_NONEXISTENT = `gsd-filter-none-${SUFFIX}`;
 
+  // AND-semantics fixture set (Phase 4, plan 04-02, Task 1): three tags and
+  // three events built so a naive OR implementation, a naive
+  // carries-exactly (superset-rejecting) implementation, or an
+  // element-count-derived (rather than distinct-count-derived) requirement
+  // would each produce a visibly different, wrong answer.
+  const TAG_AND_ALPHA = `gsd-and-alpha-${SUFFIX}`;
+  const TAG_AND_BETA = `gsd-and-beta-${SUFFIX}`;
+  const TAG_AND_GAMMA = `gsd-and-gamma-${SUFFIX}`;
+  const AND_ALL_THREE_TITLE = `${TITLE_PREFIX}${SUFFIX}-and-all-three`;
+  const AND_TWO_TITLE = `${TITLE_PREFIX}${SUFFIX}-and-two`;
+  const AND_ALPHA_ONLY_TITLE = `${TITLE_PREFIX}${SUFFIX}-and-alpha-only`;
+
   const FAR_FUTURE_DATE = new Date(Date.now() + 400 * 24 * 60 * 60 * 1000).toISOString();
 
   let devServer;
@@ -219,6 +231,34 @@ async function main() {
           tag_names: [TAG_FILTER],
         });
         assertTrue(!error && !!data?.id, "setup: created the ?tags= filter-target fixture event via save_event");
+      }
+
+      // AND-semantics fixtures (Phase 4, plan 04-02, Task 1): one event
+      // carrying all three AND tags (strict superset of any pair), one
+      // carrying exactly the alpha+beta pair, and one carrying alpha only.
+      {
+        const { data, error } = await serviceClient.rpc("save_event", {
+          event_id: null,
+          event_data: { title: AND_ALL_THREE_TITLE, priority: 0, date: FAR_FUTURE_DATE },
+          tag_names: [TAG_AND_ALPHA, TAG_AND_BETA, TAG_AND_GAMMA],
+        });
+        assertTrue(!error && !!data?.id, "setup: created the AND all-three fixture event via save_event");
+      }
+      {
+        const { data, error } = await serviceClient.rpc("save_event", {
+          event_id: null,
+          event_data: { title: AND_TWO_TITLE, priority: 0, date: FAR_FUTURE_DATE },
+          tag_names: [TAG_AND_ALPHA, TAG_AND_BETA],
+        });
+        assertTrue(!error && !!data?.id, "setup: created the AND two-tag (alpha+beta) fixture event via save_event");
+      }
+      {
+        const { data, error } = await serviceClient.rpc("save_event", {
+          event_id: null,
+          event_data: { title: AND_ALPHA_ONLY_TITLE, priority: 0, date: FAR_FUTURE_DATE },
+          tag_names: [TAG_AND_ALPHA],
+        });
+        assertTrue(!error && !!data?.id, "setup: created the AND alpha-only fixture event via save_event");
       }
 
       // ----------------------------------------------------------------
@@ -442,6 +482,126 @@ async function main() {
           "?tags= concurrency: every concurrent identical request returns a byte-identical body",
         );
       }
+
+      // ----------------------------------------------------------------
+      // ?tags= AND semantics, superset matching (Phase 4, plan 04-02,
+      // Task 1, API-02): a comma-separated pair must be satisfied by an
+      // event carrying exactly that pair AND by an event carrying a strict
+      // superset of it (carries-all-selected, not carries-exactly), while
+      // an event carrying only one of the two tags must be absent — the
+      // case an OR implementation would get wrong.
+      // ----------------------------------------------------------------
+      {
+        const { status, body } = await fetchEvents(
+          `v=1&tags=${encodeURIComponent(`${TAG_AND_ALPHA},${TAG_AND_BETA}`)}&include_past=true&page_size=25`,
+        );
+        assertTrue(status === 200, "?tags= AND pair: GET /api/events?tags=<alpha>,<beta> returns 200");
+        assertTrue(
+          findByTitle(body, AND_ALL_THREE_TITLE) !== undefined,
+          "?tags= AND pair: the all-three fixture (strict superset of the pair) is present",
+        );
+        assertTrue(
+          findByTitle(body, AND_TWO_TITLE) !== undefined,
+          "?tags= AND pair: the two-tag fixture (exact match of the pair) is present",
+        );
+        assertTrue(
+          findByTitle(body, AND_ALPHA_ONLY_TITLE) === undefined,
+          "?tags= AND pair: the alpha-only fixture (carries only one of the two) is absent",
+        );
+      }
+      {
+        const { status, body } = await fetchEvents(
+          `v=1&tags=${encodeURIComponent(`${TAG_AND_ALPHA},${TAG_AND_BETA},${TAG_AND_GAMMA}`)}&include_past=true&page_size=25`,
+        );
+        assertTrue(status === 200, "?tags= AND triple: GET /api/events?tags=<alpha>,<beta>,<gamma> returns 200");
+        assertTrue(
+          findByTitle(body, AND_ALL_THREE_TITLE) !== undefined,
+          "?tags= AND triple: the all-three fixture is present",
+        );
+        assertTrue(
+          findByTitle(body, AND_TWO_TITLE) === undefined,
+          "?tags= AND triple: the two-tag fixture (missing gamma) is absent",
+        );
+        assertTrue(
+          findByTitle(body, AND_ALPHA_ONLY_TITLE) === undefined,
+          "?tags= AND triple: the alpha-only fixture is absent",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // ?tags= case collapse at multi-tag cardinality (Phase 4, plan
+      // 04-02, Task 1, D-05/D-08/D-09): naming the same tag twice, once in
+      // its stored casing and once inverted, must collapse to a single
+      // required name rather than compound into an unsatisfiable two-name
+      // AND requirement. This would catch a required-count derived from
+      // the raw input array's element count instead of its distinct
+      // lower-cased entries — that mistake demands two distinct matched
+      // names for a request naming one tag twice, and no event could ever
+      // satisfy it. Note: this failure mode is invisible to the RPC itself
+      // here, because +server.ts deduplicates before ever calling it — what
+      // this assertion actually proves is that the two case-differing
+      // spellings collapse rather than compound over the full HTTP path.
+      // The RPC's own defensive behaviour against genuinely raw/duplicate
+      // input is covered separately by scripts/verify-tag-rpc.mjs.
+      // ----------------------------------------------------------------
+      {
+        const plain = await fetchEvents(
+          `v=1&tags=${encodeURIComponent(TAG_AND_ALPHA)}&include_past=true&page_size=25`,
+        );
+        const doubled = await fetchEvents(
+          `v=1&tags=${encodeURIComponent(`${TAG_AND_ALPHA},${TAG_AND_ALPHA.toUpperCase()}`)}&include_past=true&page_size=25`,
+        );
+        assertTrue(plain.status === 200 && doubled.status === 200, "?tags= case collapse: both requests return 200");
+
+        const plainTitles = (plain.body ?? []).map((event) => event.title).sort();
+        const doubledTitles = (doubled.body ?? []).map((event) => event.title).sort();
+        assertTrue(
+          JSON.stringify(plainTitles) === JSON.stringify(doubledTitles),
+          "?tags= case collapse: naming one tag twice in two letter-casings returns the identical fixture-title set as naming it once",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // ?tags= order preservation (Phase 4, plan 04-02, Task 1): applying
+      // ?tags= narrows WHICH events are returned, never their order. The
+      // AND fixtures' relative order under an explicit order_by/
+      // order_direction must match between the unfiltered and the
+      // ?tags=<alpha>-filtered response, and each returned event's own
+      // tags array stays case-insensitive-alphabetical regardless of
+      // filtering.
+      // ----------------------------------------------------------------
+      {
+        const orderQuery = "order_by=id&order_direction=desc&include_past=true&page_size=25";
+        const unfiltered = await fetchEvents(`v=1&${orderQuery}`);
+        const filtered = await fetchEvents(`v=1&tags=${encodeURIComponent(TAG_AND_ALPHA)}&${orderQuery}`);
+        assertTrue(
+          unfiltered.status === 200 && filtered.status === 200,
+          "?tags= ordering: both the unfiltered and the AND-alpha-filtered requests return 200",
+        );
+
+        const andTitles = new Set([AND_ALL_THREE_TITLE, AND_TWO_TITLE, AND_ALPHA_ONLY_TITLE]);
+        const unfilteredOrder = (unfiltered.body ?? [])
+          .map((event) => event.title)
+          .filter((title) => andTitles.has(title));
+        const filteredOrder = (filtered.body ?? [])
+          .map((event) => event.title)
+          .filter((title) => andTitles.has(title));
+        assertTrue(
+          filteredOrder.length === 3 && JSON.stringify(filteredOrder) === JSON.stringify(unfilteredOrder),
+          "?tags= ordering: the AND fixtures' relative order under ?tags=<alpha> matches their relative order in the unfiltered response",
+        );
+
+        const allThreeFiltered = findByTitle(filtered.body, AND_ALL_THREE_TITLE);
+        const expectedAndOrder = [TAG_AND_ALPHA, TAG_AND_BETA, TAG_AND_GAMMA]
+          .slice()
+          .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+        assertTrue(
+          Array.isArray(allThreeFiltered?.tags) &&
+            allThreeFiltered.tags.map((tag) => tag.name).every((name, i) => name === expectedAndOrder[i]),
+          "?tags= ordering: the all-three fixture's tags array stays case-insensitive alphabetical under a ?tags= filter",
+        );
+      }
+
     } finally {
       // Cleanup: delete any leftover fixture events (covers a failed
       // assertion leaving one behind) and every fixture tag row.
@@ -451,7 +611,10 @@ async function main() {
         console.error("cleanup: failed to delete fixture events", cleanupError);
       }
       try {
-        await serviceClient.from("tags").delete().in("name", [TAG_ZULU, TAG_ALPHA, TAG_MIKE, TAG_COLORED, TAG_FILTER]);
+        await serviceClient.from("tags").delete().in("name", [
+          TAG_ZULU, TAG_ALPHA, TAG_MIKE, TAG_COLORED, TAG_FILTER,
+          TAG_AND_ALPHA, TAG_AND_BETA, TAG_AND_GAMMA,
+        ]);
       } catch (cleanupError) {
         console.error("cleanup: failed to delete fixture tags", cleanupError);
       }

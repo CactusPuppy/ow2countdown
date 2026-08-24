@@ -18,7 +18,8 @@
 
   import { dates } from "../../stores/dates";
   import EventCard from "../_event_card.svelte";
-  import { eventEffectiveDate } from "$lib/utils/event_helpers";
+  import FilterPanel from "$lib/components/FilterPanel.svelte";
+  import { eventEffectiveDate, filterEventsByTags } from "$lib/utils/event_helpers";
   import { fade } from "svelte/transition";
 
   let now: Date;
@@ -71,6 +72,10 @@
       );
     });
   }
+
+  let selectedTags: string[] = [];
+  let filteredDates: CountdownDateWithTags[];
+  $: filteredDates = filterEventsByTags(displayDates ?? [], selectedTags);
 
   let timeUpdateInterval: NodeJS.Timeout;
   function updateTime() {
@@ -146,9 +151,12 @@
   </div>
 {/if}
 <div class="relative min-h-full items-center py-2 w-full dark:text-zinc-50">
-  {#if displayDates?.length != undefined && displayDates.length > 0}
+  <div class="events-wrapper mx-auto w-full px-4 mb-6">
+    <FilterPanel events={displayDates ?? []} bind:selectedTags />
+  </div>
+  {#if filteredDates?.length != undefined && filteredDates.length > 0}
     <div class="events-wrapper flex flex-col mx-auto items-center gap-6">
-      {#each displayDates as event, eventIndex (event.id)}
+      {#each filteredDates as event, eventIndex (event.id)}
         <div class="justify-self-center" animate:flip={{ duration: 500 }}>
           <EventCard {now} {event} additionalDelay={eventIndex * 150} />
         </div>

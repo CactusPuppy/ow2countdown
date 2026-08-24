@@ -63,6 +63,26 @@ function sameSet(actual, expected) {
   return a.length === b.length && a.every((value, i) => value === b[i]);
 }
 
+/** A single tag pair must be an object with exactly a string `name` and a
+ *  `color` that is either a string or null, distinguishing a missing
+ *  `color` key from an explicit `null` value via `hasOwnProperty`. */
+function isValidTagPair(tag) {
+  if (tag === null || typeof tag !== "object") return false;
+  const keys = Object.keys(tag).sort();
+  if (keys.length !== 2 || keys[0] !== "color" || keys[1] !== "name") return false;
+  if (typeof tag.name !== "string") return false;
+  if (!Object.prototype.hasOwnProperty.call(tag, "color")) return false;
+  return typeof tag.color === "string" || tag.color === null;
+}
+
+/** Same-set comparison over the `name` member of an array of { name, color }
+ *  tag pairs, plus a per-member shape check on every pair. */
+function sameTagNameSet(actualTags, expectedNames) {
+  if (!Array.isArray(actualTags)) return false;
+  if (!actualTags.every(isValidTagPair)) return false;
+  return sameSet(actualTags.map((tag) => tag.name), expectedNames);
+}
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -173,15 +193,20 @@ async function main() {
       }
 
       // ----------------------------------------------------------------
-      // A tagged event returns its tag names as an array
+      // A tagged event returns its tags as an array of { name, color }
+      // pairs (D-02)
       // ----------------------------------------------------------------
       {
         const { status, body } = await fetchEvent(taggedEventId);
         assertTrue(status === 200, "tagged: GET /api/event/{id} returns 200");
         assertTrue(Array.isArray(body?.tags), "tagged: response tags property is an array");
         assertTrue(
-          sameSet(body?.tags ?? [], [TAG_A, TAG_B]),
-          "tagged: tags array members equal the two names the event was created with",
+          Array.isArray(body?.tags) && body.tags.every(isValidTagPair),
+          "tagged: every tag is an object with exactly a string name and a string-or-null color",
+        );
+        assertTrue(
+          sameTagNameSet(body?.tags ?? [], [TAG_A, TAG_B]),
+          "tagged: tags array name values equal the two names the event was created with",
         );
       }
 
@@ -240,7 +265,7 @@ async function main() {
 
         const { body } = await fetchEvent(taggedEventId);
         assertTrue(
-          sameSet(body?.tags ?? [], [TAG_C]),
+          sameTagNameSet(body?.tags ?? [], [TAG_C]),
           "edit: the endpoint returns exactly the new tag list after the edit — old names gone, new name present",
         );
       }
@@ -258,7 +283,7 @@ async function main() {
 
         const { body } = await fetchEvent(taggedEventId);
         assertTrue(
-          sameSet(body?.tags ?? [], [TAG_C]),
+          sameTagNameSet(body?.tags ?? [], [TAG_C]),
           "re-edit: the returned array is unchanged in length and membership after an identical re-save",
         );
       }

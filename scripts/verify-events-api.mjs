@@ -139,6 +139,7 @@ async function main() {
   const TAGGED_TITLE = `${TITLE_PREFIX}${SUFFIX}-events-tagged`;
   const UNTAGGED_TITLE = `${TITLE_PREFIX}${SUFFIX}-events-untagged`;
   const COLORED_TITLE = `${TITLE_PREFIX}${SUFFIX}-events-colored`;
+  const FILTER_TITLE = `${TITLE_PREFIX}${SUFFIX}-events-filter-target`;
 
   // Chosen so alphabetical order differs from creation order and so
   // case-insensitivity is exercised: "Alpha" sorts before "mike" sorts
@@ -155,6 +156,13 @@ async function main() {
   // D-13, since save_event's write path never touches tags.color.
   const TAG_COLORED = `coral-${SUFFIX}`;
   const TAG_COLOR_HEX = "#9146FF";
+
+  // ?tags= filter fixture (Phase 4, plan 04-01, Task 3): a distinctive tag no
+  // other fixture in this file carries, so a request for it must return
+  // exactly the filter-target fixture and none of the tagged/untagged/
+  // colored fixtures above.
+  const TAG_FILTER = `gsd-filter-${SUFFIX}`;
+  const TAG_FILTER_NONEXISTENT = `gsd-filter-none-${SUFFIX}`;
 
   const FAR_FUTURE_DATE = new Date(Date.now() + 400 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -202,6 +210,15 @@ async function main() {
           .update({ color: TAG_COLOR_HEX })
           .ilike("name", TAG_COLORED);
         assertTrue(!colorError, "setup: colored the fixture tag directly on the tags table");
+      }
+
+      {
+        const { data, error } = await serviceClient.rpc("save_event", {
+          event_id: null,
+          event_data: { title: FILTER_TITLE, priority: 0, date: FAR_FUTURE_DATE },
+          tag_names: [TAG_FILTER],
+        });
+        assertTrue(!error && !!data?.id, "setup: created the ?tags= filter-target fixture event via save_event");
       }
 
       // ----------------------------------------------------------------
@@ -325,6 +342,106 @@ async function main() {
           "v2 pagination: the single returned event still carries a tags array",
         );
       }
+
+      // ----------------------------------------------------------------
+      // ?tags= single tag (Phase 4, plan 04-01, Task 3, API-01): only the
+      // fixture carrying the requested tag is present; every other fixture
+      // in this file (tagged/untagged/colored) is absent.
+      // ----------------------------------------------------------------
+      {
+        const { status, body } = await fetchEvents(
+          `v=1&tags=${encodeURIComponent(TAG_FILTER)}&include_past=true&page_size=25`,
+        );
+        assertTrue(status === 200, "?tags= single: GET /api/events?tags=<tag> returns 200");
+        assertTrue(
+          findByTitle(body, FILTER_TITLE) !== undefined,
+          "?tags= single: the filter-target fixture is present in the response",
+        );
+        assertTrue(
+          findByTitle(body, TAGGED_TITLE) === undefined,
+          "?tags= single: the tagged fixture (different tags) is absent",
+        );
+        assertTrue(
+          findByTitle(body, UNTAGGED_TITLE) === undefined,
+          "?tags= single: the untagged fixture is absent",
+        );
+        assertTrue(
+          findByTitle(body, COLORED_TITLE) === undefined,
+          "?tags= single: the colored fixture (different tag) is absent",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // ?tags= case-insensitive (D-05): an upper-cased spelling of the
+      // stored tag name returns the identical fixture-title set as the
+      // lower-case spelling above.
+      // ----------------------------------------------------------------
+      {
+        const { status, body } = await fetchEvents(
+          `v=1&tags=${encodeURIComponent(TAG_FILTER.toUpperCase())}&include_past=true&page_size=25`,
+        );
+        assertTrue(status === 200, "?tags= case-insensitive: GET /api/events?tags=<TAG> returns 200");
+        assertTrue(
+          findByTitle(body, FILTER_TITLE) !== undefined,
+          "?tags= case-insensitive (D-05): an upper-cased spelling still matches the filter-target fixture",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // ?tags= zero-match (D-04/D-06, RESEARCH Pitfall 1): a tag name no
+      // fixture carries returns a well-formed empty 200 under both v1 and
+      // v2 — never a 4xx/5xx, and never a special-cased shape.
+      // ----------------------------------------------------------------
+      {
+        const { status, body } = await fetchEvents(
+          `v=1&tags=${encodeURIComponent(TAG_FILTER_NONEXISTENT)}&include_past=true`,
+        );
+        assertTrue(status === 200, "?tags= zero-match v1: GET /api/events?tags=<unknown> returns 200");
+        assertTrue(
+          Array.isArray(body) && body.length === 0,
+          "?tags= zero-match v1: response body is an empty array",
+        );
+      }
+      {
+        const { status, body } = await fetchEvents(
+          `v=2&tags=${encodeURIComponent(TAG_FILTER_NONEXISTENT)}&include_past=true`,
+        );
+        assertTrue(status === 200, "?tags= zero-match v2: GET /api/events?tags=<unknown> returns 200");
+        assertTrue(
+          Array.isArray(body?.data) && body.data.length === 0,
+          "?tags= zero-match v2: data is an empty array",
+        );
+        assertTrue(
+          body?.meta?.total === 0 && body?.meta?.total_pages === 0,
+          "?tags= zero-match v2: meta.total and meta.total_pages are both 0",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // ?tags= concurrency (API-01 edge): several identical requests issued
+      // in parallel all return 200 with byte-identical bodies — the RPC is
+      // a single read-only stable statement and the handler keeps no
+      // request-scoped shared state, so interleaving cannot corrupt a
+      // response.
+      // ----------------------------------------------------------------
+      {
+        const query = `v=1&tags=${encodeURIComponent(TAG_FILTER)}&include_past=true&page_size=25`;
+        const responses = await Promise.all([
+          fetchEvents(query),
+          fetchEvents(query),
+          fetchEvents(query),
+          fetchEvents(query),
+        ]);
+        assertTrue(
+          responses.every((res) => res.status === 200),
+          "?tags= concurrency: every concurrent identical request returns 200",
+        );
+        const serialized = responses.map((res) => JSON.stringify(res.body));
+        assertTrue(
+          serialized.every((body) => body === serialized[0]),
+          "?tags= concurrency: every concurrent identical request returns a byte-identical body",
+        );
+      }
     } finally {
       // Cleanup: delete any leftover fixture events (covers a failed
       // assertion leaving one behind) and every fixture tag row.
@@ -334,7 +451,7 @@ async function main() {
         console.error("cleanup: failed to delete fixture events", cleanupError);
       }
       try {
-        await serviceClient.from("tags").delete().in("name", [TAG_ZULU, TAG_ALPHA, TAG_MIKE, TAG_COLORED]);
+        await serviceClient.from("tags").delete().in("name", [TAG_ZULU, TAG_ALPHA, TAG_MIKE, TAG_COLORED, TAG_FILTER]);
       } catch (cleanupError) {
         console.error("cleanup: failed to delete fixture tags", cleanupError);
       }

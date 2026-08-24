@@ -3,7 +3,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { formatISO } from "date-fns";
 import { SUPABASE_TABLE_NAME } from '$env/static/private'
 import type { EventTag } from "$lib/types";
-import { compareTagNames } from "$lib/utils/event_helpers";
+import { compareTagNames, splitTags } from "$lib/utils/event_helpers";
 
 const DEFAULT_VERSION = 1;
 const DEFAULT_PAGE_SIZE = 25;
@@ -32,6 +32,36 @@ export const GET: RequestHandler = async (request) => {
   // if we aren't including past events, limit the query to only events that are currently happening or in the future
   if (!filters.includePast) {
     query = query.or(`date.gte.${formatISO(new Date())},end_date.gte.${formatISO(new Date())},date.is.null`)
+  }
+
+  // if a tags filter is present, narrow the same query object (the one
+  // count: "exact" was set on above) to only the event ids the RPC reports
+  // as carrying every requested tag (D-01/D-02/D-03). A zero-match result is
+  // a normal outcome (D-06), so it short-circuits to an empty response
+  // rather than ever calling .in("id", []) — postgrest-js@1.19.4 builds an
+  // empty .in() into the literal `id=in.()`, a shape PostgREST has a
+  // documented history of mishandling (RESEARCH Pitfall 1).
+  if (filters.tags) {
+    const { data: matches, error: rpcErr } = await supabase.rpc(
+      "events_matching_all_tags",
+      { tag_names: filters.tags }
+    );
+
+    if (rpcErr) throw error(500, "Database error");
+
+    const matchingIds = (matches ?? []).map((row: { event_id: number }) => row.event_id);
+
+    if (matchingIds.length === 0) {
+      setHeaders({
+        "cache-control": "public, max-age=60"
+      })
+
+      return filters.version === 2
+        ? json({ meta: { total: 0, total_pages: 0 }, data: [] })
+        : json([]);
+    }
+
+    query = query.in("id", matchingIds);
   }
 
   query = query.range((filters.pageNum - 1) * filters.pageSize, (filters.pageNum * filters.pageSize) - 1);
@@ -90,12 +120,21 @@ function getRequestFilters (request: RequestEvent) {
   const orderDirection = searchParams.get("order_direction") === "desc" ? "desc" : "asc";
   const includePast = searchParams.get("include_past") === "true";
 
+  // D-07/D-08/D-09: clean via the shared splitTags() utility (comma-split,
+  // trim, drop-empty), then dedup with a Set. An absent param, a bare
+  // "?tags=", and a param whose entries are all blank/whitespace all
+  // converge on null, the unfiltered sentinel.
+  const rawTags = searchParams.get("tags");
+  const cleanedTags = rawTags ? splitTags(rawTags) : [];
+  const tags = cleanedTags.length > 0 ? [...new Set(cleanedTags)] : null;
+
   return {
     version,
     orderBy,
     pageNum,
     pageSize,
     orderDirection,
-    includePast
+    includePast,
+    tags
   }
 }

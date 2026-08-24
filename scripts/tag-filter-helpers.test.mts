@@ -17,6 +17,7 @@ import {
   compareTagNames,
   distinctSortedTags,
   filterEventsByTags,
+  hasActiveSelection,
 } from "../src/lib/utils/event_helpers.ts";
 
 // Minimal in-memory event literals shaped as CountdownDateWithTags. Only
@@ -174,4 +175,55 @@ test("activeTagNames composed with filterEventsByTags: a vanished selected tag r
   const events = [makeEvent(1, ["a"]), makeEvent(2, ["b"])];
   const result = filterEventsByTags(events, activeTagNames(events, ["gone"]));
   assert.deepEqual(result, events);
+});
+
+// ---------------------------------------------------------------------------
+// hasActiveSelection
+// ---------------------------------------------------------------------------
+
+test("hasActiveSelection: an empty selection returns false regardless of the available tags", () => {
+  const available = distinctSortedTags([makeEvent(1, ["a", "b"])]);
+  assert.equal(hasActiveSelection(available, []), false);
+});
+
+test("hasActiveSelection: a selection whose every name is available returns true", () => {
+  const available = distinctSortedTags([makeEvent(1, ["a", "b"])]);
+  assert.equal(hasActiveSelection(available, ["a", "b"]), true);
+});
+
+test("hasActiveSelection: a partial drop-out (one name available, one gone) still returns true", () => {
+  const available = distinctSortedTags([makeEvent(1, ["a"])]);
+  assert.equal(hasActiveSelection(available, ["a", "gone"]), true);
+});
+
+test("hasActiveSelection: returns false when no selected name is available (G-03-7 itself)", () => {
+  const available = distinctSortedTags([makeEvent(1, ["a"])]);
+  assert.equal(hasActiveSelection(available, ["gone"]), false);
+});
+
+test("hasActiveSelection: returns false for a non-empty selection against an empty available-tag list", () => {
+  assert.equal(hasActiveSelection([], ["a"]), false);
+});
+
+test("hasActiveSelection: a name differing only in letter case from an available tag is not a match", () => {
+  const available = distinctSortedTags([makeEvent(1, ["Esports"])]);
+  assert.equal(hasActiveSelection(available, ["esports"]), false);
+});
+
+test("hasActiveSelection composed with activeTagNames: agrees with activeTagNames(...).length > 0 across a tag-drop transition", () => {
+  // Before: both events present, TAG_ONLY_ONE's only carrier still in the list.
+  const before = [makeEvent(1, ["shared", "only-one"]), makeEvent(2, ["shared"])];
+  // After: the only carrier of "only-one" has dropped out of the dataset.
+  const after = [makeEvent(2, ["shared"])];
+  const selection = ["only-one"];
+
+  const beforeHasActive = hasActiveSelection(distinctSortedTags(before), selection);
+  const beforeNarrowedNonEmpty = activeTagNames(before, selection).length > 0;
+  assert.equal(beforeHasActive, beforeNarrowedNonEmpty);
+  assert.equal(beforeHasActive, true);
+
+  const afterHasActive = hasActiveSelection(distinctSortedTags(after), selection);
+  const afterNarrowedNonEmpty = activeTagNames(after, selection).length > 0;
+  assert.equal(afterHasActive, afterNarrowedNonEmpty);
+  assert.equal(afterHasActive, false);
 });

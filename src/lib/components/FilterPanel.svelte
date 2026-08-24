@@ -4,7 +4,7 @@
   import { fade } from "svelte/transition";
 
   import type { CountdownDateWithTags } from "$lib/types";
-  import { distinctSortedTags } from "$lib/utils/event_helpers";
+  import { distinctSortedTags, hasActiveSelection } from "$lib/utils/event_helpers";
   import { chipBackground, chipTextTone } from "$lib/utils/color_helpers";
 
   let {
@@ -20,7 +20,16 @@
   // A function of the events prop alone, never of the current selection
   // (D-09/D-10) — no faceted narrowing lives here.
   const availableTags = $derived(distinctSortedTags(events));
-  const hasSelection = $derived(selectedTags.length > 0);
+
+  // Whether the panel's selected-state affordance (D-06 dimming, D-16 Clear)
+  // should read as "a filter is active". Derived through hasActiveSelection
+  // rather than the raw selectedTags prop's length, because D-12 deliberately
+  // preserves a selection whose tag has temporarily vanished from the polled
+  // dataset — the affordance must track what filterEventsByTags is actually
+  // enforcing (the narrowed, still-offered set), not the stored selection
+  // itself, or the panel keeps claiming an active filter after the last
+  // carrying event drops out (G-03-7).
+  const hasSelection = $derived(hasActiveSelection(availableTags, selectedTags));
 
   // Maps a tag's color to exactly one of three mutually exclusive Tailwind
   // class strings, chosen from chipTextTone's computed tone. Emitting a

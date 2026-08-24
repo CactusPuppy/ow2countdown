@@ -92,6 +92,12 @@ export interface Database {
         }
         Returns: Database["public"]["Tables"]["upcoming-events"]["Row"]
       }
+      events_matching_all_tags: {
+        Args: {
+          tag_names: string[]
+        }
+        Returns: { event_id: number }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -18,6 +18,9 @@ Apply files in numeric filename order:
    after `scripts/verify-tag-migration.mjs` has passed against this same
    database — an unverified drop destroys the only copy of the original
    tag text, recoverable afterwards only via a database backup restore.
+4. `004_events_matching_all_tags.sql` — the AND-matching read-only RPC
+   backing the `?tags=` filter on `GET /api/events` (plan 04-01). Carries no
+   destructive step (unlike entry 3).
 
 ## How to apply
 

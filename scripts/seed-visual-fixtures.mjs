@@ -5,7 +5,20 @@
  *
  * Run with:
  *   node --env-file=.env.local scripts/seed-visual-fixtures.mjs seed
+ *   node --env-file=.env.local scripts/seed-visual-fixtures.mjs drop-only-one
+ *   node --env-file=.env.local scripts/seed-visual-fixtures.mjs restore-only-one
  *   node --env-file=.env.local scripts/seed-visual-fixtures.mjs cleanup
+ *
+ * `drop-only-one` and `restore-only-one` (Phase 3, plan 03-04, Task 3)
+ * reproduce UAT gap G-03-7 on demand: the scenario is a selected tag's last
+ * carrying event dropping out of the polled dataset in the background,
+ * something that cannot be triggered from the browser alone. `drop-only-one`
+ * re-saves `gsd-visual-and-both` with only TAG_SHARED, removing
+ * TAG_ONLY_ONE from every rendered event and therefore from the panel's
+ * derived tag list; `restore-only-one` re-saves it with both tags again.
+ * Run `seed` first — both modes require the `and-both` fixture to already
+ * exist. Together with `cleanup`, they also let the D-12 tag-return
+ * re-narrowing behaviour (UAT test 1) be re-checked in the same sitting.
  *
  * This script manages data only — it does NOT launch or manage a dev-server
  * process, unlike scripts/verify-events-api.mjs. Start the application
@@ -45,7 +58,7 @@ function requireEnv(name) {
   if (!value) {
     console.error(
       `Missing required environment variable: ${name}. ` +
-      "Run with: node --env-file=.env.local scripts/seed-visual-fixtures.mjs <seed|cleanup>",
+      "Run with: node --env-file=.env.local scripts/seed-visual-fixtures.mjs <seed|drop-only-one|restore-only-one|cleanup>",
     );
     process.exit(1);
   }
@@ -115,6 +128,85 @@ async function createFixtureEvent(title, tagNames) {
     throw new Error(`Failed to create fixture event "${title}" via save_event: ${error.message}`);
   }
   return data;
+}
+
+async function findFixtureEventByTitle(title) {
+  const { data, error } = await serviceClient
+    .from(TABLE_NAME)
+    .select("id, title, priority, date, end_date")
+    .eq("title", title)
+    .maybeSingle();
+  if (error) {
+    throw new Error(`Failed to look up fixture event "${title}": ${error.message}`);
+  }
+  if (!data) {
+    throw new Error(
+      `Fixture event "${title}" not found. Run ` +
+      "`node --env-file=.env.local scripts/seed-visual-fixtures.mjs seed` first.",
+    );
+  }
+  return data;
+}
+
+async function readEventTagNames(eventId) {
+  const { data, error } = await serviceClient
+    .from(TABLE_NAME)
+    .select("event_tags(tags(name))")
+    .eq("id", eventId)
+    .maybeSingle();
+  if (error) {
+    throw new Error(`Failed to read back tags for event ${eventId}: ${error.message}`);
+  }
+  const eventTags = data?.event_tags ?? [];
+  return eventTags.map((link) => link.tags.name);
+}
+
+async function resaveAndBothTags(tagNames) {
+  const existing = await findFixtureEventByTitle(AND_BOTH_TITLE);
+
+  const { error } = await serviceClient.rpc("save_event", {
+    event_id: existing.id,
+    event_data: {
+      title: existing.title,
+      priority: existing.priority,
+      date: existing.date,
+      end_date: existing.end_date,
+    },
+    tag_names: tagNames,
+  });
+  if (error) {
+    throw new Error(`Failed to re-save fixture event "${AND_BOTH_TITLE}" via save_event: ${error.message}`);
+  }
+
+  return existing.id;
+}
+
+async function dropOnlyOne() {
+  const eventId = await resaveAndBothTags([TAG_SHARED]);
+
+  const tagNames = await readEventTagNames(eventId);
+  if (tagNames.includes(TAG_ONLY_ONE)) {
+    throw new Error(`drop-only-one: "${TAG_ONLY_ONE}" is still present on "${AND_BOTH_TITLE}" after re-save.`);
+  }
+  if (!tagNames.includes(TAG_SHARED)) {
+    throw new Error(`drop-only-one: "${TAG_SHARED}" is unexpectedly missing from "${AND_BOTH_TITLE}" after re-save.`);
+  }
+
+  console.log(`Dropped "${TAG_ONLY_ONE}" from "${AND_BOTH_TITLE}" — it should now be gone from the panel's tag list.`);
+}
+
+async function restoreOnlyOne() {
+  const eventId = await resaveAndBothTags([TAG_SHARED, TAG_ONLY_ONE]);
+
+  const tagNames = await readEventTagNames(eventId);
+  if (!tagNames.includes(TAG_ONLY_ONE)) {
+    throw new Error(`restore-only-one: "${TAG_ONLY_ONE}" is still missing from "${AND_BOTH_TITLE}" after re-save.`);
+  }
+  if (!tagNames.includes(TAG_SHARED)) {
+    throw new Error(`restore-only-one: "${TAG_SHARED}" is unexpectedly missing from "${AND_BOTH_TITLE}" after re-save.`);
+  }
+
+  console.log(`Restored "${TAG_ONLY_ONE}" on "${AND_BOTH_TITLE}" — a selection on it should immediately re-narrow the list.`);
 }
 
 async function seed() {
@@ -207,16 +299,25 @@ async function cleanup() {
   console.log("Cleaned up visual fixtures — zero fixture events and zero fixture tags remain.");
 }
 
+const VALID_MODES = ["seed", "drop-only-one", "restore-only-one", "cleanup"];
+
 async function main() {
   const mode = process.argv[2];
 
-  if (mode !== "seed" && mode !== "cleanup") {
-    console.error("Usage: node --env-file=.env.local scripts/seed-visual-fixtures.mjs <seed|cleanup>");
+  if (!VALID_MODES.includes(mode)) {
+    console.error(
+      "Usage: node --env-file=.env.local scripts/seed-visual-fixtures.mjs " +
+      "<seed|drop-only-one|restore-only-one|cleanup>",
+    );
     process.exit(1);
   }
 
   if (mode === "seed") {
     await seed();
+  } else if (mode === "drop-only-one") {
+    await dropOnlyOne();
+  } else if (mode === "restore-only-one") {
+    await restoreOnlyOne();
   } else {
     await cleanup();
   }

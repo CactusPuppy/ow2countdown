@@ -2,6 +2,7 @@
   import { flip } from "svelte/animate";
 
   let {
+    id = undefined,
     tags = $bindable([] as string[]),
     tagLimit = 0,
     name = "tags",
@@ -10,7 +11,7 @@
     allowRepeats = false,
     disabled = false,
   } = $props();
-  let input = "";
+  let input = $state("");
   let inputElement: HTMLInputElement;
   const hasTagLimitBeenReached = $derived(
     tagLimit > 0 && tags.length >= tagLimit,
@@ -19,8 +20,12 @@
   function addTag(tag: string) {
     tag = tag.trim();
     if (!tag) return;
-    if (tagLimit && tag.length >= tagLimit) return;
-    if (!allowRepeats && tags.includes(tag)) return;
+    if (tagLimit && tags.length >= tagLimit) return;
+    if (
+      !allowRepeats &&
+      tags.some((t: string) => t.toLowerCase() === tag.toLowerCase())
+    )
+      return;
 
     tags = [...tags, tag];
     input = "";
@@ -36,8 +41,8 @@
     return value.split(delimiter);
   }
 
-  function cleanTag(value: string) {
-    return value.trim();
+  function commitPending() {
+    if (input) addTag(input);
   }
 
   function keydown(event: KeyboardEvent) {
@@ -47,7 +52,7 @@
 
     if (event.code === "Enter") {
       event.preventDefault();
-      return;
+      commitPending();
     }
   }
 </script>
@@ -72,6 +77,7 @@
 
   <input
     type="text"
+    {id}
     bind:this={inputElement}
     bind:value={input}
     oninput={() => {
@@ -80,10 +86,11 @@
       splitTags(input).forEach((tag) => addTag(tag));
     }}
     onkeydown={keydown}
+    onblur={commitPending}
     {disabled}
     placeholder={hasTagLimitBeenReached ? "" : placeholder}
     readonly={hasTagLimitBeenReached}
   />
 
-  <input {name} value={tags} type="hidden" />
+  <input {name} value={tags.join(delimiter)} type="hidden" />
 </div>

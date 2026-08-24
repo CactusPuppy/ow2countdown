@@ -144,7 +144,7 @@ begin
   --    naturally de-duplicates case-insensitive repeats within tag_names.
   foreach tag_name in array tag_names loop
     normalized_name := trim(tag_name);
-    if normalized_name = '' then
+    if normalized_name is null or normalized_name = '' then
       continue;
     end if;
 

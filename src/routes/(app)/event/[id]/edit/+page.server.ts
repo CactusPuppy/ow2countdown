@@ -10,6 +10,11 @@ export const actions: Actions = {
     }
 
     const id = event.params.id;
+    const eventId = Number.parseInt(id, 10);
+    if (!Number.isFinite(eventId)) {
+      return fail(400, { error: "Invalid event id" });
+    }
+
     const data = await event.request.formData();
 
     const title = data.get("title");
@@ -21,7 +26,7 @@ export const actions: Actions = {
     const tagNames = splitTags(String(data.get("tags") ?? ""));
 
     const { error, status, statusText } = await supabase.rpc("save_event", {
-      event_id: Number.parseInt(id, 10),
+      event_id: eventId,
       event_data: eventData,
       tag_names: tagNames,
     });
@@ -30,6 +35,6 @@ export const actions: Actions = {
       return fail(status, { error: statusText });
     }
 
-    throw redirect(302, `/event/${id}`);
+    throw redirect(302, `/event/${eventId}`);
   },
 };

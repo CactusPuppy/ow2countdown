@@ -58,7 +58,7 @@
         group = data.group || "";
         date = data.date || "";
         end_date = data.end_date || "";
-        tags = data.tags || [];
+        tags = Array.isArray(data.tags) ? data.tags : [];
         priority = data.priority || 0;
       }
     } catch (error) {
@@ -164,7 +164,7 @@
   placeholder="tag1, tag2, etc."
   bind:value={tags}
 /> -->
-<Tags bind:tags />
+<Tags id="event__tags" bind:tags />
 
 <label for="event__priority" class="mb-2 mt-4 text-lg optional-label"
   >Priority</label

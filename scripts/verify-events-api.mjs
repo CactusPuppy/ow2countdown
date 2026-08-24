@@ -138,6 +138,7 @@ async function main() {
   const TITLE_PREFIX = "gsd-verify-";
   const TAGGED_TITLE = `${TITLE_PREFIX}${SUFFIX}-events-tagged`;
   const UNTAGGED_TITLE = `${TITLE_PREFIX}${SUFFIX}-events-untagged`;
+  const COLORED_TITLE = `${TITLE_PREFIX}${SUFFIX}-events-colored`;
 
   // Chosen so alphabetical order differs from creation order and so
   // case-insensitivity is exercised: "Alpha" sorts before "mike" sorts
@@ -147,6 +148,13 @@ async function main() {
   const TAG_ALPHA = `Alpha-${SUFFIX}`;
   const TAG_MIKE = `mike-${SUFFIX}`;
   const EXPECTED_ORDER = [TAG_ALPHA, TAG_MIKE, TAG_ZULU];
+
+  // Colored-fixture tag (plan 02-02, Task 2): created uncolored through
+  // save_event like every other tag, then colored via a direct update on
+  // public.tags — the sanctioned way to set a color per TAGS-05 / Phase 1
+  // D-13, since save_event's write path never touches tags.color.
+  const TAG_COLORED = `coral-${SUFFIX}`;
+  const TAG_COLOR_HEX = "#9146FF";
 
   const FAR_FUTURE_DATE = new Date(Date.now() + 400 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -176,6 +184,24 @@ async function main() {
           tag_names: [],
         });
         assertTrue(!error && !!data?.id, "setup: created the untagged fixture event via save_event");
+      }
+
+      {
+        const { data, error } = await serviceClient.rpc("save_event", {
+          event_id: null,
+          event_data: { title: COLORED_TITLE, priority: 0, date: FAR_FUTURE_DATE },
+          tag_names: [TAG_COLORED],
+        });
+        assertTrue(!error && !!data?.id, "setup: created the colored fixture event via save_event");
+
+        // Direct table update, matching on the lowercased tag name — the
+        // sanctioned way to set a color (TAGS-05 / Phase 1 D-13); save_event
+        // never writes tags.color.
+        const { error: colorError } = await serviceClient
+          .from("tags")
+          .update({ color: TAG_COLOR_HEX })
+          .ilike("name", TAG_COLORED);
+        assertTrue(!colorError, "setup: colored the fixture tag directly on the tags table");
       }
 
       // ----------------------------------------------------------------
@@ -225,6 +251,41 @@ async function main() {
           !Object.prototype.hasOwnProperty.call(untaggedV1 ?? {}, "event_tags"),
           "v1 untagged: the response does not expose the raw event_tags embed",
         );
+
+        // A tag whose color was never set (the tagged fixture's zulu/alpha/
+        // mike tags) must come back as null — never an empty string or a
+        // missing key.
+        const uncoloredTag = taggedV1?.tags?.find((tag) => tag.name === TAG_ALPHA);
+        assertTrue(
+          uncoloredTag !== undefined && uncoloredTag.color === null,
+          "v1: a tag whose color was never set returns color: null (not an empty string or missing key)",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // Color round trip (plan 02-02, Task 2): a color set directly on the
+      // tags table survives GET /api/events verbatim.
+      // ----------------------------------------------------------------
+      {
+        const { status, body } = await fetchEvents(
+          "v=1&order_by=id&order_direction=desc&page_size=25&include_past=true",
+        );
+        assertTrue(status === 200, "color: GET /api/events returns 200");
+
+        const coloredV1 = findByTitle(body, COLORED_TITLE);
+        assertTrue(coloredV1 !== undefined, "color: the colored fixture event is present in the response");
+        assertTrue(
+          Array.isArray(coloredV1?.tags) && coloredV1.tags.length === 1,
+          "color: the colored fixture carries exactly one tag",
+        );
+        assertTrue(
+          coloredV1?.tags?.[0]?.name === TAG_COLORED,
+          "color: the colored fixture's tag name matches",
+        );
+        assertTrue(
+          coloredV1?.tags?.[0]?.color === TAG_COLOR_HEX,
+          `color: the colored fixture's tag color round-trips verbatim as ${TAG_COLOR_HEX}`,
+        );
       }
 
       // ----------------------------------------------------------------
@@ -273,7 +334,7 @@ async function main() {
         console.error("cleanup: failed to delete fixture events", cleanupError);
       }
       try {
-        await serviceClient.from("tags").delete().in("name", [TAG_ZULU, TAG_ALPHA, TAG_MIKE]);
+        await serviceClient.from("tags").delete().in("name", [TAG_ZULU, TAG_ALPHA, TAG_MIKE, TAG_COLORED]);
       } catch (cleanupError) {
         console.error("cleanup: failed to delete fixture tags", cleanupError);
       }

@@ -602,6 +602,116 @@ async function main() {
         );
       }
 
+      // ----------------------------------------------------------------
+      // ?tags= pagination and v2 totals under the filtered set (Phase 4,
+      // plan 04-02, Task 2, D-01): a partner paging through ?tags= results
+      // needs total_pages to describe THEIR filtered set — CONTEXT.md
+      // records this as the one dimension where the user chose correctness
+      // over the simpler post-fetch-filter alternative. TAG_AND_ALPHA has
+      // exactly three carriers (the all-three, two-tag and alpha-only
+      // fixtures), so page_size=1 walks all three pages plus one page past
+      // the end. If the count were ever taken from an unfiltered query
+      // object, meta.total would be the whole table's row count and
+      // meta.total_pages would be enormous — this cannot coincidentally
+      // pass a wrong implementation.
+      // ----------------------------------------------------------------
+      {
+        const pageQuery = (page) =>
+          `v=2&tags=${encodeURIComponent(TAG_AND_ALPHA)}&page=${page}&page_size=1&order_by=id&order_direction=desc&include_past=true`;
+
+        const page1 = await fetchEvents(pageQuery(1));
+        assertTrue(page1.status === 200, "?tags= pagination: page 1 returns 200");
+        assertTrue(
+          Array.isArray(page1.body?.data) && page1.body.data.length === 1,
+          "?tags= pagination: page 1 data.length is exactly 1",
+        );
+        assertTrue(
+          page1.body?.meta?.total === 3 && page1.body?.meta?.total_pages === 3,
+          "?tags= pagination: page 1 meta.total is 3 and meta.total_pages is 3 (the filtered set, not the whole table)",
+        );
+
+        const page2 = await fetchEvents(pageQuery(2));
+        const page3 = await fetchEvents(pageQuery(3));
+        assertTrue(
+          page2.status === 200 && page3.status === 200,
+          "?tags= pagination: pages 2 and 3 return 200",
+        );
+        assertTrue(
+          Array.isArray(page2.body?.data) && page2.body.data.length === 1 &&
+            Array.isArray(page3.body?.data) && page3.body.data.length === 1,
+          "?tags= pagination: pages 2 and 3 each return exactly one event",
+        );
+        assertTrue(
+          page2.body?.meta?.total === 3 && page3.body?.meta?.total === 3,
+          "?tags= pagination: meta.total stays 3 on pages 2 and 3",
+        );
+
+        const pagedTitles = [page1, page2, page3].map((res) => res.body?.data?.[0]?.title);
+        const distinctPagedTitles = new Set(pagedTitles);
+        const expectedTitles = new Set([AND_ALL_THREE_TITLE, AND_TWO_TITLE, AND_ALPHA_ONLY_TITLE]);
+        assertTrue(
+          distinctPagedTitles.size === 3 &&
+            [...distinctPagedTitles].every((title) => expectedTitles.has(title)),
+          "?tags= pagination: pages 1-3 together return the three distinct AND fixtures with no repeats",
+        );
+
+        const page4 = await fetchEvents(pageQuery(4));
+        assertTrue(page4.status === 200, "?tags= pagination: page 4 (past the end) returns 200");
+        assertTrue(
+          Array.isArray(page4.body?.data) && page4.body.data.length === 0,
+          "?tags= pagination: page 4 data is empty",
+        );
+        assertTrue(
+          page4.body?.meta?.total === 3,
+          "?tags= pagination: page 4 meta.total is still 3",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // ?tags= multi-tag zero-match totals (Phase 4, plan 04-02, Task 2,
+      // D-04): a multi-tag request naming a tag no fixture carries
+      // reports meta.total 0 / meta.total_pages 0 through the shared
+      // short-circuit path — proving it isn't a single-tag-only branch.
+      // ----------------------------------------------------------------
+      {
+        const { status, body } = await fetchEvents(
+          `v=2&tags=${encodeURIComponent(`${TAG_AND_ALPHA},${TAG_FILTER_NONEXISTENT}`)}&include_past=true`,
+        );
+        assertTrue(status === 200, "?tags= multi-tag zero-match: GET /api/events?tags=<alpha>,<unknown> returns 200");
+        assertTrue(
+          Array.isArray(body?.data) && body.data.length === 0,
+          "?tags= multi-tag zero-match: data is an empty array",
+        );
+        assertTrue(
+          body?.meta?.total === 0 && body?.meta?.total_pages === 0,
+          "?tags= multi-tag zero-match: meta.total and meta.total_pages are both 0",
+        );
+      }
+
+      // ----------------------------------------------------------------
+      // ?tags= multi-tag concurrency (Phase 4, plan 04-02, Task 2, API-02
+      // edge): several identical multi-tag requests issued in parallel all
+      // return 200 with identical bodies — the matching set is stable
+      // across interleaving.
+      // ----------------------------------------------------------------
+      {
+        const multiTagQuery = `v=1&tags=${encodeURIComponent(`${TAG_AND_ALPHA},${TAG_AND_BETA}`)}&include_past=true&page_size=25`;
+        const responses = await Promise.all([
+          fetchEvents(multiTagQuery),
+          fetchEvents(multiTagQuery),
+          fetchEvents(multiTagQuery),
+          fetchEvents(multiTagQuery),
+        ]);
+        assertTrue(
+          responses.every((res) => res.status === 200),
+          "?tags= multi-tag concurrency: every concurrent identical request returns 200",
+        );
+        const serializedMultiTag = responses.map((res) => JSON.stringify(res.body));
+        assertTrue(
+          serializedMultiTag.every((body) => body === serializedMultiTag[0]),
+          "?tags= multi-tag concurrency: every concurrent identical request returns an identical body",
+        );
+      }
     } finally {
       // Cleanup: delete any leftover fixture events (covers a failed
       // assertion leaving one behind) and every fixture tag row.

@@ -144,9 +144,17 @@ async function main() {
   const UNTAGGED_TITLE = `${TITLE_PREFIX}${SUFFIX}-untagged`;
   const MISSING_TITLE = `${TITLE_PREFIX}${SUFFIX}-missing`;
 
+  // Chosen so alphabetical order differs from creation order and so
+  // case-insensitivity is exercised: the Alpha-, mike- and zulu- prefixed
+  // names sort case-insensitively as Alpha- < mike- < zulu-, but they are
+  // NOT passed to save_event in that order below (see the tagged fixture
+  // setup, which passes zulu- first). Mirrors
+  // scripts/verify-events-api.mjs's EXPECTED_ORDER fixture.
   const TAG_A = `Alpha-${SUFFIX}`;
-  const TAG_B = `Beta-${SUFFIX}`;
+  const TAG_MIKE = `mike-${SUFFIX}`;
+  const TAG_ZULU = `zulu-${SUFFIX}`;
   const TAG_C = `Gamma-${SUFFIX}`;
+  const EXPECTED_ORDER = [TAG_A, TAG_MIKE, TAG_ZULU];
 
   let devServer;
 
@@ -166,7 +174,7 @@ async function main() {
         const { data, error } = await serviceClient.rpc("save_event", {
           event_id: null,
           event_data: { title: TAGGED_TITLE, priority: 0 },
-          tag_names: [TAG_A, TAG_B],
+          tag_names: [TAG_ZULU, TAG_A, TAG_MIKE],
         });
         assertTrue(!error && !!data?.id, "setup: created the tagged fixture event via save_event");
         taggedEventId = data?.id;
@@ -205,8 +213,14 @@ async function main() {
           "tagged: every tag is an object with exactly a string name and a string-or-null color",
         );
         assertTrue(
-          sameTagNameSet(body?.tags ?? [], [TAG_A, TAG_B]),
-          "tagged: tags array name values equal the two names the event was created with",
+          sameTagNameSet(body?.tags ?? [], [TAG_A, TAG_MIKE, TAG_ZULU]),
+          "tagged: tags array name values equal the three names the event was created with",
+        );
+        assertTrue(
+          Array.isArray(body?.tags) &&
+            body.tags.length === EXPECTED_ORDER.length &&
+            body.tags.map((tag) => tag.name).every((name, i) => name === EXPECTED_ORDER[i]),
+          "tagged: tags array name values are in case-insensitive alphabetical order, despite being created in a different order",
         );
       }
 
@@ -296,7 +310,7 @@ async function main() {
         console.error("cleanup: failed to delete fixture events", cleanupError);
       }
       try {
-        await serviceClient.from("tags").delete().in("name", [TAG_A, TAG_B, TAG_C]);
+        await serviceClient.from("tags").delete().in("name", [TAG_A, TAG_MIKE, TAG_ZULU, TAG_C]);
       } catch (cleanupError) {
         console.error("cleanup: failed to delete fixture tags", cleanupError);
       }

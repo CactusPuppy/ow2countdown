@@ -13,6 +13,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  activeTagNames,
   compareTagNames,
   distinctSortedTags,
   filterEventsByTags,
@@ -139,4 +140,38 @@ test("filterEventsByTags: preserves the incoming order of the events that surviv
   const events = [makeEvent(3, ["a"]), makeEvent(1, ["a"]), makeEvent(2, ["a"])];
   const result = filterEventsByTags(events, ["a"]);
   assert.deepEqual(result.map((e) => e.id), [3, 1, 2]);
+});
+
+// ---------------------------------------------------------------------------
+// activeTagNames
+// ---------------------------------------------------------------------------
+
+test("activeTagNames: returns an empty selection unchanged", () => {
+  const events = [makeEvent(1, ["a"])];
+  assert.deepEqual(activeTagNames(events, []), []);
+});
+
+test("activeTagNames: returns a selection whose names are all carried by some event unchanged and in order", () => {
+  const events = [makeEvent(1, ["a"]), makeEvent(2, ["b"])];
+  assert.deepEqual(activeTagNames(events, ["a", "b"]), ["a", "b"]);
+});
+
+test("activeTagNames: drops a selected name carried by no event while keeping the others", () => {
+  const events = [makeEvent(1, ["a"])];
+  assert.deepEqual(activeTagNames(events, ["a", "gone"]), ["a"]);
+});
+
+test("activeTagNames: returns an empty array when no selected name is carried by any event", () => {
+  const events = [makeEvent(1, ["a"])];
+  assert.deepEqual(activeTagNames(events, ["gone"]), []);
+});
+
+test("activeTagNames: drops every selected name for an empty event list", () => {
+  assert.deepEqual(activeTagNames([], ["a"]), []);
+});
+
+test("activeTagNames composed with filterEventsByTags: a vanished selected tag restores the full event list rather than emptying it", () => {
+  const events = [makeEvent(1, ["a"]), makeEvent(2, ["b"])];
+  const result = filterEventsByTags(events, activeTagNames(events, ["gone"]));
+  assert.deepEqual(result, events);
 });

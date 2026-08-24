@@ -712,6 +712,96 @@ async function main() {
           "?tags= multi-tag concurrency: every concurrent identical request returns an identical body",
         );
       }
+
+      // ----------------------------------------------------------------
+      // ?tags= degenerate-param equivalences (Phase 4, plan 04-03, Task 1,
+      // D-07/D-08/D-09, RESEARCH Assumption A4): these assertions are
+      // deliberately pinned at the HTTP boundary rather than unit-tested.
+      // The cleanup decision (splitTags() + Set dedup at the API layer)
+      // was reversed mid-discussion during discuss-phase — historical
+      // planning artifacts still describe an earlier "pass raw input
+      // through" design — so an executor or reviewer working from one of
+      // those stale notes could plausibly reintroduce it. Only an
+      // assertion that actually issues the degenerate HTTP requests and
+      // compares real responses makes that regression loud.
+      //
+      // A response is reduced to a comparable projection (v1: the array
+      // of event ids in returned order; v2: the same array plus
+      // meta.total) rather than compared whole-body, so these assertions
+      // stay stable against unrelated rows already present in the live
+      // database while still catching any change in which events are
+      // returned, in what order, or in the filtered total.
+      // ----------------------------------------------------------------
+      {
+        function projectEventsResponse(version, body) {
+          if (version === 2) {
+            const ids = (body?.data ?? []).map((event) => event.id);
+            return JSON.stringify({ ids, total: body?.meta?.total ?? null });
+          }
+          return JSON.stringify({ ids: (body ?? []).map((event) => event.id) });
+        }
+
+        // tagsSuffix is appended verbatim to the query string — callers
+        // pass "" to omit the tags param entirely, or "&tags=<encoded>"
+        // to include it (possibly already-encoded degenerate content).
+        async function assertDegenerateEquivalence(label, tagsSuffixA, tagsSuffixB) {
+          for (const version of [1, 2]) {
+            const baseQuery = `v=${version}&order_by=id&order_direction=desc&page_size=25&include_past=true`;
+            const resA = await fetchEvents(`${baseQuery}${tagsSuffixA}`);
+            const resB = await fetchEvents(`${baseQuery}${tagsSuffixB}`);
+            assertTrue(
+              resA.status === 200 && resB.status === 200,
+              `${label} (v=${version}): both requests return 200`,
+            );
+            assertTrue(
+              projectEventsResponse(version, resA.body) === projectEventsResponse(version, resB.body),
+              `${label} (v=${version}): projects identically`,
+            );
+          }
+        }
+
+        // D-07, stated literally: ?tags= (present but empty) === no tags
+        // param at all.
+        await assertDegenerateEquivalence(
+          "?tags= degenerate: empty-param equivalence",
+          "&tags=",
+          "",
+        );
+
+        // D-07 extended to the all-empty-after-cleanup case (RESEARCH
+        // Assumption A4, confirmed by this phase): once splitTags() is in
+        // the pipeline, a param with no surviving names has nothing to
+        // filter by, so the unfiltered set is the only self-consistent
+        // answer.
+        await assertDegenerateEquivalence(
+          "?tags= degenerate: all-blank commas equivalence",
+          `&tags=${encodeURIComponent(",,")}`,
+          "",
+        );
+        await assertDegenerateEquivalence(
+          "?tags= degenerate: all-blank whitespace equivalence",
+          `&tags=${encodeURIComponent(" ")}`,
+          "",
+        );
+
+        // Noise tolerance: splitTags()'s trim() buys leading/trailing
+        // whitespace around a real tag name.
+        await assertDegenerateEquivalence(
+          "?tags= degenerate: noise-tolerance (whitespace-wrapped) equivalence",
+          `&tags=${encodeURIComponent(`  ${TAG_AND_ALPHA}  `)}`,
+          `&tags=${encodeURIComponent(TAG_AND_ALPHA)}`,
+        );
+
+        // Duplicate-and-blank: splitTags()'s drop-empties plus
+        // [...new Set(...)]'s dedup — this is the assertion that fails if
+        // the parsing is ever replaced by a bespoke inline split with
+        // different trim or empty-check semantics.
+        await assertDegenerateEquivalence(
+          "?tags= degenerate: duplicate-and-blank equivalence",
+          `&tags=${encodeURIComponent(`${TAG_AND_ALPHA},,${TAG_AND_ALPHA},   ,${TAG_AND_ALPHA}`)}`,
+          `&tags=${encodeURIComponent(TAG_AND_ALPHA)}`,
+        );
+      }
     } finally {
       // Cleanup: delete any leftover fixture events (covers a failed
       // assertion leaving one behind) and every fixture tag row.

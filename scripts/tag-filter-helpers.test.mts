@@ -76,12 +76,14 @@ test("distinctSortedTags: skips an event whose tag array is empty", () => {
 });
 
 test("distinctSortedTags: sort stability keeps two equal-comparing names in first-encountered order", () => {
-  // "esports" and "ESPORTS" compare equal under sensitivity: "base". The
-  // first-encountered one (from event 1) must stay first.
+  // "esports" and "ESPORTS" are distinct exact strings, so both survive as
+  // separate entries (case-variant dedup is covered by the adjacent-entries
+  // test above). They compare equal under sensitivity: "base", so a stable
+  // sort must keep them in encounter order — "esports" (event 1) before
+  // "ESPORTS" (event 2) — rather than reordering them on every render.
   const events = [makeEvent(1, ["esports"]), makeEvent(2, ["ESPORTS"])];
   const result = distinctSortedTags(events);
-  assert.equal(result.length, 1);
-  assert.equal(result[0].name, "esports");
+  assert.deepEqual(result.map((tag) => tag.name), ["esports", "ESPORTS"]);
 });
 
 // ---------------------------------------------------------------------------

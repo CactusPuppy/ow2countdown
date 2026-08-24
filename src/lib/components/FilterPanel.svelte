@@ -91,6 +91,19 @@
             </button>
           {/each}
         </div>
+
+        {#if hasSelection}
+          <button
+            type="button"
+            data-testid="filter-clear"
+            class="mt-2 px-2 py-1 rounded-md text-sm text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100
+              focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+              focus-visible:outline-ow2-orange dark:focus-visible:outline-ow2-light-orange"
+            onclick={() => (selectedTags = [])}
+          >
+            Clear
+          </button>
+        {/if}
       </div>
     {/if}
   </div>

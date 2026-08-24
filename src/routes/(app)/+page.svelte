@@ -185,12 +185,14 @@
       <h1 class="text-5xl text-ow2-orange dark:text-ow2-light-orange">
         No events found
       </h1>
-      <p class="text-xl">
-        Next refresh {nextAttemptMarker !== undefined &&
-        compareAsc(now, nextAttemptMarker) < 0
-          ? `in ${timeToNextAttempt}`
-          : "soon"}
-      </p>
+      {#if !(displayDates?.length > 0)}
+        <p class="text-xl">
+          Next refresh {nextAttemptMarker !== undefined &&
+          compareAsc(now, nextAttemptMarker) < 0
+            ? `in ${timeToNextAttempt}`
+            : "soon"}
+        </p>
+      {/if}
     </div>
   {/if}
 

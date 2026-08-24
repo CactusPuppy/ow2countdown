@@ -802,6 +802,129 @@ async function main() {
           `&tags=${encodeURIComponent(TAG_AND_ALPHA)}`,
         );
       }
+
+      // ----------------------------------------------------------------
+      // API-03 non-regression baseline (Phase 4, plan 04-03, Task 2): pins
+      // the prohibition this phase carries — adding tag filtering may
+      // only add a new opt-in param, never alter the default response
+      // set, shape, key names or version semantics for a request a
+      // partner was already making before this milestone. These
+      // assertions pin the untagged v1/v2 contract structurally so a
+      // future accidental change (a statement escaping the
+      // if (filters.tags) branch, an edit to the flattening or response
+      // branch) fails loudly here rather than in a partner's parser.
+      // ----------------------------------------------------------------
+      {
+        const baseQuery = "order_by=id&order_direction=desc&page_size=25&include_past=true";
+        const keyStructure = (event) => JSON.stringify(Object.keys(event ?? {}).sort());
+        const idList = (list) => JSON.stringify((list ?? []).map((event) => event.id).sort((a, b) => a - b));
+
+        // -- Structural contract: v1 is a plain array; v2 is a {meta, data}
+        // envelope whose own keys are exactly meta and data.
+        const v1Baseline = await fetchEvents(`v=1&${baseQuery}`);
+        assertTrue(v1Baseline.status === 200, "API-03 baseline v1: GET /api/events returns 200");
+        assertTrue(
+          Array.isArray(v1Baseline.body),
+          "API-03 baseline v1: response body is a plain JSON array, not an envelope",
+        );
+
+        const v1Representative = findByTitle(v1Baseline.body, TAGGED_TITLE);
+        assertTrue(
+          v1Representative !== undefined && Array.isArray(v1Representative.tags),
+          "API-03 baseline v1: a representative event exposes a tags array",
+        );
+        assertTrue(
+          !Object.prototype.hasOwnProperty.call(v1Representative ?? {}, "event_tags"),
+          "API-03 baseline v1: a representative event carries no raw event_tags key",
+        );
+
+        const v2Baseline = await fetchEvents(`v=2&${baseQuery}`);
+        assertTrue(v2Baseline.status === 200, "API-03 baseline v2: GET /api/events returns 200");
+        assertTrue(
+          !Array.isArray(v2Baseline.body) && typeof v2Baseline.body === "object" && v2Baseline.body !== null,
+          "API-03 baseline v2: response body is a non-array object (the envelope, not the v1 array)",
+        );
+        assertTrue(
+          JSON.stringify(Object.keys(v2Baseline.body ?? {}).sort()) === JSON.stringify(["data", "meta"]),
+          "API-03 baseline v2: the envelope's own keys are exactly meta and data, and nothing else",
+        );
+        assertTrue(
+          JSON.stringify(Object.keys(v2Baseline.body?.meta ?? {}).sort()) === JSON.stringify(["total", "total_pages"]),
+          "API-03 baseline v2: meta's own keys are exactly total and total_pages, and nothing else",
+        );
+        assertTrue(Array.isArray(v2Baseline.body?.data), "API-03 baseline v2: data is an array");
+
+        const v2Representative = findByTitle(v2Baseline.body?.data, TAGGED_TITLE);
+        assertTrue(
+          v2Representative !== undefined && Array.isArray(v2Representative.tags),
+          "API-03 baseline v2: a representative event in data exposes a tags array",
+        );
+        assertTrue(
+          !Object.prototype.hasOwnProperty.call(v2Representative ?? {}, "event_tags"),
+          "API-03 baseline v2: a representative event in data carries no raw event_tags key",
+        );
+
+        // -- Set-and-shape stability: no-param and the empty-string-tags
+        // fallback must agree exactly (same id set, same per-event key
+        // structure); a genuinely filtered request must narrow the id set
+        // while still agreeing on per-event key structure.
+        const baselineIds = idList(v1Baseline.body);
+        const baselineShape = keyStructure(v1Representative);
+
+        const emptyTagsResult = await fetchEvents(`v=1&tags=&${baseQuery}`);
+        assertTrue(emptyTagsResult.status === 200, "API-03 baseline: ?tags= (empty) returns 200");
+        assertTrue(
+          idList(emptyTagsResult.body) === baselineIds,
+          "API-03 baseline: ?tags= (empty) returns the identical id set as omitting tags entirely",
+        );
+        assertTrue(
+          keyStructure(findByTitle(emptyTagsResult.body, TAGGED_TITLE)) === baselineShape,
+          "API-03 baseline: ?tags= (empty) returns the identical per-event key structure as omitting tags entirely",
+        );
+
+        const filteredResult = await fetchEvents(`v=1&tags=${encodeURIComponent(TAG_AND_ALPHA)}&${baseQuery}`);
+        assertTrue(filteredResult.status === 200, "API-03 baseline: a genuinely filtered ?tags= request returns 200");
+        assertTrue(
+          Array.isArray(filteredResult.body) &&
+            filteredResult.body.length > 0 &&
+            filteredResult.body.every((event) => keyStructure(event) === baselineShape),
+          "API-03 baseline: a filtered response's event objects carry the same key structure as the unfiltered baseline",
+        );
+
+        // -- Mixed tagged/untagged concurrency: the untagged path takes no
+        // RPC round trip at all (supabase.rpc is reachable only from
+        // inside if (filters.tags)), so a tagged request in flight cannot
+        // affect an untagged one.
+        const soloTagged = await fetchEvents(`v=1&tags=${encodeURIComponent(TAG_AND_ALPHA)}&${baseQuery}`);
+        const soloTaggedIds = idList(soloTagged.body);
+
+        const mixedBatch = await Promise.all([
+          fetchEvents(`v=1&${baseQuery}`),
+          fetchEvents(`v=2&${baseQuery}`),
+          fetchEvents(`v=1&tags=${encodeURIComponent(TAG_AND_ALPHA)}&${baseQuery}`),
+          fetchEvents(`v=1&${baseQuery}`),
+          fetchEvents(`v=2&${baseQuery}`),
+          fetchEvents(`v=1&tags=${encodeURIComponent(TAG_AND_ALPHA)}&${baseQuery}`),
+        ]);
+        assertTrue(
+          mixedBatch.every((res) => res.status === 200),
+          "API-03 concurrency: every response in a mixed tagged/untagged batch returns 200",
+        );
+
+        const [untaggedV1a, untaggedV2a, taggedA, untaggedV1b, untaggedV2b, taggedB] = mixedBatch;
+        assertTrue(
+          idList(untaggedV1a.body) === baselineIds && idList(untaggedV1b.body) === baselineIds,
+          "API-03 concurrency: untagged v1 responses in the mixed batch match the untagged baseline id set",
+        );
+        assertTrue(
+          idList(untaggedV2a.body?.data) === baselineIds && idList(untaggedV2b.body?.data) === baselineIds,
+          "API-03 concurrency: untagged v2 responses in the mixed batch match the untagged baseline id set",
+        );
+        assertTrue(
+          idList(taggedA.body) === soloTaggedIds && idList(taggedB.body) === soloTaggedIds,
+          "API-03 concurrency: tagged responses in the mixed batch match a solo tagged request",
+        );
+      }
     } finally {
       // Cleanup: delete any leftover fixture events (covers a failed
       // assertion leaving one behind) and every fixture tag row.

@@ -36,10 +36,9 @@ or repeated application is safe.
 ## Environment-specific identifier
 
 The one identifier you may need to change when targeting a different
-Supabase project/environment is the events table name. In this repo it is
+Supabase project/environment is the events table name. In dev/staging it is
 `upcoming_events_staging` (the value of the `SUPABASE_TABLE_NAME` env var
-for the current environment) — `src/lib/database.types.ts` still labels the
-table `"upcoming-events"` for historical reasons, but the live table is
-`upcoming_events_staging`. If your environment's table has a different
+for the current environment) — but the live production table is
+`upcoming_events`. If your environment's table has a different
 name, replace every occurrence of `upcoming_events_staging` in these SQL
 files before running them.

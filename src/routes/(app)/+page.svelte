@@ -11,14 +11,15 @@
   import { onDestroy, onMount } from "svelte";
   import { flip } from "svelte/animate";
 
-  import type { CountdownDate } from "$lib/types";
+  import type { CountdownDateWithTags } from "$lib/types";
 
   import { FontAwesomeIcon } from "fontawesome-svelte";
   import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
   import { dates } from "../../stores/dates";
   import EventCard from "../_event_card.svelte";
-  import { eventEffectiveDate } from "$lib/utils/event_helpers";
+  import FilterPanel from "$lib/components/FilterPanel.svelte";
+  import { activeTagNames, eventEffectiveDate, filterEventsByTags } from "$lib/utils/event_helpers";
   import { fade } from "svelte/transition";
 
   let now: Date;
@@ -27,7 +28,7 @@
 
   let loading = true;
 
-  let displayDates: CountdownDate[];
+  let displayDates: CountdownDateWithTags[];
   // Gets the earliest date in each group, then orders the dates
   // (no specified datetime events inherently are treated as infinitely far in the future)
   $: if ($dates.errored !== true) {
@@ -50,7 +51,7 @@
           }
           return accumulator;
         },
-        {} as Record<string, CountdownDate>,
+        {} as Record<string, CountdownDateWithTags>,
       ),
     ).sort((event1, event2) => {
       if (event1.priority != event2.priority)
@@ -71,6 +72,16 @@
       );
     });
   }
+
+  let selectedTags: string[] = [];
+  // A tag the panel no longer offers (its only carrying event(s) dropped out
+  // on a poll) stops constraining the list here rather than silently
+  // emptying the page — the selection itself is left untouched, so the tag
+  // re-applies immediately if it returns (D-12).
+  let effectiveTags: string[];
+  $: effectiveTags = activeTagNames(displayDates ?? [], selectedTags);
+  let filteredDates: CountdownDateWithTags[];
+  $: filteredDates = filterEventsByTags(displayDates ?? [], effectiveTags);
 
   let timeUpdateInterval: NodeJS.Timeout;
   function updateTime() {
@@ -146,9 +157,12 @@
   </div>
 {/if}
 <div class="relative min-h-full items-center py-2 w-full dark:text-zinc-50">
-  {#if displayDates?.length != undefined && displayDates.length > 0}
+  <div class="events-wrapper mx-auto w-full px-4 mb-6">
+    <FilterPanel events={displayDates ?? []} bind:selectedTags />
+  </div>
+  {#if filteredDates?.length != undefined && filteredDates.length > 0}
     <div class="events-wrapper flex flex-col mx-auto items-center gap-6">
-      {#each displayDates as event, eventIndex (event.id)}
+      {#each filteredDates as event, eventIndex (event.id)}
         <div class="justify-self-center" animate:flip={{ duration: 500 }}>
           <EventCard {now} {event} additionalDelay={eventIndex * 150} />
         </div>
@@ -171,12 +185,14 @@
       <h1 class="text-5xl text-ow2-orange dark:text-ow2-light-orange">
         No events found
       </h1>
-      <p class="text-xl">
-        Next refresh {nextAttemptMarker !== undefined &&
-        compareAsc(now, nextAttemptMarker) < 0
-          ? `in ${timeToNextAttempt}`
-          : "soon"}
-      </p>
+      {#if !(displayDates?.length > 0)}
+        <p class="text-xl">
+          Next refresh {nextAttemptMarker !== undefined &&
+          compareAsc(now, nextAttemptMarker) < 0
+            ? `in ${timeToNextAttempt}`
+            : "soon"}
+        </p>
+      {/if}
     </div>
   {/if}
 

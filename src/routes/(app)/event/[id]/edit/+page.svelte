@@ -1,7 +1,7 @@
 <script lang="ts">
   import EventForm from "$lib/components/event/_form.svelte";
   import { enhance } from "$app/forms";
-  import type { CountdownDate } from "$lib/types";
+  import type { CountdownDateWithTags } from "$lib/types";
   import type { ActionData, PageData, SubmitFunction } from "./$types";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
@@ -13,7 +13,7 @@
 
   export let data: PageData;
   export let form: ActionData;
-  let event: CountdownDate;
+  let event: CountdownDateWithTags;
   $: event = data.event;
 
   onMount(() => {

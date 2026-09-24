@@ -7,18 +7,33 @@
   import { fade } from "svelte/transition";
 
   import CopyTimeDropdown from "$lib/components/_copy_time_dropdown.svelte";
-  import type { CountdownDate } from "$lib/types";
+  import type { CountdownDateWithTags } from "$lib/types";
   import Timer from "$lib/components/_timer.svelte";
   import { eventEffectiveDate, eventRelationToNow, titleToSlug, isEventHappeningNow } from "$lib/utils/event_helpers";
+  import { chipBackground, chipTextTone } from "$lib/utils/color_helpers";
   import ProgressBar from "$lib/components/_progress_bar.svelte";
 
-  export let event: CountdownDate;
+  export let event: CountdownDateWithTags;
   export let now: Date;
   export let additionalDelay = 0;
 
   $: dateStringToDisplay = eventEffectiveDate(event, now);
 
   $: displayVerb = eventRelationToNow(event, now);
+
+  // Maps a tag's color to exactly one of three mutually exclusive Tailwind
+  // class strings, chosen from chipTextTone's computed tone. Emitting a
+  // single class string (rather than leaving the neutral pair on the
+  // element and appending an override beside it) avoids a specificity
+  // conflict: a `dark:`-prefixed utility outranks an unprefixed one, so a
+  // lingering `dark:text-zinc-50` would otherwise win over an override's
+  // `text-zinc-900` in dark mode.
+  function chipToneClass(color: string | null): string {
+    const tone = chipTextTone(color);
+    if (tone === "dark") return "text-zinc-900";
+    if (tone === "light") return "text-zinc-50";
+    return "text-zinc-900 dark:text-zinc-50";
+  }
 
   let eventDurationInSeconds: number;
   let timeRemainingInSeconds: number;
@@ -43,6 +58,22 @@
       {event.title}
     </a>
   </p>
+  {#if event.tags.length > 0}
+    <ul
+      data-testid="event-tags"
+      class="flex flex-wrap justify-center gap-2 list-none mt-1"
+      in:fade={{duration: 500, delay: 275 + additionalDelay}}
+      out:fade
+    >
+      {#each event.tags as tag (tag.name)}
+        <li
+          class="px-2 py-1 rounded-full text-xs font-medium leading-tight bg-zinc-300 dark:bg-zinc-700 max-w-[12rem] truncate {chipToneClass(tag.color)}"
+          style:background-color={chipBackground(tag.color)}
+          title={tag.name}
+        >{tag.name}</li>
+      {/each}
+    </ul>
+  {/if}
   {#if event.id !== -1}
     <div
       class="absolute right-0 top-0 md:mr-3 md:mt-3 px-2 py-1

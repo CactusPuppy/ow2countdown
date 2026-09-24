@@ -1,4 +1,4 @@
-import type { CountdownDate } from "$lib/types";
+import type { CountdownDate, CountdownDateWithTags } from "$lib/types";
 import { addSeconds, compareAsc } from "date-fns";
 import { writable } from "svelte/store";
 
@@ -6,9 +6,9 @@ const MIN_BACKOFF = 10;
 const MAX_BACKOFF = 60;
 const BACKOFF_VARIANCE = 0.5;
 
-export const CountdownDateKeys: (keyof CountdownDate)[] = ["date", "description", "end_date", "group", "priority", "tags", "title"];
+export const CountdownDateKeys: (keyof CountdownDate)[] = ["date", "description", "end_date", "group", "priority", "title"];
 
-export type CountdownDateContainer = CountdownDate[] & {errored?: boolean};
+export type CountdownDateContainer = CountdownDateWithTags[] & {errored?: boolean};
 
 function createDates() {
   const { subscribe, update } = writable([] as CountdownDateContainer);
@@ -60,7 +60,7 @@ function createDates() {
 
 export const dates = createDates();
 
-async function getDates(): Promise<CountdownDate[]> {
+async function getDates(): Promise<CountdownDateWithTags[]> {
   const response = await fetch("/api/events", {
     redirect: "follow"
   });

@@ -12,3 +12,6 @@ node_modules
 supabase
 .vercel
 .env*.local
+
+# GSD planning docs (local-only per project config)
+.planning/

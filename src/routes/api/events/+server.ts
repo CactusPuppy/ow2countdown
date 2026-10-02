@@ -2,6 +2,7 @@ import { error, json, type RequestEvent } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
 import { formatISO } from "date-fns";
 import { SUPABASE_TABLE_NAME } from "$env/static/private";
+import { handleCORS, setCacheControl } from "../apiHeaders";
 
 const DEFAULT_VERSION = 1;
 const DEFAULT_PAGE_SIZE = 25;
@@ -11,8 +12,9 @@ const SUPPORTED_ORDER_BY = ["date", "id"];
 const SUPPORTED_VERSIONS = [1, 2];
 
 export const GET: RequestHandler = async (request) => {
+  const { request: originalRequest, setHeaders } = request;
+  const { headers: requestHeaders } = originalRequest;
   const { supabase } = request.locals;
-  const { setHeaders } = request;
   const filters = getRequestFilters(request);
 
   let query = supabase
@@ -46,10 +48,10 @@ export const GET: RequestHandler = async (request) => {
 
   if (err) throw error(500, "Database error");
 
-  setHeaders({
-    "cache-control": "public, max-age=60",
-    "Access-Control-Allow-Origin": "*",
-  });
+  let responseHeaders = setCacheControl();
+  responseHeaders = handleCORS(originalRequest, responseHeaders);
+
+  setHeaders(responseHeaders);
 
   if (filters.version === 2) {
     return json({

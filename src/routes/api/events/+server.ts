@@ -1,7 +1,7 @@
-import { error, json, type RequestEvent } from "@sveltejs/kit"
+import { error, json, type RequestEvent } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
 import { formatISO } from "date-fns";
-import { SUPABASE_TABLE_NAME } from '$env/static/private'
+import { SUPABASE_TABLE_NAME } from "$env/static/private";
 
 const DEFAULT_VERSION = 1;
 const DEFAULT_PAGE_SIZE = 25;
@@ -15,47 +15,56 @@ export const GET: RequestHandler = async (request) => {
   const { setHeaders } = request;
   const filters = getRequestFilters(request);
 
-  let query = supabase.from(SUPABASE_TABLE_NAME)
-      .select("*", { count: filters.version === 2 ? "exact" : undefined })
+  let query = supabase
+    .from(SUPABASE_TABLE_NAME)
+    .select("*", { count: filters.version === 2 ? "exact" : undefined });
 
   // if there is no order by, use the default sort of priority and date which is used by the homepage
   if (!filters.orderBy) {
     query = query
-        .order("priority", { ascending: false })
-        .order("date", { ascending: true })
+      .order("priority", { ascending: false })
+      .order("date", { ascending: true });
   } else {
-    query = query.order(filters.orderBy, { ascending: filters.orderDirection === "asc" })
+    query = query.order(filters.orderBy, {
+      ascending: filters.orderDirection === "asc",
+    });
   }
 
   // if we aren't including past events, limit the query to only events that are currently happening or in the future
   if (!filters.includePast) {
-    query = query.or(`date.gte.${formatISO(new Date())},end_date.gte.${formatISO(new Date())},date.is.null`)
+    query = query.or(
+      `date.gte.${formatISO(new Date())},end_date.gte.${formatISO(new Date())},date.is.null`,
+    );
   }
 
-  query = query.range((filters.pageNum - 1) * filters.pageSize, (filters.pageNum * filters.pageSize) - 1);
+  query = query.range(
+    (filters.pageNum - 1) * filters.pageSize,
+    filters.pageNum * filters.pageSize - 1,
+  );
 
   const { data, error: err, count, status } = await query;
 
   if (err) throw error(500, "Database error");
 
   setHeaders({
-    "cache-control": "public, max-age=60"
-  })
+    "cache-control": "public, max-age=60",
+    "Access-Control-Allow-Origin": "*",
+  });
 
   if (filters.version === 2) {
     return json({
       meta: {
         total: count,
-        total_pages: Math.ceil(count / filters.pageSize)
+        total_pages: Math.ceil(count / filters.pageSize),
       },
-      data
+      data,
     });
   }
 
   return json(data);
-}
+};
 
-function getRequestFilters (request: RequestEvent) {
+function getRequestFilters(request: RequestEvent) {
   const searchParams = request.url.searchParams;
 
   let version = Number.parseInt(searchParams.get("v"), 10);
@@ -67,10 +76,13 @@ function getRequestFilters (request: RequestEvent) {
   let pageNum = Number.parseInt(searchParams.get("page"), 10) || 1;
   pageNum = pageNum < 1 ? 1 : pageNum;
 
-  let pageSize = Number.parseInt(searchParams.get("page_size"), 10) || DEFAULT_PAGE_SIZE;
-  pageSize = (pageSize < 1 || pageSize > MAX_PAGE_SIZE) ? DEFAULT_PAGE_SIZE : pageSize;
+  let pageSize =
+    Number.parseInt(searchParams.get("page_size"), 10) || DEFAULT_PAGE_SIZE;
+  pageSize =
+    pageSize < 1 || pageSize > MAX_PAGE_SIZE ? DEFAULT_PAGE_SIZE : pageSize;
 
-  const orderDirection = searchParams.get("order_direction") === "desc" ? "desc" : "asc";
+  const orderDirection =
+    searchParams.get("order_direction") === "desc" ? "desc" : "asc";
   const includePast = searchParams.get("include_past") === "true";
 
   return {
@@ -79,6 +91,6 @@ function getRequestFilters (request: RequestEvent) {
     pageNum,
     pageSize,
     orderDirection,
-    includePast
-  }
+    includePast,
+  };
 }

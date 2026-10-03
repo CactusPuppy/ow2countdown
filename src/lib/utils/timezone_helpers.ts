@@ -8,7 +8,7 @@ export function getTimeZoneInfo(timeZone: string) {
     "shortOffset",
   ];
 
-  const [generic, offset] = timeZoneOptions.map((option) => {
+  let [generic, offset] = timeZoneOptions.map((option) => {
     const formatter = new Intl.DateTimeFormat("en-US", {
       timeZone,
       timeZoneName: option,
@@ -29,7 +29,12 @@ export function getTimeZoneInfo(timeZone: string) {
   const shorthand =
     generic?.endsWith("Time") || generic?.startsWith("GMT") ? null : generic;
 
-  const pretty = `${city} (${[shorthand, offset].filter(Boolean).join(", ")})`;
+  // Skip offset for GMT time zones because of duplicated info
+  if (city?.startsWith("GMT")) offset = "";
+
+  let details = `${[shorthand, offset].filter(Boolean).join(", ")}`;
+  if (details) details = ` (${details})`;
+  const pretty = `${city}${details}`;
 
   return {
     name: timeZone,

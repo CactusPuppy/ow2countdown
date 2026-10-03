@@ -2,7 +2,7 @@ export function getUserTimeZone() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
-export function getTimeZoneInfo(timeZone: string) {
+export function getTimeZoneInfo(timeZone: string, date: Date) {
   const timeZoneOptions: Intl.DateTimeFormatOptions["timeZoneName"][] = [
     "shortGeneric",
     "shortOffset",
@@ -14,9 +14,8 @@ export function getTimeZoneInfo(timeZone: string) {
       timeZoneName: option,
     });
 
-    return formatter
-      .formatToParts(new Date())
-      .find((p) => p.type === "timeZoneName")?.value;
+    return formatter.formatToParts(date).find((p) => p.type === "timeZoneName")
+      ?.value;
   });
 
   let [continent, ...rest] = timeZone.replaceAll("_", " ").split("/");
@@ -47,7 +46,7 @@ export function getTimeZoneInfo(timeZone: string) {
   };
 }
 
-export function getTimeZones() {
+export function getTimeZones(date: Date) {
   const timeZones = Intl.supportedValuesOf("timeZone");
 
   // Some browsers return an "UTC" time zone - since we need it for older events, forcefully add it for browsers that do not return it.
@@ -55,17 +54,20 @@ export function getTimeZones() {
   // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/supportedValuesOf#browser_compatibility
   if (!timeZones.includes("UTC")) timeZones.push("UTC");
 
-  return timeZones.map(getTimeZoneInfo);
+  return timeZones.map((i) => getTimeZoneInfo(i, date));
 }
 
-export function getGroupedTimeZones() {
-  const timeZones = getTimeZones();
+export function getGroupedTimeZones(date: Date | string) {
+  let _date = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(_date.getTime())) _date = new Date();
+
+  const timeZones = getTimeZones(_date);
   const grouped = Object.groupBy(timeZones, ({ continent }) => continent);
 
   // add user's and Blizzard campus time zones to separate group and promote them to top
   grouped["Special"] = [
-    getTimeZoneInfo(getUserTimeZone()),
-    getTimeZoneInfo("America/Los_Angeles"),
+    getTimeZoneInfo(getUserTimeZone(), _date),
+    getTimeZoneInfo("America/Los_Angeles", _date),
   ];
 
   return Object.entries(grouped).sort(([a], [b]) =>

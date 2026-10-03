@@ -25,6 +25,9 @@
   let tags = $state("");
   let priority = $state(0);
 
+  let date_timezones = $derived(getGroupedTimeZones(date));
+  let end_date_timezones = $derived(getGroupedTimeZones(end_date));
+
   if (browser) {
     if (event !== undefined) {
       setEventData(event);
@@ -150,7 +153,7 @@
     class="flex-3 min-w-px px-2 py-1 rounded-sm dark:bg-zinc-800"
     bind:value={date_timezone}
   >
-    {#each getGroupedTimeZones() as [continent, timezones]}
+    {#each date_timezones as [continent, timezones]}
       <optgroup label={continent}>
         {#each timezones as timezone}
           <option value={timezone.name}>
@@ -180,7 +183,7 @@
     class="flex-3 min-w-px px-2 py-1 rounded-sm dark:bg-zinc-800"
     bind:value={end_date_timezone}
   >
-    {#each getGroupedTimeZones() as [continent, timezones]}
+    {#each end_date_timezones as [continent, timezones]}
       <optgroup label={continent}>
         {#each timezones as timezone}
           <option value={timezone.name}>

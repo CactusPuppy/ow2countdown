@@ -14,34 +14,40 @@ export interface Database {
           id: number
           created_at: string | null
           date: string | null
+          date_timezone: string | null
           title: string
           description: string | null
           group: string | null
           priority: number
           tags: string | null
           end_date: string | null
+          end_date_timezone: string | null
         }
         Insert: {
           id?: number
           created_at?: string | null
           date?: string | null
+          date_timezone?: string | null
           title: string
           description?: string | null
           group?: string | null
           priority?: number
           tags?: string | null
           end_date?: string | null
+          end_date_timezone?: string | null
         }
         Update: {
           id?: number
           created_at?: string | null
           date?: string | null
+          date_timezone?: string | null
           title?: string
           description?: string | null
           group?: string | null
           priority?: number
           tags?: string | null
           end_date?: string | null
+          end_date_timezone?: string | null
         }
       }
     }

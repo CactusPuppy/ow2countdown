@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fromZonedTime } from "date-fns-tz";
   import EventForm from "$lib/components/event/_form.svelte";
   import { enhance } from "$app/forms";
   import type { CountdownDate } from "$lib/types";
@@ -26,12 +27,25 @@
     formData: FormData;
   }) => {
     const date = formData.get("date");
-    if (typeof date === "string" && date != "") {
-      formData.set("date", new Date(date).toISOString());
+    const dateTimeZone = formData.get("date_timezone");
+    if (
+      typeof date === "string" && 
+      date != "" && 
+      typeof dateTimeZone === "string" && 
+      dateTimeZone != ""
+    ) {
+      formData.set("date", fromZonedTime(new Date(date), dateTimeZone).toISOString());
     }
+
     const endDate = formData.get("end_date");
-    if (typeof endDate === "string" && endDate != "") {
-      formData.set("end_date", new Date(endDate).toISOString());
+    const endDateTimeZone = formData.get("end_date_timezone");
+    if (
+      typeof endDate === "string" && 
+      endDate != "" && 
+      typeof endDateTimeZone === "string" && 
+      endDateTimeZone != ""
+    ) {
+      formData.set("end_date", fromZonedTime(new Date(endDate), endDateTimeZone).toISOString());
     }
     submitting = true;
 

@@ -43,7 +43,14 @@ export function getTimeZoneInfo(timeZone: string) {
 }
 
 export function getTimeZones() {
-  return Intl.supportedValuesOf("timeZone").map(getTimeZoneInfo);
+  const timeZones = Intl.supportedValuesOf("timeZone");
+
+  // Some browsers return an "UTC" time zone - since we need it for older events, forcefully add it for browsers that do not return it.
+  // Browsers that do not return it will still support it just fine.
+  // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/supportedValuesOf#browser_compatibility
+  if (!timeZones.includes("UTC")) timeZones.push("UTC");
+
+  return timeZones.map(getTimeZoneInfo);
 }
 
 export function getGroupedTimeZones() {

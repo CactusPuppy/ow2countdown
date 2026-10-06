@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fromZonedTime } from "date-fns-tz";
   import EventForm from "$lib/components/event/_form.svelte";
   import { enhance } from "$app/forms";
   import type { CountdownDate } from "$lib/types";
@@ -9,6 +8,7 @@
   import { onMount } from "svelte";
   import type { ActionResult } from "@sveltejs/kit";
   import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
+  import { handleEventFormData } from "$lib/utils/event_helpers";
 
   let submitting = false;
 
@@ -26,27 +26,8 @@
   }: {
     formData: FormData;
   }) => {
-    const date = formData.get("date");
-    const dateTimeZone = formData.get("date_timezone");
-    if (
-      typeof date === "string" && 
-      date != "" && 
-      typeof dateTimeZone === "string" && 
-      dateTimeZone != ""
-    ) {
-      formData.set("date", fromZonedTime(new Date(date), dateTimeZone).toISOString());
-    }
+    handleEventFormData(formData);
 
-    const endDate = formData.get("end_date");
-    const endDateTimeZone = formData.get("end_date_timezone");
-    if (
-      typeof endDate === "string" && 
-      endDate != "" && 
-      typeof endDateTimeZone === "string" && 
-      endDateTimeZone != ""
-    ) {
-      formData.set("end_date", fromZonedTime(new Date(endDate), endDateTimeZone).toISOString());
-    }
     submitting = true;
 
     return async ({

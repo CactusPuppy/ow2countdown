@@ -1,5 +1,6 @@
 import type { CountdownDate } from "$lib/types";
 import { parseISO } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 
 export function titleToSlug(title: string) {
   return title.toLowerCase()
@@ -39,4 +40,20 @@ export function eventRelationToNow(event: CountdownDate, now?: Date) {
   }
 
    return "occurs";
+}
+
+export function handleEventFormData(formData: FormData) {
+  for(const name of ["date", "end_date"]) {
+    const date = formData.get(name);
+    const dateTimeZone = formData.get(`${name}_timezone`);
+
+    if (
+      typeof date === "string" && 
+      date != "" && 
+      typeof dateTimeZone === "string" && 
+      dateTimeZone != ""
+    ) {
+      formData.set(name, fromZonedTime(new Date(date), dateTimeZone).toISOString());
+    }
+  }
 }

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fromZonedTime } from "date-fns-tz";
   import EventForm, { AUTO_SAVE_KEY } from "$lib/components/event/_form.svelte";
   import { enhance } from "$app/forms";
   import { page } from "$app/stores";
@@ -8,6 +7,7 @@
 
   import type { ActionData, SubmitFunction } from "./$types";
   import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
+  import { handleEventFormData } from "$lib/utils/event_helpers";
 
   let submitting = false;
 
@@ -18,27 +18,7 @@
   });
 
   const handleFormSubmit: SubmitFunction = ({ formData }) => {
-    const date = formData.get("date");
-    const dateTimeZone = formData.get("date_timezone");
-    if (
-      typeof date === "string" && 
-      date != "" && 
-      typeof dateTimeZone === "string" && 
-      dateTimeZone != ""
-    ) {
-      formData.set("date", fromZonedTime(new Date(date), dateTimeZone).toISOString());
-    }
-
-    const endDate = formData.get("end_date");
-    const endDateTimeZone = formData.get("end_date_timezone");
-    if (
-      typeof endDate === "string" && 
-      endDate != "" && 
-      typeof endDateTimeZone === "string" 
-      && endDateTimeZone != ""
-    ) {
-      formData.set("end_date", fromZonedTime(new Date(endDate), endDateTimeZone).toISOString());
-    }
+    handleEventFormData(formData);
 
     submitting = true;
 

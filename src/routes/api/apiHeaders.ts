@@ -16,11 +16,14 @@ export function handleCORS(
   request: Request,
   currentHeaders: Record<string, string>,
 ): Record<string, string> {
-  if (!request.headers.has("Origin")) return currentHeaders;
-  const origin = request.headers.get("Origin");
-  if (!allowedOrigins.includes(origin)) return currentHeaders;
-  return {
+  const varyHeaders = {
     ...currentHeaders,
+    Vary: currentHeaders.Vary ? `${currentHeaders.Vary}, Origin` : "Origin",
+  };
+  const origin = request.headers.get("Origin");
+  if (origin === null || !allowedOrigins.includes(origin)) return varyHeaders;
+  return {
+    ...varyHeaders,
     "Access-Control-Allow-Origin": origin,
   };
 }

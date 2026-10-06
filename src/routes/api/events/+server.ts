@@ -13,7 +13,6 @@ const SUPPORTED_VERSIONS = [1, 2];
 
 export const GET: RequestHandler = async (request) => {
   const { request: originalRequest, setHeaders } = request;
-  const { headers: requestHeaders } = originalRequest;
   const { supabase } = request.locals;
   const filters = getRequestFilters(request);
 
@@ -50,7 +49,6 @@ export const GET: RequestHandler = async (request) => {
 
   let responseHeaders = setCacheControl();
   responseHeaders = handleCORS(originalRequest, responseHeaders);
-
   setHeaders(responseHeaders);
 
   if (filters.version === 2) {

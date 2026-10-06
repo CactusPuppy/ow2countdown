@@ -1,5 +1,51 @@
+import { differenceInSeconds, set } from "date-fns";
+import { fromZonedTime, toZonedTime } from "date-fns-tz";
+
 export function getUserTimeZone() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function timeDiff(date1: Date, date2: Date) {
+  const diff = differenceInSeconds(date1, date2);
+
+  if (!diff) return null;
+
+  const sign = diff > 0 ? "+" : "-";
+  const absSecs = Math.abs(diff);
+
+  const vals = [
+    [Math.floor(absSecs / 3600), "h"],
+    [Math.floor((absSecs % 3600) / 60), "m"],
+    [absSecs % 60, "s"],
+  ];
+
+  const strings = vals.filter(([v]) => v).map(([v, l]) => `${v}${l}`);
+
+  return `${sign}${strings.join(" ")}`;
+}
+
+export function toLosAngelesDate(date: Date | string, timeZone: string) {
+  date = date instanceof Date ? date : new Date(date);
+
+  if (isNaN(date.getTime())) return null;
+
+  const losAngelesDate = toZonedTime(
+    fromZonedTime(date, timeZone),
+    "America/Los_Angeles",
+  );
+
+  const patchTime = set(losAngelesDate, {
+    hours: 11,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+
+  return {
+    date: losAngelesDate,
+    patchTime: patchTime,
+    diff: timeDiff(losAngelesDate, patchTime),
+  };
 }
 
 export function getTimeZoneInfo(timeZone: string, date: Date) {
@@ -18,6 +64,7 @@ export function getTimeZoneInfo(timeZone: string, date: Date) {
       ?.value;
   });
 
+  // Extract continent/ocean and city
   let [continent, ...rest] = timeZone.replaceAll("_", " ").split("/");
   const city = rest.join("/") || continent;
 

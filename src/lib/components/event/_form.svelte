@@ -4,10 +4,11 @@
 
 <script lang="ts">
   import type { CountdownDate } from "$lib/types";
-  import { getUserTimeZone, getGroupedTimeZones } from "$lib/utils/timezone_helpers";
+  import { getUserTimeZone } from "$lib/utils/timezone_helpers";
   import { parseISO, format } from "date-fns";
   import { toZonedTime } from "date-fns-tz";
   import { browser } from "$app/environment";
+  import DatePicker from "$lib/components/event/_date_picker.svelte";
   import type { Snippet } from "svelte";
 
   const {
@@ -24,9 +25,6 @@
   let end_date_timezone = $state(getUserTimeZone());
   let tags = $state("");
   let priority = $state(0);
-
-  let date_timezones = $derived(getGroupedTimeZones(date));
-  let end_date_timezones = $derived(getGroupedTimeZones(end_date));
 
   if (browser) {
     if (event !== undefined) {
@@ -113,7 +111,7 @@
   export { clearLocalStorage };
 </script>
 
-<label for="event__title" class="mb-2 text-lg">Title</label>
+<label for="event__title" class="mb-2 text-lg required-label">Title</label>
 <textarea
   id="event__title"
   name="title"
@@ -136,64 +134,26 @@
   bind:value={description}
 ></textarea>
 
-<label for="event__date" class="mb-2 mt-4 text-lg">Start Date</label>
-<div class="flex gap-2">
-  <input
-    id="event__date"
-    name="date"
-    type="datetime-local"
-    class="flex-4 px-2 py-1 rounded-sm dark:bg-zinc-800"
-    required
-    step="1"
-    bind:value={date}
-  />
-  <select
-    id="event__date-timezone"
-    name="date_timezone"
-    class="flex-3 min-w-px px-2 py-1 rounded-sm dark:bg-zinc-800"
-    bind:value={date_timezone}
-  >
-    {#each date_timezones as [continent, timezones]}
-      <optgroup label={continent}>
-        {#each timezones as timezone}
-          <option value={timezone.name}>
-            {timezone.pretty}
-          </option>
-        {/each}
-      </optgroup>
-    {/each}
-  </select>
-</div>
+<label for="event__date" class="mb-2 mt-4 text-lg required-label"
+  >Start Date</label
+>
+<DatePicker 
+  id="event__date" 
+  name="date" 
+  bind:date={date} 
+  bind:timezone={date_timezone} 
+  required 
+/>
 
 <label for="event__end-date" class="mb-2 mt-4 text-lg optional-label"
   >End Date</label
 >
-<div class="flex gap-2">
-  <input
-    id="event__end-date"
-    name="end_date"
-    type="datetime-local"
-    class="flex-4 px-2 py-1 rounded-sm dark:bg-zinc-800"
-    step="1"
-    bind:value={end_date}
-  />
-  <select
-    id="event__end-date-timezone"
-    name="end_date_timezone"
-    class="flex-3 min-w-px px-2 py-1 rounded-sm dark:bg-zinc-800"
-    bind:value={end_date_timezone}
-  >
-    {#each end_date_timezones as [continent, timezones]}
-      <optgroup label={continent}>
-        {#each timezones as timezone}
-          <option value={timezone.name}>
-            {timezone.pretty}
-          </option>
-        {/each}
-      </optgroup>
-    {/each}
-  </select>
-</div>
+<DatePicker 
+  id="event__end-date" 
+  name="end_date"
+  bind:date={end_date}
+  bind:timezone={end_date_timezone} 
+/>
 
 <label for="event__group" class="mb-2 mt-4 text-lg optional-label">Group</label>
 <input
@@ -231,7 +191,7 @@
 
 <style>
   @reference "../../../app.css";
-  label:has(+ :required)::after {
+  .required-label::after {
     content: "*";
     @apply text-red-400;
     @apply pl-1;

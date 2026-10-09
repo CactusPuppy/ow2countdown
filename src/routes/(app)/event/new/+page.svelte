@@ -7,6 +7,7 @@
 
   import type { ActionData, SubmitFunction } from "./$types";
   import WidthLimiter from "$lib/utils/WidthLimiter.svelte";
+  import { handleEventFormData } from "$lib/utils/event_helpers";
 
   let submitting = false;
 
@@ -17,14 +18,7 @@
   });
 
   const handleFormSubmit: SubmitFunction = ({ formData }) => {
-    const date = formData.get("date");
-    if (typeof date === "string" && date != "") {
-      formData.set("date", new Date(date).toISOString());
-    }
-    const endDate = formData.get("end_date");
-    if (typeof endDate === "string" && endDate != "") {
-      formData.set("end_date", new Date(endDate).toISOString());
-    }
+    handleEventFormData(formData);
 
     submitting = true;
 

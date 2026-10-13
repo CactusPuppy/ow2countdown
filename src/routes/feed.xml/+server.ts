@@ -46,8 +46,11 @@ export const GET: RequestHandler = async(fullRequest) => {
       baseItem["eventEndDate"] = formatRFC7231(parseISO(event.end_date));
       baseItem["eventEndTimestamp"] = Math.floor(parseISO(event.end_date).getTime() / 1000);
     }
+    const tags = event.tags
+      ? event.tags.split(",").map(tag => ({ tag: tag.trim() })).filter(c => c.tag)
+      : [];
     return {
-      item: baseItem
+      item: [baseItem, ...tags]
     };
   })
 
